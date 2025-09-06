@@ -12,6 +12,7 @@ interface Quote {
   text: string;
   author?: string;
   category: string;
+  tier: "free" | "premium";
 }
 
 const Index = () => {
@@ -23,7 +24,7 @@ const Index = () => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Combine affirmations and quotes into one array
-  const allQuotes: Quote[] = [...quotesData.affirmations, ...quotesData.quotes];
+  const allQuotes: Quote[] = [...quotesData.affirmations as Quote[], ...quotesData.quotes as Quote[]];
 
   // Filter quotes based on selected mood
   const getFilteredQuotes = () => {

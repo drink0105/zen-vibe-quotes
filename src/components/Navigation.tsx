@@ -1,5 +1,12 @@
-import { Heart, Home, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { 
+  MdHome, 
+  MdFavorite, 
+  MdPlaylistAdd, 
+  MdSettings,
+  MdTimer,
+  MdNotifications
+} from "react-icons/md";
 
 interface NavigationProps {
   currentPage: string;
@@ -8,33 +15,42 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onPageChange }: NavigationProps) {
   const navItems = [
-    { id: "home", label: "Home", icon: Home },
-    { id: "favorites", label: "Favorites", icon: Heart },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "home", label: "Home", icon: MdHome },
+    { id: "favorites", label: "Favorites", icon: MdFavorite },
+    { id: "playlists", label: "Playlists", icon: MdPlaylistAdd },
+    { id: "timer", label: "Timer", icon: MdTimer },
+    { id: "alarms", label: "Alarms", icon: MdNotifications },
+    { id: "settings", label: "Settings", icon: MdSettings },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/80 backdrop-blur-lg border-t border-border z-50">
-      <div className="flex justify-around items-center py-2 px-4 max-w-md mx-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPage === item.id;
-          
-          return (
-            <Button
-              key={item.id}
-              variant="ghost"
-              size="sm"
-              onClick={() => onPageChange(item.id)}
-              className={`flex flex-col items-center gap-1 p-3 h-auto ${
-                isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground'
-              }`}
-            >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
-              <span className="text-xs">{item.label}</span>
-            </Button>
-          );
-        })}
+    <nav className="fixed bottom-0 left-0 right-0 z-50">
+      <div className="glass-card m-4 rounded-2xl">
+        <div className="flex justify-around items-center py-3 px-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPage === item.id;
+            
+            return (
+              <Button
+                key={item.id}
+                variant="ghost"
+                size="sm"
+                onClick={() => onPageChange(item.id)}
+                className={`
+                  flex flex-col items-center gap-1 p-3 h-auto transition-all duration-300
+                  ${isActive 
+                    ? 'text-primary bg-primary/10 glow-primary scale-110' 
+                    : 'text-muted-foreground hover:text-foreground hover:scale-105'
+                  }
+                `}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? 'animate-glow-pulse' : ''}`} />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

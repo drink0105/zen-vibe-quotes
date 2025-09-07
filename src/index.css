@@ -8,53 +8,75 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core colors */
-    --background: 220 15% 97%;
-    --foreground: 220 15% 12%;
+    /* Core colors - Dark theme by default */
+    --background: 222 84% 5%;
+    --foreground: 210 40% 98%;
     
-    --card: 0 0% 100%;
-    --card-foreground: 220 15% 12%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 12%;
+    --popover: 222 84% 5%;
+    --popover-foreground: 210 40% 98%;
     
-    --primary: 220 60% 50%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
     
-    --secondary: 220 15% 96%;
-    --secondary-foreground: 220 15% 20%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
     
-    --muted: 220 15% 94%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
     
-    --accent: 220 15% 92%;
-    --accent-foreground: 220 15% 20%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
     
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
     
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 220 60% 50%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
     
     --radius: 1rem;
     
-    /* Category-based gradients */
-    --gradient-motivation: linear-gradient(135deg, hsl(15 100% 70%) 0%, hsl(30 100% 65%) 100%);
-    --gradient-mindfulness: linear-gradient(135deg, hsl(200 85% 70%) 0%, hsl(210 90% 75%) 100%);
-    --gradient-humor: linear-gradient(135deg, hsl(45 100% 75%) 0%, hsl(60 100% 70%) 100%);
-    --gradient-productivity: linear-gradient(135deg, hsl(120 60% 65%) 0%, hsl(140 70% 60%) 100%);
-    --gradient-creativity: linear-gradient(135deg, hsl(280 80% 70%) 0%, hsl(300 85% 75%) 100%);
-    --gradient-resilience: linear-gradient(135deg, hsl(160 70% 65%) 0%, hsl(180 75% 70%) 100%);
-    --gradient-default: linear-gradient(135deg, hsl(220 60% 70%) 0%, hsl(240 65% 75%) 100%);
+    /* Dark gradient backgrounds */
+    --gradient-motivation: linear-gradient(135deg, hsl(15 70% 25%) 0%, hsl(30 80% 30%) 100%);
+    --gradient-mindfulness: linear-gradient(135deg, hsl(200 60% 25%) 0%, hsl(210 70% 30%) 100%);
+    --gradient-humor: linear-gradient(135deg, hsl(45 70% 25%) 0%, hsl(60 80% 30%) 100%);
+    --gradient-productivity: linear-gradient(135deg, hsl(120 50% 25%) 0%, hsl(140 60% 30%) 100%);
+    --gradient-creativity: linear-gradient(135deg, hsl(280 60% 25%) 0%, hsl(300 70% 30%) 100%);
+    --gradient-resilience: linear-gradient(135deg, hsl(160 50% 25%) 0%, hsl(180 60% 30%) 100%);
+    --gradient-default: linear-gradient(135deg, hsl(220 50% 25%) 0%, hsl(240 60% 30%) 100%);
+    
+    /* Main app background */
+    --app-background: linear-gradient(135deg, hsl(222 84% 5%) 0%, hsl(217 33% 10%) 100%);
+    
+    /* Glassmorphism effects */
+    --glass-bg: hsla(210, 40%, 98%, 0.1);
+    --glass-border: hsla(210, 40%, 98%, 0.2);
+    --glass-shadow: 0 8px 32px hsla(222, 84%, 5%, 0.37);
+    
+    /* Glow effects */
+    --glow-primary: 0 0 20px hsla(217, 91%, 60%, 0.5);
+    --glow-motivation: 0 0 20px hsla(15, 70%, 25%, 0.6);
+    --glow-mindfulness: 0 0 20px hsla(200, 60%, 25%, 0.6);
+    --glow-humor: 0 0 20px hsla(45, 70%, 25%, 0.6);
+    --glow-productivity: 0 0 20px hsla(120, 50%, 25%, 0.6);
+    --glow-creativity: 0 0 20px hsla(280, 60%, 25%, 0.6);
+    --glow-resilience: 0 0 20px hsla(160, 50%, 25%, 0.6);
+    
+    /* 3D Effects */
+    --perspective: 1000px;
+    --transform-3d: preserve-3d;
     
     /* Quote card styling */
-    --quote-shadow: 0 20px 40px -10px hsla(220, 60%, 50%, 0.15);
-    --quote-shadow-hover: 0 30px 60px -15px hsla(220, 60%, 50%, 0.25);
+    --quote-shadow: 0 20px 40px -10px hsla(222, 84%, 5%, 0.5);
+    --quote-shadow-hover: 0 30px 60px -15px hsla(217, 91%, 60%, 0.25);
     
     /* Animation timing */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-3d: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -118,24 +140,52 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: var(--app-background);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
   }
 }
 
 @layer components {
-  /* Quote card animations */
+  /* Glassmorphism quote card */
   .quote-card {
-    @apply bg-card rounded-2xl p-8 shadow-lg transition-all duration-500 hover:shadow-xl;
+    @apply rounded-2xl p-8 border transition-all duration-500;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
     box-shadow: var(--quote-shadow);
+    perspective: var(--perspective);
+    transform-style: var(--transform-3d);
   }
   
   .quote-card:hover {
     box-shadow: var(--quote-shadow-hover);
-    transform: translateY(-2px);
+    transform: translateY(-4px) rotateX(2deg) rotateY(2deg);
   }
   
-  /* Gradient backgrounds */
+  /* Glassmorphism effects */
+  .glass-card {
+    @apply rounded-xl border;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  
+  .glass-button {
+    @apply rounded-lg border transition-all duration-300;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+  }
+  
+  .glass-button:hover {
+    background: hsla(210, 40%, 98%, 0.2);
+    transform: scale(1.05);
+  }
+  
+  /* Gradient backgrounds with glow */
   .gradient-motivation { background: var(--gradient-motivation); }
   .gradient-mindfulness { background: var(--gradient-mindfulness); }
   .gradient-humor { background: var(--gradient-humor); }
@@ -144,47 +194,102 @@ All colors MUST be HSL.
   .gradient-resilience { background: var(--gradient-resilience); }
   .gradient-default { background: var(--gradient-default); }
   
-  /* Card flip animation */
+  /* Glow effects */
+  .glow-primary { box-shadow: var(--glow-primary); }
+  .glow-motivation { box-shadow: var(--glow-motivation); }
+  .glow-mindfulness { box-shadow: var(--glow-mindfulness); }
+  .glow-humor { box-shadow: var(--glow-humor); }
+  .glow-productivity { box-shadow: var(--glow-productivity); }
+  .glow-creativity { box-shadow: var(--glow-creativity); }
+  .glow-resilience { box-shadow: var(--glow-resilience); }
+  
+  /* 3D Tilt Effect */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: var(--transition-3d);
+  }
+  
+  .tilt-3d:hover {
+    transform: rotateY(5deg) rotateX(2deg);
+  }
+  
+  /* Card flip animation with 3D */
   .flip-enter {
     opacity: 0;
-    transform: rotateY(90deg);
+    transform: perspective(1000px) rotateY(90deg);
   }
   
   .flip-enter-active {
     opacity: 1;
-    transform: rotateY(0deg);
+    transform: perspective(1000px) rotateY(0deg);
     transition: var(--transition-smooth);
   }
   
   .flip-exit {
     opacity: 1;
-    transform: rotateY(0deg);
+    transform: perspective(1000px) rotateY(0deg);
   }
   
   .flip-exit-active {
     opacity: 0;
-    transform: rotateY(-90deg);
+    transform: perspective(1000px) rotateY(-90deg);
     transition: var(--transition-smooth);
   }
   
-  /* Floating animation */
+  /* Advanced animations */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: var(--glow-primary); }
+    50% { box-shadow: 0 0 30px hsla(217, 91%, 60%, 0.8); }
+  }
+  
+  @keyframes rotate-3d {
+    0% { transform: perspective(1000px) rotateY(0deg); }
+    100% { transform: perspective(1000px) rotateY(360deg); }
   }
   
   .float-animation {
     animation: float 6s ease-in-out infinite;
   }
   
+  .glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  
+  .rotate-3d {
+    animation: rotate-3d 10s linear infinite;
+  }
+  
   /* Pulse animation for favorites */
   @keyframes pulse-heart {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.2); }
     100% { transform: scale(1); }
   }
   
   .pulse-heart {
     animation: pulse-heart 0.3s ease-in-out;
+  }
+  
+  /* Premium tier visual indicators */
+  .premium-glow {
+    position: relative;
+  }
+  
+  .premium-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: glow-pulse 2s ease-in-out infinite;
   }
 }

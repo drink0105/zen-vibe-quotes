@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useLocation, useNavigate } from "react-router-dom";
 import { 
   MdHome, 
   MdFavorite, 
@@ -8,19 +9,16 @@ import {
   MdNotifications
 } from "react-icons/md";
 
-interface NavigationProps {
-  currentPage: string;
-  onPageChange: (page: string) => void;
-}
-
-export function Navigation({ currentPage, onPageChange }: NavigationProps) {
+export function Navigation() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const navItems = [
-    { id: "home", label: "Home", icon: MdHome },
-    { id: "favorites", label: "Favorites", icon: MdFavorite },
-    { id: "playlists", label: "Playlists", icon: MdPlaylistAdd },
-    { id: "timer", label: "Timer", icon: MdTimer },
-    { id: "alarms", label: "Alarms", icon: MdNotifications },
-    { id: "settings", label: "Settings", icon: MdSettings },
+    { id: "/", label: "Home", icon: MdHome },
+    { id: "/favorites", label: "Favorites", icon: MdFavorite },
+    { id: "/playlists", label: "Playlists", icon: MdPlaylistAdd },
+    { id: "/timer", label: "Timer", icon: MdTimer },
+    { id: "/alarms", label: "Alarms", icon: MdNotifications },
+    { id: "/settings", label: "Settings", icon: MdSettings },
   ];
 
   return (
@@ -29,14 +27,14 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
         <div className="flex justify-around items-center py-3 px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentPage === item.id;
+            const isActive = location.pathname === item.id;
             
             return (
               <Button
                 key={item.id}
                 variant="ghost"
                 size="sm"
-                onClick={() => onPageChange(item.id)}
+                onClick={() => navigate(item.id)}
                 className={`
                   flex flex-col items-center gap-1 p-3 h-auto transition-all duration-300
                   ${isActive 

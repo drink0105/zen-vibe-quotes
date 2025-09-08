@@ -155,8 +155,8 @@ const Index = () => {
               onNewQuote={handleNewQuote}
               onFavorite={handleFavorite}
               onShare={handleShare}
-              isFavorite={isFavorite}
-              isAnimating={isAnimating}
+              isFavorited={isFavorite}
+              isPremium={true}
             />
           )}
         </div>

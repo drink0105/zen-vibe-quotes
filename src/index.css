@@ -9,33 +9,33 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Core colors - Light theme with soft green/emerald and beige */
-    --background: 39 27% 92%; /* #EAE6D6 - Soft beige */
+    --background: 39 35% 85%; /* #D4CDB0 - Warm beige background */
     --foreground: 25 25% 15%; /* #2D261A - Dark brown for text */
     
-    --card: 43 31% 88%; /* #E2DCC7 - Light beige card */
+    --card: 39 40% 80%; /* #C5B897 - Medium beige card */
     --card-foreground: 25 25% 15%;
     
-    --popover: 43 31% 88%;
+    --popover: 39 40% 80%;
     --popover-foreground: 25 25% 15%;
     
-    --primary: 158 64% 52%; /* #42C885 - Soft emerald green */
+    --primary: 158 70% 45%; /* #2EBF6F - Darker emerald green for better contrast */
     --primary-foreground: 0 0% 98%;
     
-    --secondary: 39 35% 85%; /* #D4CDB0 - Warm beige secondary */
-    --secondary-foreground: 25 25% 20%;
+    --secondary: 39 45% 75%; /* #B8A87A - Darker beige secondary */
+    --secondary-foreground: 25 30% 25%;
     
-    --muted: 39 35% 85%;
-    --muted-foreground: 25 15% 45%;
+    --muted: 39 45% 75%;
+    --muted-foreground: 25 20% 40%;
     
-    --accent: 146 55% 60%; /* #68D391 - Light green accent */
+    --accent: 146 60% 50%; /* #4FBA6F - Darker green accent */
     --accent-foreground: 25 25% 15%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 39 20% 80%; /* #CFBFA0 - Beige border */
-    --input: 39 25% 82%;
-    --ring: 158 64% 52%;
+    --border: 39 30% 70%; /* #B5A482 - Darker beige border */
+    --input: 39 35% 75%;
+    --ring: 158 70% 45%;
     
     --radius: 1rem;
     
@@ -48,8 +48,8 @@ All colors MUST be HSL.
     --gradient-resilience: linear-gradient(135deg, hsl(158 50% 75%) 0%, hsl(180 60% 70%) 100%);
     --gradient-default: linear-gradient(135deg, hsl(39 50% 85%) 0%, hsl(146 60% 80%) 100%);
     
-    /* Main app background - beige gradient */
-    --app-background: linear-gradient(135deg, hsl(39 27% 92%) 0%, hsl(43 31% 88%) 100%);
+    /* Main app background - darker beige gradient */
+    --app-background: linear-gradient(135deg, hsl(39 35% 85%) 0%, hsl(39 40% 80%) 100%);
     
     /* Glassmorphism effects for light theme */
     --glass-bg: hsla(158, 64%, 52%, 0.1);

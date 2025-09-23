@@ -1,24 +1,48 @@
 import { Button } from "@/components/ui/button";
-import { MdSettings, MdLightMode, MdDarkMode, MdStars } from "react-icons/md";
+import { Input } from "@/components/ui/input";
+import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh } from "react-icons/md";
+import { useState } from "react";
 
 interface SettingsPageProps {
   theme: 'light' | 'dark';
   onThemeChange: (theme: 'light' | 'dark') => void;
   isPremium: boolean;
   onPremiumChange: (premium: boolean) => void;
+  backgroundTheme: string;
+  onBackgroundThemeChange: (theme: string) => void;
+  appVersion: string;
+  onVersionChange: (version: string) => void;
 }
 
-export default function SettingsPage({ theme, onThemeChange, isPremium, onPremiumChange }: SettingsPageProps) {
+export default function SettingsPage({ 
+  theme, 
+  onThemeChange, 
+  isPremium, 
+  onPremiumChange,
+  backgroundTheme,
+  onBackgroundThemeChange,
+  appVersion,
+  onVersionChange
+}: SettingsPageProps) {
+  const [newVersion, setNewVersion] = useState(appVersion);
+
   const backgroundGradients = [
-    { name: "Ocean", class: "from-blue-400 to-blue-600", tier: "free" },
-    { name: "Sunset", class: "from-orange-400 to-red-500", tier: "free" },
-    { name: "Forest", class: "from-green-400 to-green-600", tier: "premium" },
-    { name: "Purple", class: "from-purple-400 to-purple-600", tier: "premium" },
-    { name: "Rose", class: "from-pink-400 to-rose-500", tier: "premium" },
-    { name: "Emerald", class: "from-emerald-400 to-emerald-600", tier: "premium" },
-    { name: "Amber", class: "from-amber-400 to-orange-500", tier: "premium" },
-    { name: "Indigo", class: "from-indigo-400 to-blue-500", tier: "premium" },
+    { name: "Default", class: "default-gradient", tier: "free", id: "default" },
+    { name: "Ocean", class: "from-[#3B82F6] to-[#14B8A6]", tier: "free", id: "ocean" },
+    { name: "Sunset", class: "from-[#F97316] to-[#8B5CF6]", tier: "free", id: "sunset" },
+    { name: "Forest", class: "from-green-400 to-green-600", tier: "premium", id: "forest" },
+    { name: "Purple", class: "from-purple-400 to-purple-600", tier: "premium", id: "purple" },
+    { name: "Rose", class: "from-pink-400 to-rose-500", tier: "premium", id: "rose" },
+    { name: "Emerald", class: "from-emerald-400 to-emerald-600", tier: "premium", id: "emerald" },
+    { name: "Amber", class: "from-amber-400 to-orange-500", tier: "premium", id: "amber" },
+    { name: "Indigo", class: "from-indigo-400 to-blue-500", tier: "premium", id: "indigo" },
   ];
+
+  const handleVersionUpdate = () => {
+    onVersionChange(newVersion);
+    // In a real app, this would update the manifest.json
+    console.log(`Version updated to ${newVersion}`);
+  };
 
   const availableGradients = isPremium ? backgroundGradients : backgroundGradients.filter(g => g.tier === "free");
 
@@ -56,14 +80,24 @@ export default function SettingsPage({ theme, onThemeChange, isPremium, onPremiu
           </div>
         </div>
 
-        {/* Background Gradients */}
+        {/* Background Themes */}
         <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Background Themes</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Choose a background theme that applies across all screens
+          </p>
           <div className="grid grid-cols-2 gap-3">
             {availableGradients.map((gradient) => (
               <div
-                key={gradient.name}
-                className={`h-20 rounded-lg bg-gradient-to-br ${gradient.class} flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-105 transition-transform`}
+                key={gradient.id}
+                onClick={() => onBackgroundThemeChange(gradient.id)}
+                className={`h-20 rounded-lg ${
+                  gradient.id === "default" 
+                    ? `bg-gradient-to-br ${theme === 'light' ? 'from-[#FFF7ED] to-[#FFDAB9]' : 'from-[#1A202C] to-[#000000]'}` 
+                    : `bg-gradient-to-br ${gradient.class}`
+                } flex items-center justify-center font-semibold cursor-pointer hover:scale-105 transition-transform border-2 ${
+                  backgroundTheme === gradient.id ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'
+                } ${gradient.id === "default" ? 'text-foreground' : 'text-white'}`}
               >
                 {gradient.name}
                 {gradient.tier === "premium" && (
@@ -77,6 +111,33 @@ export default function SettingsPage({ theme, onThemeChange, isPremium, onPremiu
               Upgrade to Premium to unlock 6 additional background themes
             </p>
           )}
+        </div>
+
+        {/* Version Management */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4">App Version</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Update version number for Play Console submissions
+          </p>
+          <div className="flex gap-3">
+            <Input
+              value={newVersion}
+              onChange={(e) => setNewVersion(e.target.value)}
+              placeholder="1.0.0"
+              className="flex-1"
+            />
+            <Button 
+              onClick={handleVersionUpdate}
+              variant="zen"
+              className="px-4"
+            >
+              <MdRefresh className="w-4 h-4 mr-2" />
+              Update
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Current version: {appVersion} • Use semantic versioning (major.minor.patch)
+          </p>
         </div>
 
         {/* Premium Status */}

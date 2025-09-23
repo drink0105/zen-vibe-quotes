@@ -134,6 +134,57 @@ All colors MUST be HSL.
   }
 }
 
+/* Background Theme Classes */
+html.theme-ocean {
+  --background: 220 26% 14%;
+  --background-alt: 215 28% 17%;
+}
+
+html.theme-ocean.dark {
+  --background: 197 71% 73%;
+  --background-alt: 178 64% 67%;
+}
+
+html.theme-sunset {
+  --background: 24 95% 53%;
+  --background-alt: 262 83% 58%;
+}
+
+html.theme-sunset.dark {
+  --background: 24 95% 53%;
+  --background-alt: 262 83% 58%;
+}
+
+html.theme-forest {
+  --background: 142 76% 36%;
+  --background-alt: 142 69% 58%;
+}
+
+html.theme-purple {
+  --background: 262 83% 58%;
+  --background-alt: 263 70% 50%;
+}
+
+html.theme-rose {
+  --background: 330 81% 60%;
+  --background-alt: 346 77% 50%;
+}
+
+html.theme-emerald {
+  --background: 158 64% 52%;
+  --background-alt: 160 84% 39%;
+}
+
+html.theme-amber {
+  --background: 38 92% 50%;
+  --background-alt: 25 95% 53%;
+}
+
+html.theme-indigo {
+  --background: 231 48% 48%;
+  --background-alt: 217 91% 60%;
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -32,6 +32,8 @@ const App = () => {
   const [favorites, setFavorites] = useLocalStorage<Quote[]>("zenvibes-favorites", []);
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("zenvibes-theme", "light");
   const [isPremium, setIsPremium] = useLocalStorage<boolean>("zenvibes-premium", false);
+  const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
+  const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -55,10 +57,21 @@ const App = () => {
     loadQuotes();
   }, []);
 
-  // Apply theme
+  // Apply theme and background
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    
+    // Remove existing background theme classes
+    document.documentElement.classList.remove(
+      'theme-default', 'theme-ocean', 'theme-sunset', 'theme-forest', 
+      'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
+    );
+    
+    // Apply selected background theme
+    if (backgroundTheme !== "default") {
+      document.documentElement.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
+    }
+  }, [theme, backgroundTheme]);
 
   // Shared handlers
   const handleShare = async (quote: Quote) => {
@@ -155,6 +168,10 @@ const App = () => {
                   onThemeChange={setTheme}
                   isPremium={isPremium}
                   onPremiumChange={setIsPremium}
+                  backgroundTheme={backgroundTheme}
+                  onBackgroundThemeChange={setBackgroundTheme}
+                  appVersion={appVersion}
+                  onVersionChange={setAppVersion}
                 />
               } />
               <Route path="*" element={<NotFound />} />

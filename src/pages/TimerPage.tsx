@@ -24,7 +24,7 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
   const [vibrateEnabled, setVibrateEnabled] = useState(true);
   
   const intervalRef = useRef<NodeJS.Timeout>();
-  const audioRef = useRef<HTMLAudioElement>();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const availableQuotes = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");
   const mindfulnessQuotes = availableQuotes.filter(q => q.category === "Mindfulness");
@@ -72,10 +72,12 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
 
   const startTimer = () => {
     setIsRunning(true);
-    // Start audio if available
-    if (audioRef.current && isPremium) {
+    // Start audio - free tier gets bell1.mp3, premium gets user selection
+    if (audioRef.current) {
       audioRef.current.loop = true;
       audioRef.current.volume = 0.3;
+      const soundFile = isPremium ? selectedSound : "bell1";
+      audioRef.current.src = `/${soundFile}.mp3`;
       audioRef.current.play().catch(console.error);
     }
   };
@@ -210,18 +212,18 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
           </div>
         </div>
 
-        {/* Sound Selection (Premium) */}
-        {isPremium && (
-          <div className="glass-card p-6 mb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <MdVolumeUp className="w-5 h-5" />
-              Background Sound
-            </h3>
+        {/* Sound Selection */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <MdVolumeUp className="w-5 h-5" />
+            Background Sound
+          </h3>
+          {isPremium ? (
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: "bell1", name: "Bell", file: "/bell1.mp3" },
-                { id: "gong2", name: "Gong", file: "/gong2.mp3" },
-                { id: "chime3", name: "Chime", file: "/chime3.mp3" },
+                { id: "bell1", name: "Bell" },
+                { id: "gong2", name: "Gong" },
+                { id: "chime3", name: "Chime" },
               ].map((sound) => (
                 <Button
                   key={sound.id}
@@ -233,15 +235,19 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
                 </Button>
               ))}
             </div>
-            
-            {/* Audio element */}
-            <audio
-              ref={audioRef}
-              src={`/${selectedSound}.mp3`}
-              preload="auto"
-            />
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground mb-2">Free tier includes Bell sound</p>
+              <p className="text-sm text-muted-foreground">Upgrade to premium for Gong and Chime sounds</p>
+            </div>
+          )}
+          
+          {/* Audio element */}
+          <audio
+            ref={audioRef}
+            preload="auto"
+          />
+        </div>
 
         {/* Current Quote */}
         {currentQuote && (

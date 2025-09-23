@@ -13,8 +13,6 @@ import AlarmsPage from "./pages/AlarmsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
-import quotesData from "@/data/quotes.json";
-
 const queryClient = new QueryClient();
 
 interface Quote {
@@ -25,12 +23,37 @@ interface Quote {
   tier: "free" | "premium";
 }
 
+interface QuotesData {
+  affirmations: Quote[];
+  quotes: Quote[];
+}
+
 const App = () => {
   const [favorites, setFavorites] = useLocalStorage<Quote[]>("zenvibes-favorites", []);
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("zenvibes-theme", "light");
   const [isPremium, setIsPremium] = useLocalStorage<boolean>("zenvibes-premium", false);
+  const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const allQuotes: Quote[] = [...quotesData.affirmations as Quote[], ...quotesData.quotes as Quote[]];
+  // Load quotes from public folder on app start
+  useEffect(() => {
+    const loadQuotes = async () => {
+      try {
+        const response = await fetch('/ZenVibeContent.json');
+        const quotesData: QuotesData = await response.json();
+        const combined = [...quotesData.affirmations, ...quotesData.quotes];
+        setAllQuotes(combined);
+      } catch (error) {
+        console.error('Failed to load quotes:', error);
+        // Fallback to empty array if loading fails
+        setAllQuotes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuotes();
+  }, []);
 
   // Apply theme
   useEffect(() => {
@@ -73,6 +96,17 @@ const App = () => {
   const handleRemoveFavorite = (id: number) => {
     setFavorites(favorites.filter(fav => fav.id !== id));
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading ZenVibe...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

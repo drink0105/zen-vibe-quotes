@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { QuoteCard } from "@/components/QuoteCard";
 import { MoodSelector } from "@/components/MoodSelector";
+import { AdMobBanner } from "@/components/AdMobBanner";
+import { QuoteOfTheDay } from "@/components/QuoteOfTheDay";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 
 interface Quote {
   id: number;
@@ -79,8 +82,14 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
         <p className="text-muted-foreground">Your daily dose of inspiration</p>
       </header>
 
+      {/* Quote of the Day Widget */}
+      <QuoteOfTheDay allQuotes={allQuotes} isPremium={isPremium} />
+
       {/* Mood Selector */}
       <MoodSelector selectedMood={selectedMood} onMoodChange={handleMoodChange} />
+
+      {/* AdMob Banner (Free tier only) */}
+      <AdMobBanner isPremium={isPremium} />
 
       {/* Quote Card */}
       <div className="flex items-center justify-center px-4 py-8">
@@ -99,17 +108,44 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
       {/* Premium upsell banner (free tier only) */}
       {!isPremium && (
         <div className="mx-4 mb-6">
-          <div className="glass-card p-4 text-center gradient-creativity">
+          <div className="glass-card p-4 text-center gradient-creativity relative overflow-hidden">
             <h3 className="text-lg font-semibold mb-2 text-white">Go Premium</h3>
             <p className="text-white/90 text-sm mb-4">
               Unlock 300+ premium quotes, unlimited favorites, and remove ads
             </p>
-            <button className="bg-white/20 border border-white/30 text-white px-6 py-2 rounded-lg hover:bg-white/30 transition-colors">
+            <button 
+              onClick={async () => {
+                // Import and use Google Play Billing
+                const { purchasePremium, mockPurchasePremium, isGooglePlayAvailable } = await import('@/services/googlePlayBilling');
+                
+                if (!isGooglePlayAvailable()) {
+                  // For web testing: use mock purchase
+                  mockPurchasePremium();
+                  window.location.reload(); // Reload to reflect premium status
+                } else {
+                  // Real Google Play purchase
+                  const result = await purchasePremium();
+                  if (result) {
+                    window.location.reload();
+                  } else {
+                    alert('Purchase failed. Please try again.');
+                  }
+                }
+              }}
+              className="bg-white/20 border border-white/30 text-white px-6 py-2 rounded-lg hover:bg-white/30 transition-all hover:scale-105"
+            >
               Upgrade for $2.99
             </button>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-3xl animate-pulse" />
+            <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-yellow-400/20 blur-2xl animate-pulse delay-1000" />
           </div>
         </div>
       )}
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 }

@@ -37,6 +37,31 @@ const App = () => {
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Check for premium purchase on app start
+  useEffect(() => {
+    const checkPremium = async () => {
+      // Check mock purchase first (for web testing)
+      const mockPremium = localStorage.getItem('zenvibe-mock-premium');
+      if (mockPremium === 'true') {
+        setIsPremium(true);
+        return;
+      }
+
+      // Check real Google Play purchase
+      try {
+        const { verifyPremiumPurchase } = await import('@/services/googlePlayBilling');
+        const hasPremium = await verifyPremiumPurchase();
+        if (hasPremium) {
+          setIsPremium(true);
+        }
+      } catch (error) {
+        console.log('Premium check skipped:', error);
+      }
+    };
+
+    checkPremium();
+  }, []);
+
   // Load quotes from public folder on app start
   useEffect(() => {
     const loadQuotes = async () => {

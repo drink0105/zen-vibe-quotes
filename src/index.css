@@ -215,13 +215,28 @@ html.theme-indigo {
     transform: translateY(-4px) rotateX(2deg) rotateY(2deg);
   }
   
-  /* Glassmorphism effects */
+  /* Glassmorphism effects with enhanced border glow */
   .glass-card {
-    @apply rounded-xl border;
+    @apply rounded-xl border relative;
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
+    transform-style: preserve-3d;
+  }
+  
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
   }
   
   .glass-button {
@@ -304,6 +319,17 @@ html.theme-indigo {
     100% { transform: perspective(1000px) rotateY(360deg); }
   }
   
+  @keyframes slide-up {
+    0% { 
+      opacity: 0;
+      transform: translateY(100px);
+    }
+    100% { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
   .float-animation {
     animation: float 6s ease-in-out infinite;
   }
@@ -314,6 +340,10 @@ html.theme-indigo {
   
   .rotate-3d {
     animation: rotate-3d 10s linear infinite;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out;
   }
   
   /* Pulse animation for favorites */

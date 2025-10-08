@@ -66,7 +66,10 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // Offline fallback
+          // Offline fallback for navigation requests
+          if (event.request.mode === 'navigate') {
+            return caches.match(`${BASE_PATH}index.html`);
+          }
           return new Response(
             JSON.stringify({
               message: 'Offline - Cached data loaded',
@@ -100,8 +103,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'ZenVibe';
   const options = {
     body: data.body || 'Your daily affirmation is ready',
-    icon: '/icon.png',
-    badge: '/icon.png',
+    icon: `${BASE_PATH}icon.png`,
+    badge: `${BASE_PATH}icon.png`,
     vibrate: [200, 100, 200],
     data: data.url,
   };
@@ -113,6 +116,6 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow(event.notification.data || '/')
+    clients.openWindow(event.notification.data || BASE_PATH)
   );
 });

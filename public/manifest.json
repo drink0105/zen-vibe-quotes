@@ -6,19 +6,19 @@
   "version_code": 1,
   "icons": [
     {
-      "src": "/icon.png",
+      "src": "/zen-vibe-quotes/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon.png",
+      "src": "/zen-vibe-quotes/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/favicon.ico",
+      "src": "/zen-vibe-quotes/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
@@ -36,47 +36,47 @@
       "short_name": "New Quote",
       "description": "View a new motivational quote",
       "url": "/zen-vibe-quotes/",
-      "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/zen-vibe-quotes/icon.png", "sizes": "192x192" }]
     },
     {
       "name": "Zen Timer",
       "short_name": "Timer",
       "description": "Start a mindfulness timer",
       "url": "/zen-vibe-quotes/timer",
-      "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/zen-vibe-quotes/icon.png", "sizes": "192x192" }]
     },
     {
       "name": "Favorites",
       "short_name": "Favorites",
       "description": "View your favorite quotes",
       "url": "/zen-vibe-quotes/favorites",
-      "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/zen-vibe-quotes/icon.png", "sizes": "192x192" }]
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshot1.png",
+      "src": "/zen-vibe-quotes/screenshot1.png",
       "sizes": "720x1280",
       "type": "image/png",
       "platform": "narrow",
       "label": "Main quote view"
     },
     {
-      "src": "/screenshot2.png",
+      "src": "/zen-vibe-quotes/screenshot2.png",
       "sizes": "720x1280",
       "type": "image/png",
       "platform": "narrow",
       "label": "Favorites collection"
     },
     {
-      "src": "/screenshot3.png",
+      "src": "/zen-vibe-quotes/screenshot3.png",
       "sizes": "720x1280",
       "type": "image/png",
       "platform": "narrow",
       "label": "Zen timer with audio"
     },
     {
-      "src": "/screenshot4.png",
+      "src": "/zen-vibe-quotes/screenshot4.png",
       "sizes": "720x1280",
       "type": "image/png",
       "platform": "narrow",

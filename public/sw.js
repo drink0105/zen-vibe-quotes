@@ -103,8 +103,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'ZenVibe';
   const options = {
     body: data.body || 'Your daily affirmation is ready',
-    icon: `${BASE_PATH}icon.png`,
-    badge: `${BASE_PATH}icon.png`,
+    icon: 'icon.png',
+    badge: 'icon.png',
     vibrate: [200, 100, 200],
     data: data.url,
   };

@@ -23,8 +23,8 @@
       "type": "image/x-icon"
     }
   ],
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/zen-vibe-quotes/",
+  "scope": "/zen-vibe-quotes/",
   "display": "standalone",
   "theme_color": "#FFDAB9",
   "background_color": "#FFF7ED",
@@ -35,21 +35,21 @@
       "name": "New Quote",
       "short_name": "New Quote",
       "description": "View a new motivational quote",
-      "url": "/",
+      "url": "/zen-vibe-quotes/",
       "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
     },
     {
       "name": "Zen Timer",
       "short_name": "Timer",
       "description": "Start a mindfulness timer",
-      "url": "/timer",
+      "url": "/zen-vibe-quotes/timer",
       "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
     },
     {
       "name": "Favorites",
       "short_name": "Favorites",
       "description": "View your favorite quotes",
-      "url": "/favorites",
+      "url": "/zen-vibe-quotes/favorites",
       "icons": [{ "src": "/icon.png", "sizes": "192x192" }]
     }
   ],

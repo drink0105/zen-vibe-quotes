@@ -1,13 +1,14 @@
 const CACHE_NAME = 'zenvibe-v1.0.0';
+const BASE_PATH = '/zen-vibe-quotes/';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/ZenVibeContent.json',
-  '/bell1.mp3',
-  '/gong2.mp3',
-  '/chime3.mp3',
-  '/icon.png',
-  '/manifest.json',
+  BASE_PATH,
+  `${BASE_PATH}index.html`,
+  `${BASE_PATH}ZenVibeContent.json`,
+  `${BASE_PATH}bell1.mp3`,
+  `${BASE_PATH}gong2.mp3`,
+  `${BASE_PATH}chime3.mp3`,
+  `${BASE_PATH}icon.png`,
+  `${BASE_PATH}manifest.json`,
 ];
 
 // Install event - cache assets

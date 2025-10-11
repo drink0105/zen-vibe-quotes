@@ -8,8 +8,8 @@
   "version": "1.0.0",
   "version_code": 1,
   "icons": [
-    { "src": "/public/icon.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/public/icon.png", "sizes": "192x192", "type": "image/png" }
+    { "src": "public/icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "public/icon.png", "sizes": "192x192", "type": "image/png" }
   ],
   "shortcuts": [
     { "name": "New Quote", "url": "/home", "description": "View a new quote" },

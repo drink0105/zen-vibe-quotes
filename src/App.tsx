@@ -66,7 +66,7 @@ const App = () => {
   useEffect(() => {
     const loadQuotes = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}ZenVibeContent.json`);
+        const response = await fetch(`${import.meta.env.BASE_URL}public/ZenVibeContent.json`);
         const quotesData: QuotesData = await response.json();
         const combined = [...quotesData.affirmations, ...quotesData.quotes];
         setAllQuotes(combined);
@@ -151,7 +151,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter basename="/zen-vibe-quotes">
+        <BrowserRouter basename="">
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={

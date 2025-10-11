@@ -1,6 +1,6 @@
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open('zenvibe-cache-v1').then((cache) => {
+    caches.open('zenvibe-cache').then((cache) => {
       return cache.addAll([
         '/',
         '/manifest.json',
@@ -8,7 +8,9 @@ self.addEventListener('install', (event) => {
         '/public/bell1.mp3',
         '/public/gong2.mp3',
         '/public/chime3.mp3',
-        '/public/icon.png'
+        '/public/icon.png',
+        '/assets/main.js',
+        '/assets/main.css'
       ]);
     })
   );
@@ -17,22 +19,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).then((fetchResponse) => {
-        // Cache successful responses
-        if (fetchResponse.ok && event.request.method === 'GET') {
-          const responseToCache = fetchResponse.clone();
-          caches.open('zenvibe-cache-v1').then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return fetchResponse;
-      }).catch(() => {
-        // Offline fallback for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
-        }
-        return response;
-      });
+      return response || fetch(event.request);
     })
   );
 });

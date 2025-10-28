@@ -6,7 +6,7 @@ import './index.css'
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/public/sw.js')
+      .register(`${import.meta.env.BASE_URL}public/sw.js`)
       .then((registration) => {
         console.log('SW registered:', registration);
       })

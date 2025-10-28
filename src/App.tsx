@@ -151,7 +151,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter basename="">
+        <BrowserRouter basename="/zen-vibe-quotes">
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={

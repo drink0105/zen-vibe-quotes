@@ -6,10 +6,6 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: '/zen-vibe-quotes/',
-  build: {
-    outDir: 'docs',
-    emptyOutDir: true,
-  },
   server: {
     host: "::",
     port: 8080,

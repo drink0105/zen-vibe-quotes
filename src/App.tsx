@@ -66,7 +66,7 @@ const App = () => {
   useEffect(() => {
     const loadQuotes = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}public/ZenVibeContent.json`);
+        const response = await fetch(`${import.meta.env.BASE_URL}ZenVibeContent.json`);
         const quotesData: QuotesData = await response.json();
         const combined = [...quotesData.affirmations, ...quotesData.quotes];
         setAllQuotes(combined);

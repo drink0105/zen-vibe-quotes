@@ -6,11 +6,11 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         `${BASE_PATH}/`,
         `${BASE_PATH}/manifest.json`,
-        `${BASE_PATH}/public/ZenVibeContent.json`,
-        `${BASE_PATH}/public/bell1.mp3`,
-        `${BASE_PATH}/public/gong2.mp3`,
-        `${BASE_PATH}/public/chime3.mp3`,
-        `${BASE_PATH}/public/icon.png`
+        `${BASE_PATH}/ZenVibeContent.json`,
+        `${BASE_PATH}/bell1.mp3`,
+        `${BASE_PATH}/gong2.mp3`,
+        `${BASE_PATH}/chime3.mp3`,
+        `${BASE_PATH}/icon.png`
       ]);
     })
   );

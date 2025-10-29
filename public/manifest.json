@@ -1,19 +1,19 @@
 {
   "name": "ZenVibe",
   "short_name": "ZenVibe",
-  "start_url": "/zen-vibe-quotes/",
-  "scope": "/zen-vibe-quotes/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#FFDAB9",
   "background_color": "#FFF7ED",
   "version": "1.0.0",
   "version_code": 1,
   "icons": [
-    { "src": "/zen-vibe-quotes/icon.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/zen-vibe-quotes/icon.png", "sizes": "192x192", "type": "image/png" }
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon.png", "sizes": "192x192", "type": "image/png" }
   ],
   "shortcuts": [
-    { "name": "New Quote", "url": "/zen-vibe-quotes/", "description": "View a new quote" },
-    { "name": "Zen Timer", "url": "/zen-vibe-quotes/timer", "description": "Start a mindfulness timer" }
+    { "name": "New Quote", "url": "/", "description": "View a new quote" },
+    { "name": "Zen Timer", "url": "/timer", "description": "Start a mindfulness timer" }
   ]
 }

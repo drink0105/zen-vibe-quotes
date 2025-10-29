@@ -151,7 +151,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter basename={import.meta.env.PROD ? '/zen-vibe-quotes' : ''}>
+        <BrowserRouter basename="">
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={

@@ -1,16 +1,16 @@
-const BASE_PATH = '/zen-vibe-quotes';
+const BASE_PATH = '';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open('zenvibe-cache-v1').then((cache) => {
       return cache.addAll([
-        `${BASE_PATH}/`,
-        `${BASE_PATH}/manifest.json`,
-        `${BASE_PATH}/ZenVibeContent.json`,
-        `${BASE_PATH}/bell1.mp3`,
-        `${BASE_PATH}/gong2.mp3`,
-        `${BASE_PATH}/chime3.mp3`,
-        `${BASE_PATH}/icon.png`
+        '/',
+        '/manifest.json',
+        '/ZenVibeContent.json',
+        '/bell1.mp3',
+        '/gong2.mp3',
+        '/chime3.mp3',
+        '/icon.png'
       ]);
     })
   );
@@ -22,7 +22,7 @@ self.addEventListener('fetch', (event) => {
       return response || fetch(event.request).catch(() => {
         // Offline fallback
         if (event.request.destination === 'document') {
-          return caches.match(`${BASE_PATH}/`);
+          return caches.match('/');
         }
       });
     })

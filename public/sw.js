@@ -5,12 +5,17 @@ self.addEventListener('install', (event) => {
     caches.open('zenvibe-cache-v1').then((cache) => {
       return cache.addAll([
         '/',
+        '/index.html',
         '/manifest.json',
         '/ZenVibeContent.json',
         '/bell1.mp3',
         '/gong2.mp3',
         '/chime3.mp3',
-        '/icon.png'
+        '/icon.png',
+        '/screenshot1.png',
+        '/screenshot2.png',
+        '/screenshot3.png',
+        '/screenshot4.png'
       ]);
     })
   );

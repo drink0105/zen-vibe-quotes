@@ -1,16 +1,33 @@
 {
+  "id": "/",
   "name": "ZenVibe",
   "short_name": "ZenVibe",
+  "description": "Find daily inspiration with mindfulness quotes, meditation timers, and peaceful moments for your mental wellness journey",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en",
   "theme_color": "#FFDAB9",
   "background_color": "#FFF7ED",
+  "categories": ["lifestyle", "health", "wellness", "productivity"],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "app.lovable.zenvibe"
+    }
+  ],
   "version": "1.0.0",
   "version_code": 1,
   "icons": [
-    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icon.png", "sizes": "192x192", "type": "image/png" }
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "/screenshot1.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow" },
+    { "src": "/screenshot2.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow" },
+    { "src": "/screenshot3.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow" },
+    { "src": "/screenshot4.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow" }
   ],
   "shortcuts": [
     { "name": "New Quote", "url": "/", "description": "View a new quote" },

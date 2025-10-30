@@ -176,6 +176,9 @@ export default function SettingsPage({
             <p>500+ motivational quotes and affirmations</p>
             <p>6 categories: Motivation, Mindfulness, Humor, Productivity, Creativity, Resilience</p>
             <p>Fully offline experience</p>
+            <p className="pt-2">
+              <a href="/privacy.html" className="text-primary hover:underline">Privacy Policy</a>
+            </p>
           </div>
         </div>
       </div>

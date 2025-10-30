@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.drink0105.zenvibe",
-      "sha256_cert_fingerprints": [
-        "14:6D:E9:83:C5:73:06:50:D8:EE:B9:95:2F:34:FC:64:16:A0:83:42:E6:1D:BE:A8:8A:04:96:B2:3F:CF:44:E5"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.lovable.zen_vibe_quotes.twa",
+        "sha256_cert_fingerprints": ["1A:D0:42:BF:10:72:10:4B:8E:6D:74:75:F8:A3:5B:42:41:98:08:85:45:CB:8D:BB:FC:9B:CA:A4:D1:56:E7:7D"]
+      }
+    }]

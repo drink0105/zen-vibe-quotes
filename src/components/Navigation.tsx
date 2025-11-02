@@ -24,7 +24,7 @@ export function Navigation() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="glass-card m-4 rounded-2xl">
-        <div className="flex justify-around items-center py-3 px-2">
+        <div className="flex flex-wrap justify-around items-center py-3 px-2 gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.id;
@@ -36,7 +36,7 @@ export function Navigation() {
                 size="sm"
                 onClick={() => navigate(item.id)}
                 className={`
-                  flex flex-col items-center gap-1 p-3 h-auto transition-all duration-300
+                  flex flex-col items-center gap-1 p-3 h-auto transition-all duration-300 min-w-[60px]
                   ${isActive 
                     ? 'text-primary bg-primary/10 glow-primary scale-110' 
                     : 'text-muted-foreground hover:text-foreground hover:scale-105'

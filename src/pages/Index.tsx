@@ -3,7 +3,6 @@ import { QuoteCard } from "@/components/QuoteCard";
 import { MoodSelector } from "@/components/MoodSelector";
 import { AdMobBanner } from "@/components/AdMobBanner";
 import { QuoteOfTheDay } from "@/components/QuoteOfTheDay";
-import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 
 interface Quote {
   id: number;
@@ -73,7 +72,7 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
   const isFavorite = currentQuote ? favorites.some(fav => fav.id === currentQuote.id) : false;
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-[130px]">
       {/* Header */}
       <header className="text-center py-8 px-4">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mb-2">
@@ -144,8 +143,6 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
         </div>
       )}
 
-      {/* PWA Install Prompt */}
-      <PWAInstallPrompt />
     </div>
   );
 }

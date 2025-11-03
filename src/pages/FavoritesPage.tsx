@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { MdShare, MdDelete, MdFavorite } from "react-icons/md";
+import { AdMobBanner } from "@/components/AdMobBanner";
+import { MdFavorite, MdDelete, MdShare } from "react-icons/md";
 
 interface Quote {
   id: number;
@@ -13,6 +14,7 @@ interface FavoritesPageProps {
   favorites: Quote[];
   onRemoveFavorite: (id: number) => void;
   onShare: (quote: Quote) => void;
+  isPremium: boolean;
 }
 
 const categoryGradients = {
@@ -24,10 +26,10 @@ const categoryGradients = {
   Resilience: "gradient-resilience",
 };
 
-export default function FavoritesPage({ favorites, onRemoveFavorite, onShare }: FavoritesPageProps) {
+export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, isPremium }: FavoritesPageProps) {
   if (favorites.length === 0) {
     return (
-      <div className="min-h-screen pb-32 px-4 py-8">
+      <div className="min-h-screen pb-[180px] px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <MdFavorite className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -48,7 +50,7 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare }: 
   }
 
   return (
-    <div className="min-h-screen pb-32 px-4 py-8">
+    <div className="min-h-screen pb-[180px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdFavorite className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -105,6 +107,9 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare }: 
             </div>
           ))}
         </div>
+
+        {/* AdMob Banner */}
+        <AdMobBanner isPremium={isPremium} />
       </div>
     </div>
   );

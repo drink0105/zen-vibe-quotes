@@ -12,6 +12,8 @@ interface SettingsPageProps {
   onBackgroundThemeChange: (theme: string) => void;
   appVersion: string;
   onVersionChange: (version: string) => void;
+  testFreemiumMode: boolean;
+  onTestFreemiumModeChange: (enabled: boolean) => void;
 }
 
 export default function SettingsPage({ 
@@ -22,7 +24,9 @@ export default function SettingsPage({
   backgroundTheme,
   onBackgroundThemeChange,
   appVersion,
-  onVersionChange
+  onVersionChange,
+  testFreemiumMode,
+  onTestFreemiumModeChange
 }: SettingsPageProps) {
   const [newVersion, setNewVersion] = useState(appVersion);
 
@@ -47,7 +51,7 @@ export default function SettingsPage({
   const availableGradients = isPremium ? backgroundGradients : backgroundGradients.filter(g => g.tier === "free");
 
   return (
-    <div className="min-h-screen pb-32 px-4 py-8">
+    <div className="min-h-screen pb-[180px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdSettings className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -140,10 +144,31 @@ export default function SettingsPage({
           </p>
         </div>
 
+        {/* Test Freemium Mode */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4">Developer Testing</h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Test Freemium Mode</p>
+              <p className="text-sm text-muted-foreground">Temporarily disable premium features for testing</p>
+              <p className="text-xs text-muted-foreground mt-1">Resets on app restart</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={testFreemiumMode}
+                onChange={(e) => onTestFreemiumModeChange(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
+        </div>
+
         {/* Premium Status */}
         <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Premium Status</h3>
-          {isPremium ? (
+          {isPremium && !testFreemiumMode ? (
             <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg text-white">
               <MdStars className="w-6 h-6" />
               <div>

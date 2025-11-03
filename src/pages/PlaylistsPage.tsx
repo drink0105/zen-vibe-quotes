@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { AdMobBanner } from "@/components/AdMobBanner";
 import { 
   MdPlaylistAdd, 
   MdAdd, 
   MdDelete, 
   MdPlayArrow, 
   MdArrowForward,
-  MdClose
+  MdClose,
+  MdVolumeUp
 } from "react-icons/md";
 
 interface Quote {
@@ -28,9 +30,10 @@ interface Playlist {
 interface PlaylistsPageProps {
   allQuotes: Quote[];
   isPremium: boolean;
+  onPremiumUpgrade: () => void;
 }
 
-export default function PlaylistsPage({ allQuotes, isPremium }: PlaylistsPageProps) {
+export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }: PlaylistsPageProps) {
   const [playlists, setPlaylists] = useLocalStorage<Playlist[]>("zenvibes-playlists", []);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingPlaylist, setEditingPlaylist] = useState<Playlist | null>(null);
@@ -38,6 +41,7 @@ export default function PlaylistsPage({ allQuotes, isPremium }: PlaylistsPagePro
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [selectedQuotes, setSelectedQuotes] = useState<Quote[]>([]);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const createPlaylist = () => {
     if (!newPlaylistName.trim()) return;
@@ -101,10 +105,43 @@ export default function PlaylistsPage({ allQuotes, isPremium }: PlaylistsPagePro
     }
   };
 
+  const playVerbal = (playlist: Playlist) => {
+    if (isSpeaking) {
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    setIsSpeaking(true);
+    let index = 0;
+
+    const speakQuote = () => {
+      if (index >= playlist.quotes.length) {
+        setIsSpeaking(false);
+        return;
+      }
+
+      const quote = playlist.quotes[index];
+      const text = quote.author 
+        ? `${quote.text}. By ${quote.author}` 
+        : quote.text;
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => {
+        index++;
+        speakQuote();
+      };
+      
+      speechSynthesis.speak(utterance);
+    };
+
+    speakQuote();
+  };
+
   const availableQuotes = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");
 
   return (
-    <div className="min-h-screen pb-32 px-4 py-8">
+    <div className="min-h-screen pb-[180px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdPlaylistAdd className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -196,6 +233,13 @@ export default function PlaylistsPage({ allQuotes, isPremium }: PlaylistsPagePro
                       <MdPlayArrow className="w-4 h-4" />
                     </Button>
                     <Button
+                      onClick={() => playVerbal(playlist)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <MdVolumeUp className="w-4 h-4" />
+                    </Button>
+                    <Button
                       onClick={() => deletePlaylist(playlist.id)}
                       variant="destructive"
                       size="sm"
@@ -285,11 +329,18 @@ export default function PlaylistsPage({ allQuotes, isPremium }: PlaylistsPagePro
             <p className="text-white/90 text-sm mb-4">
               Unlock unlimited playlists, 10 quotes per playlist, and access to all premium content
             </p>
-            <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+            <Button 
+              onClick={onPremiumUpgrade}
+              variant="outline" 
+              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+            >
               Upgrade for $2.99
             </Button>
           </div>
         )}
+
+        {/* AdMob Banner */}
+        <AdMobBanner isPremium={isPremium} />
       </div>
     </div>
   );

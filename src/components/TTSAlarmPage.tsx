@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { AdMobBanner } from "@/components/AdMobBanner";
 import { 
   MdAlarm, 
   MdAdd, 
@@ -16,25 +17,32 @@ interface TTSAlarm {
   enabled: boolean;
   voice: string;
   label: string;
+  speed?: number;
+  pitch?: number;
 }
 
 interface TTSAlarmPageProps {
   isPremium: boolean;
+  onPremiumUpgrade: () => void;
 }
 
-export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
+export function TTSAlarmPage({ isPremium, onPremiumUpgrade }: TTSAlarmPageProps) {
   const [alarms, setAlarms] = useLocalStorage<TTSAlarm[]>("tts-alarms", []);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState("");
   const [newAlarmTime, setNewAlarmTime] = useState("08:00");
   const [newAlarmLabel, setNewAlarmLabel] = useState("");
+  const [voiceSpeed, setVoiceSpeed] = useState(1);
+  const [voicePitch, setVoicePitch] = useState(1);
 
   useEffect(() => {
     const loadVoices = () => {
       const voices = speechSynthesis.getVoices();
       setAvailableVoices(voices);
       if (voices.length > 0 && !selectedVoice) {
-        setSelectedVoice(voices[0].name);
+        // Get device default voice (usually first in list)
+        const defaultVoice = voices.find(v => v.default) || voices[0];
+        setSelectedVoice(defaultVoice.name);
       }
     };
 
@@ -54,6 +62,8 @@ export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
       enabled: true,
       voice: selectedVoice,
       label: newAlarmLabel || `Alarm ${alarms.length + 1}`,
+      speed: voiceSpeed,
+      pitch: voicePitch,
     };
 
     setAlarms([...alarms, newAlarm]);
@@ -77,12 +87,14 @@ export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
       );
       const voice = availableVoices.find(v => v.name === selectedVoice);
       if (voice) utterance.voice = voice;
+      utterance.rate = voiceSpeed;
+      utterance.pitch = voicePitch;
       speechSynthesis.speak(utterance);
     }
   };
 
   return (
-    <div className="min-h-screen pb-32 px-4 py-8">
+    <div className="min-h-screen pb-[180px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdAlarm className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -129,12 +141,12 @@ export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
             <div>
               <label className="block text-sm font-medium mb-2 flex items-center gap-2">
                 <MdRecordVoiceOver className="w-4 h-4" />
-                Voice {!isPremium && "(Default only in free tier)"}
+                Voice {!isPremium && "(Premium only)"}
               </label>
               <select
                 value={selectedVoice}
                 onChange={(e) => setSelectedVoice(e.target.value)}
-                disabled={!isPremium && availableVoices.length > 1}
+                disabled={!isPremium}
                 className="glass-button w-full p-3 rounded-lg border text-foreground"
               >
                 {availableVoices.map((voice) => (
@@ -143,16 +155,50 @@ export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
                   </option>
                 ))}
               </select>
-              <Button
-                onClick={testVoice}
-                variant="outline"
-                size="sm"
-                className="mt-2"
-              >
-                <MdVolumeUp className="w-4 h-4 mr-2" />
-                Test Voice
-              </Button>
             </div>
+
+            {isPremium && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Voice Speed: {voiceSpeed}x
+                  </label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={voiceSpeed}
+                    onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Voice Pitch: {voicePitch}x
+                  </label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={voicePitch}
+                    onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
+
+            <Button
+              onClick={testVoice}
+              variant="outline"
+              size="sm"
+            >
+              <MdVolumeUp className="w-4 h-4 mr-2" />
+              Test Voice
+            </Button>
 
             <Button onClick={addAlarm} variant="zen" className="w-full">
               <MdAdd className="w-4 h-4 mr-2" />
@@ -215,11 +261,18 @@ export function TTSAlarmPage({ isPremium }: TTSAlarmPageProps) {
             <p className="text-white/90 text-sm mb-4">
               Unlock unlimited alarms, all voice options, and access to 80 premium affirmations
             </p>
-            <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+            <Button 
+              onClick={onPremiumUpgrade}
+              variant="outline" 
+              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+            >
               Upgrade for $2.99
             </Button>
           </div>
         )}
+        
+        {/* AdMob Banner */}
+        <AdMobBanner isPremium={isPremium} />
       </div>
     </div>
   );

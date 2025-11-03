@@ -20,7 +20,7 @@ export function AdMobBanner({
     script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
     script.async = true;
     script.crossOrigin = "anonymous";
-    script.dataset.adClient = adUnitId.split('/')[0];
+    script.dataset.adClient = "ca-app-pub-3940256099942544";
     document.head.appendChild(script);
 
     // Initialize ad after script loads
@@ -41,13 +41,13 @@ export function AdMobBanner({
         script.parentNode.removeChild(script);
       }
     };
-  }, [adUnitId, isPremium]);
+  }, [isPremium]);
 
   // Don't render for premium users
   if (isPremium) return null;
 
   return (
-    <div className="w-full flex justify-center py-4 px-4">
+    <div className="w-full flex justify-center py-4 px-4 mt-6">
       <div 
         ref={adContainerRef}
         className="glass-card overflow-hidden rounded-lg"
@@ -56,8 +56,8 @@ export function AdMobBanner({
         <ins
           className="adsbygoogle"
           style={{ display: "block", width: "100%", height: "90px" }}
-          data-ad-client={adUnitId.split('/')[0]}
-          data-ad-slot={adUnitId.split('/')[1]}
+          data-ad-client="ca-app-pub-3940256099942544"
+          data-ad-slot="6300978111"
           data-ad-format="horizontal"
           data-full-width-responsive="true"
         />

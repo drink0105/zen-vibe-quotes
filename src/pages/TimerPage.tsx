@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { AdMobBanner } from "@/components/AdMobBanner";
 import { MdTimer, MdPlayArrow, MdPause, MdStop, MdVolumeUp, MdVibration } from "react-icons/md";
 
 interface Quote {
@@ -111,7 +112,7 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
     : [60]; // 1 minute only
 
   return (
-    <div className="min-h-screen pb-32 px-4 py-8">
+    <div className="min-h-screen pb-[180px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdTimer className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -278,6 +279,9 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
             </Button>
           </div>
         )}
+
+        {/* AdMob Banner */}
+        <AdMobBanner isPremium={isPremium} />
       </div>
     </div>
   );

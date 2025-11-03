@@ -34,8 +34,12 @@ const App = () => {
   const [isPremium, setIsPremium] = useLocalStorage<boolean>("zenvibes-premium", false);
   const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
   const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
+  const [testFreemiumMode, setTestFreemiumMode] = useState(false);
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Effective premium status (considers test mode)
+  const effectiveIsPremium = isPremium && !testFreemiumMode;
 
   // Check for premium purchase on app start
   useEffect(() => {
@@ -135,6 +139,24 @@ const App = () => {
     setFavorites(favorites.filter(fav => fav.id !== id));
   };
 
+  const handlePremiumUpgrade = async () => {
+    const { purchasePremium, mockPurchasePremium, isGooglePlayAvailable } = await import('@/services/googlePlayBilling');
+    
+    if (!isGooglePlayAvailable()) {
+      // For web testing: use mock purchase
+      mockPurchasePremium();
+      window.location.reload();
+    } else {
+      // Real Google Play purchase
+      const result = await purchasePremium();
+      if (result) {
+        window.location.reload();
+      } else {
+        alert('Purchase failed. Please try again.');
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -160,7 +182,7 @@ const App = () => {
                   favorites={favorites}
                   onFavorite={handleFavorite}
                   onShare={handleShare}
-                  isPremium={isPremium}
+                  isPremium={effectiveIsPremium}
                 />
               } />
               <Route path="/favorites" element={
@@ -168,35 +190,40 @@ const App = () => {
                   favorites={favorites}
                   onRemoveFavorite={handleRemoveFavorite}
                   onShare={handleShare}
+                  isPremium={effectiveIsPremium}
                 />
               } />
               <Route path="/playlists" element={
                 <PlaylistsPage 
                   allQuotes={allQuotes}
-                  isPremium={isPremium}
+                  isPremium={effectiveIsPremium}
+                  onPremiumUpgrade={handlePremiumUpgrade}
                 />
               } />
               <Route path="/timer" element={
                 <TimerPage 
                   allQuotes={allQuotes}
-                  isPremium={isPremium}
+                  isPremium={effectiveIsPremium}
                 />
               } />
               <Route path="/alarms" element={
                 <AlarmsPage 
-                  isPremium={isPremium}
+                  isPremium={effectiveIsPremium}
+                  onPremiumUpgrade={handlePremiumUpgrade}
                 />
               } />
               <Route path="/settings" element={
                 <SettingsPage 
                   theme={theme}
                   onThemeChange={setTheme}
-                  isPremium={isPremium}
+                  isPremium={effectiveIsPremium}
                   onPremiumChange={setIsPremium}
                   backgroundTheme={backgroundTheme}
                   onBackgroundThemeChange={setBackgroundTheme}
                   appVersion={appVersion}
                   onVersionChange={setAppVersion}
+                  testFreemiumMode={testFreemiumMode}
+                  onTestFreemiumModeChange={setTestFreemiumMode}
                 />
               } />
               <Route path="*" element={<NotFound />} />

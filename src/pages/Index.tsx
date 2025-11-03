@@ -72,7 +72,7 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
   const isFavorite = currentQuote ? favorites.some(fav => fav.id === currentQuote.id) : false;
 
   return (
-    <div className="min-h-screen bg-background pb-[130px]">
+    <div className="min-h-screen bg-background pb-[180px]">
       {/* Header */}
       <header className="text-center py-8 px-4">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mb-2">

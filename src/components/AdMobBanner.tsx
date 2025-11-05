@@ -47,7 +47,7 @@ export function AdMobBanner({
   if (isPremium) return null;
 
   return (
-    <div className="w-full flex justify-center py-4 px-4 mt-6">
+    <div className="fixed bottom-0 left-0 right-0 z-40 w-full flex justify-center py-2 px-4 bg-background/95 backdrop-blur-sm border-t border-border">
       <div 
         ref={adContainerRef}
         className="glass-card overflow-hidden rounded-lg"

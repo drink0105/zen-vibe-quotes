@@ -229,13 +229,16 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
                       onClick={() => playPlaylist(playlist)}
                       variant="zen"
                       size="sm"
+                      title="Play visually"
                     >
                       <MdPlayArrow className="w-4 h-4" />
                     </Button>
                     <Button
                       onClick={() => playVerbal(playlist)}
-                      variant="outline"
+                      variant={isSpeaking ? "default" : "outline"}
                       size="sm"
+                      title={isSpeaking ? "Stop speaking" : "Play verbally"}
+                      className={isSpeaking ? "animate-pulse" : ""}
                     >
                       <MdVolumeUp className="w-4 h-4" />
                     </Button>
@@ -243,6 +246,7 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
                       onClick={() => deletePlaylist(playlist.id)}
                       variant="destructive"
                       size="sm"
+                      title="Delete playlist"
                     >
                       <MdDelete className="w-4 h-4" />
                     </Button>
@@ -312,10 +316,10 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
                 <Button
                   onClick={createPlaylist}
                   variant="zen"
-                  className="w-full"
+                  className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!newPlaylistName.trim() || selectedQuotes.length === 0}
                 >
-                  Create Playlist
+                  Create Playlist {selectedQuotes.length > 0 && `(${selectedQuotes.length} selected)`}
                 </Button>
               </div>
             </div>

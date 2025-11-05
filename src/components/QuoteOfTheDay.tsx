@@ -114,23 +114,13 @@ export function QuoteOfTheDay({
         )}
 
         {/* Category tag */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center">
           <span className={`
             text-xs px-3 py-1 rounded-full font-medium
             ${isPremium ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground'}
           `}>
             {dailyQuote.category}
           </span>
-          
-          <Button
-            variant="glass"
-            size="sm"
-            onClick={() => window.location.href = '/'}
-            className={isPremium ? 'text-white hover:bg-white/20' : ''}
-          >
-            <MdOpenInNew className="w-4 h-4 mr-1" />
-            Open App
-          </Button>
         </div>
 
         {/* Decorative glow */}

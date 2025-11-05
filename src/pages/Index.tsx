@@ -72,7 +72,7 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
   const isFavorite = currentQuote ? favorites.some(fav => fav.id === currentQuote.id) : false;
 
   return (
-    <div className="min-h-screen bg-background pb-[180px]">
+    <div className={`min-h-screen bg-background ${isPremium ? 'pb-[100px]' : 'pb-[160px]'}`}>
       {/* Header */}
       <header className="text-center py-8 px-4">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mb-2">
@@ -86,9 +86,6 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
 
       {/* Mood Selector */}
       <MoodSelector selectedMood={selectedMood} onMoodChange={handleMoodChange} />
-
-      {/* AdMob Banner (Free tier only) */}
-      <AdMobBanner isPremium={isPremium} />
 
       {/* Quote Card */}
       <div className="flex items-center justify-center px-4 py-8">

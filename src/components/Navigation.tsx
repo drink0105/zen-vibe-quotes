@@ -9,7 +9,11 @@ import {
   MdNotifications
 } from "react-icons/md";
 
-export function Navigation() {
+interface NavigationProps {
+  isPremium: boolean;
+}
+
+export function Navigation({ isPremium }: NavigationProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const navItems = [
@@ -22,7 +26,7 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50">
+    <nav className={`fixed left-0 right-0 z-50 ${isPremium ? 'bottom-0' : 'bottom-[60px]'}`}>
       <div className="glass-card m-4 rounded-2xl">
         <div className="flex flex-wrap justify-around items-center py-3 px-2 gap-1">
           {navItems.map((item) => {

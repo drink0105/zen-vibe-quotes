@@ -13,6 +13,7 @@ import AlarmsPage from "./pages/AlarmsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
+import { AdMobBanner } from "@/components/AdMobBanner";
 const queryClient = new QueryClient();
 
 interface Quote {
@@ -228,8 +229,9 @@ const App = () => {
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Navigation />
+            <Navigation isPremium={effectiveIsPremium} />
           </div>
+          <AdMobBanner isPremium={effectiveIsPremium} />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

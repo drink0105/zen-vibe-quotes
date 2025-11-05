@@ -47,15 +47,14 @@ export function AdMobBanner({
   if (isPremium) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 w-full flex justify-center py-2 px-4 bg-background/95 backdrop-blur-sm border-t border-border">
+    <div className="fixed bottom-0 left-0 right-0 z-30 w-full bg-background border-t border-border" style={{ height: "60px" }}>
       <div 
         ref={adContainerRef}
-        className="glass-card overflow-hidden rounded-lg"
-        style={{ maxWidth: "728px", width: "100%" }}
+        className="w-full h-full flex items-center justify-center"
       >
         <ins
           className="adsbygoogle"
-          style={{ display: "block", width: "100%", height: "90px" }}
+          style={{ display: "block", width: "100%", height: "50px" }}
           data-ad-client="ca-app-pub-3940256099942544"
           data-ad-slot="6300978111"
           data-ad-format="horizontal"

@@ -41,6 +41,7 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [selectedQuotes, setSelectedQuotes] = useState<Quote[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [ttsAlarms] = useLocalStorage<any[]>("tts-alarms", []);
 
   const createPlaylist = () => {
     if (!newPlaylistName.trim()) return;
@@ -114,6 +115,18 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
     setIsSpeaking(true);
     let index = 0;
 
+    // Get voice settings from alarms if premium user
+    let selectedVoiceName = '';
+    let voiceSpeed = 1;
+    let voicePitch = 1;
+
+    if (isPremium && ttsAlarms.length > 0) {
+      const firstAlarm = ttsAlarms[0];
+      selectedVoiceName = firstAlarm.voice || '';
+      voiceSpeed = firstAlarm.speed || 1;
+      voicePitch = firstAlarm.pitch || 1;
+    }
+
     const speakQuote = () => {
       if (index >= playlist.quotes.length) {
         setIsSpeaking(false);
@@ -126,6 +139,16 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
         : quote.text;
       
       const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Apply voice settings for premium users
+      if (isPremium && selectedVoiceName) {
+        const voices = speechSynthesis.getVoices();
+        const voice = voices.find(v => v.name === selectedVoiceName);
+        if (voice) utterance.voice = voice;
+        utterance.rate = voiceSpeed;
+        utterance.pitch = voicePitch;
+      }
+      
       utterance.onend = () => {
         index++;
         speakQuote();
@@ -259,7 +282,7 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
         {/* Create Playlist Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="glass-card p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div className="glass-card p-6 w-full max-w-md max-h-[60vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Create Playlist</h3>
                 <Button

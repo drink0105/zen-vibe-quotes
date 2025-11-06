@@ -163,7 +163,7 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
   const availableQuotes = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");
 
   return (
-    <div className={`min-h-screen ${isPremium ? 'pb-[100px]' : 'pb-[160px]'} px-4 py-8`}>
+    <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdPlaylistAdd className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />

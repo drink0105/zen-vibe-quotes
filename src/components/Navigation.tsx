@@ -26,9 +26,9 @@ export function Navigation({ isPremium }: NavigationProps) {
   ];
 
   return (
-    <nav className={`fixed left-0 right-0 z-50 ${isPremium ? 'bottom-0' : 'bottom-[60px]'}`}>
-      <div className="glass-card m-4 rounded-2xl">
-        <div className="flex flex-wrap justify-around items-center py-3 px-2 gap-1">
+    <nav className={`fixed left-0 right-0 z-50 ${isPremium ? 'bottom-0' : 'bottom-[50px]'}`} style={{ height: "56px" }}>
+      <div className="glass-card mx-2 mb-2 rounded-2xl h-full">
+        <div className="flex justify-around items-center h-full px-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.id;
@@ -40,15 +40,16 @@ export function Navigation({ isPremium }: NavigationProps) {
                 size="sm"
                 onClick={() => navigate(item.id)}
                 className={`
-                  flex flex-col items-center gap-1 p-3 h-auto transition-all duration-300 min-w-[60px]
+                  flex flex-col items-center gap-0.5 p-1 h-full transition-all duration-300 flex-1
                   ${isActive 
-                    ? 'text-primary bg-primary/10 glow-primary scale-110' 
-                    : 'text-muted-foreground hover:text-foreground hover:scale-105'
+                    ? 'text-primary bg-primary/10 glow-primary' 
+                    : 'text-muted-foreground hover:text-foreground'
                   }
                 `}
+                style={{ fontSize: "10px" }}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'animate-glow-pulse' : ''}`} />
-                <span className="text-xs font-medium">{item.label}</span>
+                <Icon className="w-6 h-6" style={{ height: "24px", width: "24px" }} />
+                <span className="font-medium leading-tight">{item.label}</span>
               </Button>
             );
           })}

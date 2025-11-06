@@ -47,7 +47,7 @@ export function AdMobBanner({
   if (isPremium) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 w-full bg-background border-t border-border" style={{ height: "60px" }}>
+    <div className="fixed bottom-0 left-0 right-0 z-30 w-full bg-background border-t border-border" style={{ height: "50px" }}>
       <div 
         ref={adContainerRef}
         className="w-full h-full flex items-center justify-center"

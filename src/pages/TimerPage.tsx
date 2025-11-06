@@ -111,7 +111,7 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
     : [60]; // 1 minute only
 
   return (
-    <div className={`min-h-screen ${isPremium ? 'pb-[100px]' : 'pb-[160px]'} px-4 py-8`}>
+    <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdTimer className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />

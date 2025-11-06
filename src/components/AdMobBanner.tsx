@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AdMobBannerProps {
   adUnitId?: string;
@@ -10,38 +10,58 @@ export function AdMobBanner({
   isPremium 
 }: AdMobBannerProps) {
   const adContainerRef = useRef<HTMLDivElement>(null);
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
     // Don't show ads for premium users
     if (isPremium) return;
 
-    // Load AdMob script
-    const script = document.createElement("script");
-    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    script.dataset.adClient = "ca-app-pub-3940256099942544";
-    document.head.appendChild(script);
+    // Set timeout for fallback
+    const fallbackTimer = setTimeout(() => {
+      if (!adLoaded) {
+        setShowFallback(true);
+      }
+    }, 3000);
 
-    // Initialize ad after script loads
-    script.onload = () => {
+    // Initialize ad
+    const initAd = () => {
       if (adContainerRef.current) {
         try {
           // @ts-ignore - AdSense global
           (window.adsbygoogle = window.adsbygoogle || []).push({});
+          setAdLoaded(true);
         } catch (e) {
           console.error("AdMob error:", e);
+          setShowFallback(true);
         }
       }
     };
 
+    // Check if script is already loaded
+    // @ts-ignore - AdSense global
+    if (window.adsbygoogle) {
+      initAd();
+    } else {
+      // Wait for script to load
+      const checkInterval = setInterval(() => {
+        // @ts-ignore - AdSense global
+        if (window.adsbygoogle) {
+          clearInterval(checkInterval);
+          initAd();
+        }
+      }, 100);
+
+      return () => {
+        clearInterval(checkInterval);
+        clearTimeout(fallbackTimer);
+      };
+    }
+
     return () => {
-      // Cleanup
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
+      clearTimeout(fallbackTimer);
     };
-  }, [isPremium]);
+  }, [isPremium, adLoaded]);
 
   // Don't render for premium users
   if (isPremium) return null;
@@ -52,14 +72,18 @@ export function AdMobBanner({
         ref={adContainerRef}
         className="w-full h-full flex items-center justify-center"
       >
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block", width: "100%", height: "50px" }}
-          data-ad-client="ca-app-pub-3940256099942544"
-          data-ad-slot="6300978111"
-          data-ad-format="horizontal"
-          data-full-width-responsive="true"
-        />
+        {showFallback && !adLoaded ? (
+          <div className="text-xs text-muted-foreground">Test Ad Banner</div>
+        ) : (
+          <ins
+            className="adsbygoogle"
+            style={{ display: "block", width: "100%", height: "50px" }}
+            data-ad-client="ca-app-pub-3940256099942544"
+            data-ad-slot="6300978111"
+            data-ad-format="horizontal"
+            data-full-width-responsive="true"
+          />
+        )}
       </div>
     </div>
   );

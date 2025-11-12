@@ -8,33 +8,33 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core colors - Light theme - brighter with gradients */
-    --background: 210 100% 98%; /* #FAFAFA - Very light blue-white */
-    --foreground: 0 0% 20%; /* #333333 - Dark gray for text */
+    /* Core colors - Light theme - PURE WHITE */
+    --background: 0 0% 100%; /* #FFFFFF - Pure white */
+    --foreground: 0 0% 0%; /* #000000 - Black text */
     
-    --card: 210 100% 97%; /* Lighter card */
-    --card-foreground: 0 0% 20%;
+    --card: 0 0% 98%; /* #FAFAFA - Very light gray card */
+    --card-foreground: 0 0% 0%;
     
-    --popover: 210 100% 97%;
-    --popover-foreground: 0 0% 20%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 0% 0%;
     
     --primary: 158 70% 45%; /* Emerald green */
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 210 50% 90%; /* Light blue-gray */
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 0 0% 96%; /* #F5F5F5 - Light gray */
+    --secondary-foreground: 0 0% 0%;
     
-    --muted: 210 50% 90%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
     
     --accent: 146 60% 50%; /* Green accent */
-    --accent-foreground: 0 0% 20%;
+    --accent-foreground: 0 0% 0%;
     
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
     
-    --border: 210 30% 85%; /* Light border */
-    --input: 210 40% 92%;
+    --border: 0 0% 90%; /* Light border */
+    --input: 0 0% 96%;
     --ring: 158 70% 45%;
     
     --radius: 1rem;
@@ -46,20 +46,20 @@ All colors MUST be HSL.
     --gradient-productivity: linear-gradient(135deg, hsl(158 60% 85%) 0%, hsl(140 70% 80%) 100%);
     --gradient-creativity: linear-gradient(135deg, hsl(280 70% 85%) 0%, hsl(300 80% 80%) 100%);
     --gradient-resilience: linear-gradient(135deg, hsl(158 60% 85%) 0%, hsl(180 70% 80%) 100%);
-    --gradient-default: linear-gradient(135deg, hsl(210 100% 98%) 0%, hsl(205 100% 96%) 100%);
+    --gradient-default: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
     
     /* Gradient blue for Quote of the Day and headers */
-    --gradient-blue: linear-gradient(135deg, hsl(211 75% 58%) 0%, hsl(211 100% 50%) 100%);
+    --gradient-blue: linear-gradient(135deg, #4A90E2, #007AFF);
     
     /* Light blue for selected mood buttons */
-    --mood-selected-bg: hsl(207 89% 92%);
+    --mood-selected-bg: #E3F2FD;
     
     /* Text colors for contrast rules */
-    --text-on-light: hsl(0 0% 0%); /* Black for light backgrounds */
-    --text-on-dark: hsl(0 0% 100%); /* White for dark backgrounds */
+    --text-on-light: #000000; /* Black for light backgrounds */
+    --text-on-dark: #FFFFFF; /* White for dark backgrounds */
     
-    /* Main app background - bright gradient #FAFAFA to #F0F8FF */
-    --app-background: linear-gradient(135deg, hsl(210 100% 98%) 0%, hsl(208 100% 97%) 100%);
+    /* Main app background - pure white */
+    --app-background: #FFFFFF;
     
     /* Glassmorphism effects for light theme */
     --glass-bg: hsla(158, 64%, 52%, 0.1);
@@ -205,6 +205,27 @@ html.theme-indigo {
     background: var(--app-background);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
+  }
+  
+  /* Global contrast rules for light/dark modes */
+  .light body,
+  :root:not(.dark) body {
+    color: var(--text-on-light);
+    background: var(--app-background);
+  }
+  
+  .dark body {
+    color: var(--text-on-dark);
+  }
+  
+  /* Ensure all cards, buttons, chips have proper contrast */
+  .light .card,
+  .light .btn,
+  .light .chip,
+  :root:not(.dark) .card,
+  :root:not(.dark) .btn,
+  :root:not(.dark) .chip {
+    color: var(--text-on-light);
   }
 }
 

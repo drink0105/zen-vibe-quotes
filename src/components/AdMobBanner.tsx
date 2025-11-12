@@ -12,10 +12,19 @@ export function AdMobBanner({
   const adContainerRef = useRef<HTMLDivElement>(null);
   const [adLoaded, setAdLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Don't show ads for premium users
-    if (isPremium) return;
+    // Check if mobile (<600px)
+    const checkMobile = () => setIsMobile(window.innerWidth < 600);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Don't show ads for premium users or non-mobile
+    if (isPremium || !isMobile) return;
 
     // Set timeout for fallback
     const fallbackTimer = setTimeout(() => {
@@ -61,26 +70,52 @@ export function AdMobBanner({
     return () => {
       clearTimeout(fallbackTimer);
     };
-  }, [isPremium, adLoaded]);
+  }, [isPremium, adLoaded, isMobile]);
 
-  // Don't render for premium users
-  if (isPremium) return null;
+  // Don't render for premium users or non-mobile
+  if (isPremium || !isMobile) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 w-full bg-background border-t border-border" style={{ height: "50px" }}>
+    <div 
+      id="admob-banner-container"
+      className="fixed bottom-0 left-0 right-0 z-[999] w-full bg-[#f5f5f5] border-t border-border flex items-center justify-center"
+      style={{ 
+        height: "50px",
+        maxHeight: "50px",
+        minHeight: "50px",
+        overflow: "hidden"
+      }}
+    >
       <div 
+        id="admob-banner"
         ref={adContainerRef}
-        className="w-full h-full flex items-center justify-center"
+        className="w-full flex items-center justify-center"
+        style={{ 
+          height: "50px",
+          maxHeight: "50px",
+          minHeight: "50px"
+        }}
       >
         {showFallback && !adLoaded ? (
-          <div className="text-xs text-muted-foreground">Test Ad Banner</div>
+          <div className="text-xs text-muted-foreground">
+            📱 Test Ad Banner (Google AdMob)
+          </div>
         ) : (
           <ins
             className="adsbygoogle"
-            style={{ display: "block", width: "100%", height: "50px" }}
+            style={{ 
+              display: "block",
+              width: "100%",
+              height: "50px",
+              maxHeight: "50px",
+              minHeight: "50px",
+              margin: 0,
+              padding: 0,
+              border: "none"
+            }}
             data-ad-client="ca-app-pub-3940256099942544"
             data-ad-slot="6300978111"
-            data-ad-format="horizontal"
+            data-ad-format="auto"
             data-full-width-responsive="true"
           />
         )}

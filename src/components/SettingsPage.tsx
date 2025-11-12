@@ -52,12 +52,12 @@ export function SettingsPage({ theme, onThemeChange }: SettingsPageProps) {
           </div>
           
           {/* Premium section (placeholder) */}
-          <div className="quote-card gradient-motivation text-white">
-            <h3 className="text-lg font-semibold mb-2">Go Premium</h3>
-            <p className="text-white/90 text-sm mb-4">
+          <div className="quote-card gradient-motivation">
+            <h3 className="text-lg font-semibold mb-2 text-black">Go Premium</h3>
+            <p className="text-black/80 text-sm mb-4">
               Unlock unlimited quotes, custom themes, and advanced features
             </p>
-            <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+            <Button variant="outline" className="bg-white/20 border-black/30 text-black hover:bg-white/30">
               Coming Soon - $2.99
             </Button>
           </div>

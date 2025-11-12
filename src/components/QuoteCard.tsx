@@ -75,13 +75,13 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
         {/* Category tag with gradient */}
         <div className={`
           inline-block px-4 py-2 rounded-full text-sm font-semibold mb-6
-          ${gradientClass} text-white shadow-lg
+          ${gradientClass} shadow-lg
         `}>
           {quote.category}
         </div>
 
         {/* Quote text */}
-        <blockquote className="text-xl md:text-2xl font-quote leading-relaxed text-foreground mb-6 animate-float">
+        <blockquote className="text-xl md:text-2xl font-quote leading-relaxed text-foreground mb-6">
           "{quote.text}"
         </blockquote>
 

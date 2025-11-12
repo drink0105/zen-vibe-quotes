@@ -43,7 +43,7 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
               size="sm"
               className={`
                 flex flex-col items-center gap-2 h-auto py-4 px-3 tilt-3d
-                ${isSelected ? `${mood.gradient} glow-primary text-white` : ''}
+                ${isSelected ? 'bg-[#E3F2FD] text-black' : 'text-foreground'}
                 transition-all duration-300 hover:scale-105
               `}
             >

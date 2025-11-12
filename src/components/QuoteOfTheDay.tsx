@@ -78,11 +78,7 @@ export function QuoteOfTheDay({
 
   return (
     <div className="w-full max-w-md mx-auto px-4 mb-6">
-      <div className={`
-        glass-card relative overflow-hidden p-6
-        ${isPremium ? customGradient : 'bg-gradient-to-br from-background to-muted'}
-        ${isPremium ? '' : 'border-2 border-muted'}
-      `}>
+      <div className="glass-card gradient-blue relative overflow-hidden p-6 border-2 border-blue-400">
         {/* Premium badge */}
         {isPremium && (
           <div className="absolute top-3 right-3">
@@ -92,41 +88,32 @@ export function QuoteOfTheDay({
 
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <h3 className={`text-sm font-semibold ${isPremium ? 'text-white' : 'text-foreground'}`}>
+          <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+          <h3 className="text-sm font-semibold text-black">
             Quote of the Day
           </h3>
         </div>
 
         {/* Quote */}
         <blockquote className={`
-          ${customFont} text-lg leading-relaxed mb-3
-          ${isPremium ? 'text-white' : 'text-foreground'}
+          ${customFont} text-lg leading-relaxed mb-3 text-black
         `}>
           "{dailyQuote.text}"
         </blockquote>
 
         {/* Author */}
         {dailyQuote.author && (
-          <p className={`text-sm mb-4 ${isPremium ? 'text-white/80' : 'text-muted-foreground'}`}>
+          <p className="text-sm mb-4 text-black/80">
             — {dailyQuote.author}
           </p>
         )}
 
         {/* Category tag */}
         <div className="flex items-center justify-center">
-          <span className={`
-            text-xs px-3 py-1 rounded-full font-medium
-            ${isPremium ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground'}
-          `}>
+          <span className="text-xs px-3 py-1 rounded-full font-medium bg-white/30 text-black">
             {dailyQuote.category}
           </span>
         </div>
-
-        {/* Decorative glow */}
-        {isPremium && (
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-3xl animate-pulse" />
-        )}
       </div>
     </div>
   );

@@ -253,14 +253,14 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
         {currentQuote && (
           <div className="glass-card p-6 mb-6 gradient-mindfulness">
             <div className="text-center">
-              <span className="px-3 py-1 text-xs font-semibold bg-white/20 rounded-full backdrop-blur-sm text-white mb-4 inline-block">
+              <span className="px-3 py-1 text-xs font-semibold bg-white/30 rounded-full backdrop-blur-sm text-black mb-4 inline-block">
                 {currentQuote.category}
               </span>
-              <blockquote className="text-lg mb-4 leading-relaxed font-quote text-white">
+              <blockquote className="text-lg mb-4 leading-relaxed font-quote text-black">
                 "{currentQuote.text}"
               </blockquote>
               {currentQuote.author && (
-                <p className="text-sm text-white/80">— {currentQuote.author}</p>
+                <p className="text-sm text-black/80">— {currentQuote.author}</p>
               )}
             </div>
           </div>
@@ -269,11 +269,11 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
         {/* Premium upsell */}
         {!isPremium && (
           <div className="glass-card p-6 text-center gradient-creativity">
-            <h3 className="text-lg font-semibold mb-2 text-white">Go Premium</h3>
-            <p className="text-white/90 text-sm mb-4">
+            <h3 className="text-lg font-semibold mb-2 text-black">Go Premium</h3>
+            <p className="text-black/80 text-sm mb-4">
               Unlock 1-5 minute timers, background sounds, and access to all premium quotes
             </p>
-            <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+            <Button variant="outline" className="bg-white/20 border-black/30 text-black hover:bg-white/30">
               Upgrade for $2.99
             </Button>
           </div>

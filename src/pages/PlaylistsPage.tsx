@@ -177,37 +177,37 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
         {currentlyPlaying && (
           <div className="glass-card p-6 mb-6 gradient-creativity">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Now Playing: {currentlyPlaying.name}</h3>
+              <h3 className="text-lg font-semibold text-black">Now Playing: {currentlyPlaying.name}</h3>
               <Button
                 onClick={() => setCurrentlyPlaying(null)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20"
+                className="text-black hover:bg-white/20"
               >
                 <MdClose className="w-4 h-4" />
               </Button>
             </div>
             
             <div className="mb-4">
-              <blockquote className="text-lg mb-2 leading-relaxed font-quote text-white">
+              <blockquote className="text-lg mb-2 leading-relaxed font-quote text-black">
                 "{currentlyPlaying.quotes[currentQuoteIndex].text}"
               </blockquote>
               {currentlyPlaying.quotes[currentQuoteIndex].author && (
-                <p className="text-sm text-white/80">
+                <p className="text-sm text-black/80">
                   — {currentlyPlaying.quotes[currentQuoteIndex].author}
                 </p>
               )}
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-sm text-white/80">
+              <span className="text-sm text-black/80">
                 {currentQuoteIndex + 1} of {currentlyPlaying.quotes.length}
               </span>
               <Button
                 onClick={nextQuote}
                 variant="outline"
                 size="sm"
-                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                className="bg-white/20 border-black/30 text-black hover:bg-white/30"
               >
                 <MdArrowForward className="w-4 h-4 mr-2" />
                 Next Quote
@@ -351,14 +351,14 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
         {/* Premium upsell */}
         {!isPremium && (
           <div className="glass-card p-6 mt-6 text-center gradient-creativity">
-            <h3 className="text-lg font-semibold mb-2 text-white">Go Premium</h3>
-            <p className="text-white/90 text-sm mb-4">
+            <h3 className="text-lg font-semibold mb-2 text-black">Go Premium</h3>
+            <p className="text-black/80 text-sm mb-4">
               Unlock unlimited playlists, 10 quotes per playlist, and access to all premium content
             </p>
             <Button 
               onClick={onPremiumUpgrade}
               variant="outline" 
-              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              className="bg-white/20 border-black/30 text-black hover:bg-white/30"
             >
               Upgrade for $2.99
             </Button>

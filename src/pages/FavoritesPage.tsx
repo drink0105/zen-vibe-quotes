@@ -51,10 +51,11 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, is
   return (
     <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <MdFavorite className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
-          <h1 className="text-3xl font-bold mb-2">Your Favorites</h1>
-          <p className="text-muted-foreground">
+        {/* Gradient blue header */}
+        <div className="gradient-blue glass-card p-6 mb-8 border-2 border-blue-400">
+          <MdFavorite className="w-16 h-16 mx-auto mb-4 text-black" />
+          <h1 className="text-3xl font-bold mb-2 text-black text-center">Your Favorites</h1>
+          <p className="text-black/80 text-center">
             {favorites.length} saved quote{favorites.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -66,7 +67,7 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, is
               className={`glass-card p-6 ${categoryGradients[quote.category as keyof typeof categoryGradients] || 'gradient-default'}`}
             >
               <div className="flex justify-between items-start mb-4">
-                <span className="px-3 py-1 text-xs font-semibold bg-white/20 rounded-full backdrop-blur-sm">
+                <span className="px-3 py-1 text-xs font-semibold bg-white/30 text-black rounded-full backdrop-blur-sm">
                   {quote.category}
                 </span>
                 {quote.tier === "premium" && (
@@ -76,12 +77,12 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, is
                 )}
               </div>
               
-              <blockquote className="text-lg mb-4 leading-relaxed font-quote">
+              <blockquote className="text-lg mb-4 leading-relaxed font-quote text-black">
                 "{quote.text}"
               </blockquote>
               
               {quote.author && (
-                <p className="text-sm opacity-80 mb-4">— {quote.author}</p>
+                <p className="text-sm text-black/80 mb-4">— {quote.author}</p>
               )}
               
               <div className="flex gap-2">
@@ -89,7 +90,7 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, is
                   onClick={() => onShare(quote)}
                   variant="outline"
                   size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="bg-white/20 border-black/20 text-black hover:bg-white/30"
                 >
                   <MdShare className="w-4 h-4 mr-2" />
                   Share

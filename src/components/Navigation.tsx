@@ -27,8 +27,8 @@ export function Navigation({ isPremium }: NavigationProps) {
 
   return (
     <nav className={`fixed left-0 right-0 z-50 ${isPremium ? 'bottom-0' : 'bottom-[60px]'}`} style={{ height: "56px" }}>
-      <div className="glass-card mx-1 mb-1 rounded-2xl h-full">
-        <div className="flex flex-nowrap justify-around items-center h-full px-0.5 gap-0">
+      <div className="glass-card mx-1 mb-1 rounded-2xl h-full overflow-hidden">
+        <div className="flex flex-row flex-nowrap justify-around items-center h-full px-0.5 gap-0" style={{ flexWrap: 'nowrap' }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.id;
@@ -40,16 +40,16 @@ export function Navigation({ isPremium }: NavigationProps) {
                 size="sm"
                 onClick={() => navigate(item.id)}
                 className={`
-                  flex flex-col items-center justify-center gap-0 p-0.5 h-full transition-all duration-300 flex-1 min-w-0 shrink-0
+                  flex flex-col items-center justify-center gap-0 p-1 h-full transition-all duration-300 flex-1 min-w-0 shrink-0
                   ${isActive 
                     ? 'text-primary bg-primary/10 glow-primary' 
                     : 'text-muted-foreground hover:text-foreground'
                   }
                 `}
-                style={{ fontSize: "9px", maxWidth: "calc(100% / 6)" }}
+                style={{ fontSize: "8px", maxWidth: "16.666%", minWidth: 0 }}
               >
-                <Icon style={{ height: "18px", width: "18px", flexShrink: 0 }} />
-                <span className="font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-[8px] sm:text-[9px] w-full text-center">{item.label}</span>
+                <Icon style={{ height: "16px", width: "16px", flexShrink: 0 }} />
+                <span className="font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-[7px] w-full text-center block">{item.label}</span>
               </Button>
             );
           })}

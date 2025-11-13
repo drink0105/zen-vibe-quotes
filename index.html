@@ -18,6 +18,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-3940256099942544" crossorigin="anonymous"></script>
+  <style>
+    #admob-banner-container, #admob-banner, #admob-banner iframe {
+      width: 100% !important;
+      height: 50px !important;
+      max-height: 50px !important;
+    }
+  </style>
+  <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.admob) {
+        admob.banner.config({
+          id: 'ca-app-pub-3940256099942544/6300978111',
+          size: 'SMART_BANNER',
+          position: 'BOTTOM'
+        });
+        admob.banner.show();
+      }
+    });
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

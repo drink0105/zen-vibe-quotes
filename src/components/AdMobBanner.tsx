@@ -1,77 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface AdMobBannerProps {
   isPremium: boolean;
 }
 
 export function AdMobBanner({ isPremium }: AdMobBannerProps) {
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 600);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    if (isPremium) return;
 
-  useEffect(() => {
-    if (isPremium || !isMobile) return;
-
-    const initAdMob = () => {
-      // @ts-ignore - AdMob global
-      if (window.admob) {
-        // @ts-ignore
-        window.admob.banner.config({
-          id: 'ca-app-pub-3940256099942544/6300978111',
-          size: 'SMART_BANNER',
-          position: 'BOTTOM'
-        });
-        // @ts-ignore
-        window.admob.banner.show();
-      }
-    };
-
-    // Check if admob is already loaded
-    // @ts-ignore
-    if (window.admob) {
-      initAdMob();
-    } else {
-      // Wait for admob to load
-      const checkInterval = setInterval(() => {
-        // @ts-ignore
-        if (window.admob) {
-          clearInterval(checkInterval);
-          initAdMob();
-        }
-      }, 100);
-
-      return () => clearInterval(checkInterval);
+    // Inject AdSense script
+    const scriptId = "adsbygoogle-js";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.async = true;
+      script.src =
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544";
+      script.crossOrigin = "anonymous";
+      document.body.appendChild(script);
     }
-  }, [isPremium, isMobile]);
 
-  // Don't render for premium users or desktop
-  if (isPremium || !isMobile) return null;
+    try {
+      // @ts-ignore
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.log("Ad error:", e);
+    }
+  }, [isPremium]);
+
+  if (isPremium) return null;
 
   return (
-    <div 
-      id="admob-banner-container"
+    <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 0,
         left: 0,
-        width: '100%',
-        height: '50px',
-        maxHeight: '50px',
-        overflow: 'hidden',
+        width: "100%",
+        height: "50px",
+        background: "#f5f5f5",
         zIndex: 999,
-        background: '#f5f5f5'
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
       }}
     >
-      <div id="admob-banner"></div>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block", width: "100%", height: "50px" }}
+        data-ad-client="ca-pub-3940256099942544"
+        data-ad-slot="6300978111"
+      />
     </div>
   );
 }
+

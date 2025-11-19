@@ -88,20 +88,30 @@ const App = () => {
   }, []);
 
   // Apply theme and background
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    
-    // Remove existing background theme classes
-    document.documentElement.classList.remove(
-      'theme-default', 'theme-ocean', 'theme-sunset', 'theme-forest', 
-      'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
-    );
-    
-    // Apply selected background theme
-    if (backgroundTheme !== "default") {
-      document.documentElement.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
-    }
-  }, [theme, backgroundTheme]);
+useEffect(() => {
+  const root = document.documentElement;
+
+  // Remove previous dark/light class
+  root.classList.remove("dark", "light");
+
+  // Apply selected theme
+  if (theme === "dark") {
+    root.classList.add("dark");
+  } else {
+    root.classList.add("light");
+  }
+
+  // Remove existing background theme classes
+  root.classList.remove(
+    'theme-default', 'theme-ocean', 'theme-sunset', 'theme-forest', 
+    'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
+  );
+
+  // Apply selected background theme if not default
+  if (backgroundTheme !== "default") {
+    root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
+  }
+}, [theme, backgroundTheme]);
 
   // Shared handlers
   const handleShare = async (quote: Quote) => {

@@ -8,35 +8,35 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core colors - Light theme - PURE WHITE */
-    --background: 0 0% 100%; /* #FFFFFF - Pure white */
-    --foreground: 0 0% 0%; /* #000000 - Black text */
-    
-    --card: 0 0% 96%; /* #F5F5F5 - Light gray card */
-    --card-foreground: 0 0% 0%;
-    
-    --popover: 0 0% 98%;
-    --popover-foreground: 0 0% 0%;
-    
-    --primary: 158 70% 45%; /* Emerald green */
+    /* Light mode colors - Peach / Soft Cream */
+    --background: 33 100% 97%;      /* #FFF7ED */
+    --foreground: 20 14% 10%;       /* Soft dark text */
+
+    --card: 0 0% 100%;              /* Pure white card */
+    --card-foreground: 20 14% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 10%;
+
+    --primary: 20 90% 70%;          /* Peach */
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 0 0% 96%; /* #F5F5F5 - Light gray */
-    --secondary-foreground: 0 0% 0%;
-    
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
-    
-    --accent: 146 60% 50%; /* Green accent */
-    --accent-foreground: 0 0% 0%;
-    
-    --destructive: 0 84% 60%;
+
+    --secondary: 33 100% 92%;       /* Soft peach tint */
+    --secondary-foreground: 20 14% 10%;
+
+    --muted: 33 40% 93%;
+    --muted-foreground: 20 10% 40%;
+
+    --accent: 20 90% 80%;           /* Lighter peach */
+    --accent-foreground: 20 14% 10%;
+
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
-    
-    --border: 0 0% 90%; /* Light border */
-    --input: 0 0% 96%;
-    --ring: 158 70% 45%;
-    
+
+    --border: 33 40% 90%;
+    --input: 33 40% 93%;
+    --ring: 20 90% 70%;
+
     --radius: 1rem;
     
     /* Light gradient backgrounds - bright and airy */

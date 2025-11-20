@@ -18,8 +18,8 @@
       "id": "app.lovable.zenvibe"
     }
   ],
-  "version": "1.0.0.4",
-  "version_code": 4,
+  "version": "1.0.5",
+  "version_code": 5,
   "icons": [
     { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],

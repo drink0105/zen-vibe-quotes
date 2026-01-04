@@ -20,23 +20,35 @@ interface IndexProps {
   isPremium: boolean;
 }
 
-export default function Index({ allQuotes, favorites, onFavorite, onShare, isPremium }: IndexProps) {
+export default function Index({
+  allQuotes,
+  favorites,
+  onFavorite,
+  onShare,
+  isPremium,
+}: IndexProps) {
   const [selectedMood, setSelectedMood] = useState("all");
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Filter quotes based on selected mood and premium status
-  const getFilteredQuotes = () => {
-    let filtered = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");
-    if (selectedMood !== "all") {
-      filtered = filtered.filter(quote => quote.category === selectedMood);
+  const getFilteredQuotes = (mood = selectedMood) => {
+    let filtered = isPremium
+      ? allQuotes
+      : allQuotes.filter((q) => q.tier === "free");
+
+    if (mood !== "all") {
+      filtered = filtered.filter(
+        (quote) => quote.category.toLowerCase() === mood.toLowerCase()
+      );
     }
+
     return filtered;
   };
 
   // Get random quote from filtered list
-  const getRandomQuote = () => {
-    const filteredQuotes = getFilteredQuotes();
+  const getRandomQuote = (mood = selectedMood) => {
+    const filteredQuotes = getFilteredQuotes(mood);
     if (filteredQuotes.length === 0) return allQuotes[0];
     return filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
   };
@@ -50,16 +62,16 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
     }, 200);
   };
 
-  // Handle mood change
+  // Handle mood change (FIXED: no timeout, no race condition)
   const handleMoodChange = (mood: string) => {
     setSelectedMood(mood);
-    // Auto-generate new quote for the mood
-    setTimeout(() => {
-      const filteredQuotes = getFilteredQuotes();
-      if (filteredQuotes.length > 0) {
-        setCurrentQuote(filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)]);
-      }
-    }, 100);
+
+    const filteredQuotes = getFilteredQuotes(mood);
+    if (filteredQuotes.length > 0) {
+      setCurrentQuote(
+        filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)]
+      );
+    }
   };
 
   // Initialize with random quote
@@ -69,28 +81,39 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
     }
   }, [allQuotes]);
 
-  const isFavorite = currentQuote ? favorites.some(fav => fav.id === currentQuote.id) : false;
+  const isFavorite = currentQuote
+    ? favorites.some((fav) => fav.id === currentQuote.id)
+    : false;
 
   return (
-    <div className={`min-h-screen bg-background ${isPremium ? 'pb-[80px]' : 'pb-[130px]'}`}>
+    <div
+      className={`min-h-screen bg-background ${
+        isPremium ? "pb-[80px]" : "pb-[130px]"
+      }`}
+    >
       {/* Header */}
       <header className="text-center py-8 px-4">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mb-2">
           ZenVibe
         </h1>
-        <p className="text-muted-foreground">Your daily dose of inspiration</p>
+        <p className="text-muted-foreground">
+          Your daily dose of inspiration
+        </p>
       </header>
 
       {/* Quote of the Day Widget */}
       <QuoteOfTheDay allQuotes={allQuotes} isPremium={isPremium} />
 
       {/* Mood Selector */}
-      <MoodSelector selectedMood={selectedMood} onMoodChange={handleMoodChange} />
+      <MoodSelector
+        selectedMood={selectedMood}
+        onMoodChange={handleMoodChange}
+      />
 
       {/* Quote Card */}
       <div className="flex items-center justify-center px-4 py-8">
         {currentQuote && (
-          <QuoteCard 
+          <QuoteCard
             quote={currentQuote}
             onNewQuote={handleNewQuote}
             onFavorite={onFavorite}
@@ -105,26 +128,29 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
       {!isPremium && (
         <div className="mx-4 mb-6">
           <div className="glass-card p-4 text-center gradient-creativity relative overflow-hidden">
-            <h3 className="text-lg font-semibold mb-2 text-black">Go Premium</h3>
+            <h3 className="text-lg font-semibold mb-2 text-black">
+              Go Premium
+            </h3>
             <p className="text-black/80 text-sm mb-4">
               Unlock 300+ premium quotes, unlimited favorites, and remove ads
             </p>
-            <button 
+            <button
               onClick={async () => {
-                // Import and use Google Play Billing
-                const { purchasePremium, mockPurchasePremium, isGooglePlayAvailable } = await import('@/services/googlePlayBilling');
-                
+                const {
+                  purchasePremium,
+                  mockPurchasePremium,
+                  isGooglePlayAvailable,
+                } = await import("@/services/googlePlayBilling");
+
                 if (!isGooglePlayAvailable()) {
-                  // For web testing: use mock purchase
                   mockPurchasePremium();
-                  window.location.reload(); // Reload to reflect premium status
+                  window.location.reload();
                 } else {
-                  // Real Google Play purchase
                   const result = await purchasePremium();
                   if (result) {
                     window.location.reload();
                   } else {
-                    alert('Purchase failed. Please try again.');
+                    alert("Purchase failed. Please try again.");
                   }
                 }
               }}
@@ -132,14 +158,14 @@ export default function Index({ allQuotes, favorites, onFavorite, onShare, isPre
             >
               Upgrade for $2.99
             </button>
-            
+
             {/* Decorative elements */}
             <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-3xl animate-pulse" />
             <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-yellow-400/20 blur-2xl animate-pulse delay-1000" />
           </div>
         </div>
       )}
-
     </div>
   );
 }
+

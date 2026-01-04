@@ -87,33 +87,25 @@ const App = () => {
     loadQuotes();
   }, []);
 
-  // Apply theme and background
-useEffect(() => {
-  const root = document.documentElement;
+  // Apply color mode (.dark class) and background theme (data-theme attribute)
+  // These are SEPARATE concerns:
+  // - .dark/.light controls semantic tokens (text, card, border colors)
+  // - data-theme controls decorative elements (app background, gradients)
+  useEffect(() => {
+    const root = document.documentElement;
 
-  // Remove previous dark/light class
-  root.classList.remove("dark", "light");
+    // 1. Apply color mode (controls ALL semantic tokens)
+    root.classList.remove("dark", "light");
+    root.classList.add(theme);
 
-  // Apply selected theme
-  if (theme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.add("light");
-  }
-
-  // Remove existing background theme classes
-  root.classList.remove(
-    'theme-default', 'theme-ocean', 'theme-sunset', 'theme-forest', 
-    'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
-  );
-
-  // Always apply a background theme class (including default)
-  if (backgroundTheme === "default") {
-    root.classList.add("theme-default");
-  } else {
-    root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
-  }
-}, [theme, backgroundTheme]);
+    // 2. Apply background theme (ONLY decorative - never touches semantic tokens)
+    // "default" = no data-theme attribute = pure defaults
+    if (backgroundTheme === "default") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.setAttribute("data-theme", backgroundTheme.toLowerCase());
+    }
+  }, [theme, backgroundTheme]);
 
   // Shared handlers
   const handleShare = async (quote: Quote) => {

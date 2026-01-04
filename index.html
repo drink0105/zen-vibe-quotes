@@ -19,14 +19,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/index.css">
   <script>
+    // THEMING SYSTEM: Strict separation of concerns
+    // 1. Color mode (.dark/.light) - controls semantic tokens
+    // 2. Background theme (data-theme) - controls decorative elements only
     try {
-      const savedTheme = localStorage.getItem('zenvibe-theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.remove('light');
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
+      // Apply color mode
+      const savedTheme = localStorage.getItem('zenvibes-theme');
+      const parsedTheme = savedTheme ? JSON.parse(savedTheme) : 'light';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(parsedTheme === 'dark' ? 'dark' : 'light');
+      
+      // Apply background theme (default = no attribute)
+      const savedBg = localStorage.getItem('zenvibes-background');
+      const parsedBg = savedBg ? JSON.parse(savedBg) : 'default';
+      if (parsedBg && parsedBg !== 'default') {
+        document.documentElement.setAttribute('data-theme', parsedBg.toLowerCase());
       }
     } catch(e) {}
   </script>

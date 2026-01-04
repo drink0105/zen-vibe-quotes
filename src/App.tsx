@@ -117,7 +117,7 @@ useEffect(() => {
   // Apply selected background theme if not default
   if (backgroundTheme !== "default") {
     root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
-  }
+  
 }, [theme, backgroundTheme]);
 
   // Shared handlers

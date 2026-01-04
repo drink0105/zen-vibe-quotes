@@ -143,6 +143,17 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+/* ✅ Explicit DEFAULT theme */
+html.theme-default,
+html:not([class*="theme-"]) {
+  --background: 33 100% 97%;
+  --background-alt: 33 100% 92%;
+  --app-background: #FFFFFF;
+
+  --glass-bg: hsla(158, 64%, 52%, 0.1);
+  --glass-border: hsla(158, 64%, 52%, 0.2);
+  --glass-shadow: 0 8px 32px hsla(39, 27%, 82%, 0.37);
+}
 
 /* Background Theme Classes */
 html.theme-ocean {

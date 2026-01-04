@@ -91,7 +91,7 @@ const App = () => {
 useEffect(() => {
   const root = document.documentElement;
 
-  // Remove previous theme classes
+  // Remove previous dark/light class
   root.classList.remove("dark", "light");
 
   // Apply selected theme
@@ -103,21 +103,16 @@ useEffect(() => {
 
   // Remove existing background theme classes
   root.classList.remove(
-    "theme-default",
-    "theme-ocean",
-    "theme-sunset",
-    "theme-forest",
-    "theme-purple",
-    "theme-rose",
-    "theme-emerald",
-    "theme-amber",
-    "theme-indigo"
+    'theme-default', 'theme-ocean', 'theme-sunset', 'theme-forest', 
+    'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
   );
 
-  // Apply selected background theme if not default
-  if (backgroundTheme !== "default") {
+  // Always apply a background theme class (including default)
+  if (backgroundTheme === "default") {
+    root.classList.add("theme-default");
+  } else {
     root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
-  
+  }
 }, [theme, backgroundTheme]);
 
   // Shared handlers

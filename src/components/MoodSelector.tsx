@@ -15,13 +15,13 @@ interface MoodSelectorProps {
 }
 
 const moods = [
-  { name: "All", category: "all", icon: MdAutoAwesome, gradient: "gradient-default" },
-  { name: "Motivated", category: "Motivation", icon: MdRocket, gradient: "gradient-motivation" },
-  { name: "Peaceful", category: "Mindfulness", icon: MdSelfImprovement, gradient: "gradient-mindfulness" },
-  { name: "Cheerful", category: "Humor", icon: MdEmojiEmotions, gradient: "gradient-humor" },
-  { name: "Focused", category: "Productivity", icon: MdBolt, gradient: "gradient-productivity" },
-  { name: "Creative", category: "Creativity", icon: MdPalette, gradient: "gradient-creativity" },
-  { name: "Strong", category: "Resilience", icon: MdFitnessCenter, gradient: "gradient-resilience" },
+  { id: "all", label: "All", icon: MdAutoAwesome, gradient: "gradient-default" },
+  { id: "motivation", label: "Motivated", icon: MdRocket, gradient: "gradient-motivation" },
+  { id: "mindfulness", label: "Peaceful", icon: MdSelfImprovement, gradient: "gradient-mindfulness" },
+  { id: "humor", label: "Cheerful", icon: MdEmojiEmotions, gradient: "gradient-humor" },
+  { id: "productivity", label: "Focused", icon: MdBolt, gradient: "gradient-productivity" },
+  { id: "creativity", label: "Creative", icon: MdPalette, gradient: "gradient-creativity" },
+  { id: "resilience", label: "Strong", icon: MdFitnessCenter, gradient: "gradient-resilience" },
 ];
 
 export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) {
@@ -33,12 +33,12 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
       <div className="grid grid-cols-3 md:grid-cols-7 gap-3">
         {moods.map((mood) => {
           const Icon = mood.icon;
-          const isSelected = selectedMood === mood.category;
+          const isSelected = selectedMood === mood.id;
           
           return (
             <Button
               key={mood.category}
-              onClick={() => onMoodChange(mood.category)}
+              onClick={() => onMoodChange(mood.id)}
               variant={isSelected ? "zen" : "glass"}
               size="sm"
               className={`
@@ -48,7 +48,7 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
               `}
             >
               <Icon className="w-6 h-6" />
-              <span className="text-xs font-medium">{mood.name}</span>
+              <span className="text-xs font-medium">{mood.label}</span>
             </Button>
           );
         })}

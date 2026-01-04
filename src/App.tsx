@@ -107,9 +107,13 @@ useEffect(() => {
     'theme-purple', 'theme-rose', 'theme-emerald', 'theme-amber', 'theme-indigo'
   );
 
-  // Apply selected background theme if not default
-  if (backgroundTheme !== "default") {
-    root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
+ // ✅ Always apply a background theme class (including default)
+if (backgroundTheme === "default") {
+  root.classList.add("theme-default");
+} else {
+  root.classList.add(`theme-${backgroundTheme.toLowerCase()}`);
+}
+
   }
 }, [theme, backgroundTheme]);
 

@@ -30,14 +30,15 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
       <h3 className="text-lg font-medium text-center mb-6 text-foreground">
         How are you feeling today?
       </h3>
+
       <div className="grid grid-cols-3 md:grid-cols-7 gap-3">
         {moods.map((mood) => {
           const Icon = mood.icon;
           const isSelected = selectedMood === mood.id;
-          
+
           return (
             <Button
-              key={mood.category}
+              key={mood.id}
               onClick={() => onMoodChange(mood.id)}
               variant={isSelected ? "zen" : "glass"}
               size="sm"
@@ -56,3 +57,4 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
     </div>
   );
 }
+

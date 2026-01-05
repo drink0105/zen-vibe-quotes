@@ -159,140 +159,157 @@
 
 /* No theme applied = pure defaults (no overrides needed) */
 
-/* OCEAN THEME */
+/* DEFAULT THEME - Neutral grey */
+html[data-theme="default"]:not(.dark) {
+  --app-background: hsl(220 10% 94%);
+  --app-gradient: linear-gradient(180deg, hsl(220 10% 94%) 0%, hsl(220 8% 88%) 100%);
+  --decorative-accent: 220 10% 50%;
+  --glass-bg: hsla(220, 10%, 50%, 0.12);
+  --glass-border: hsla(220, 10%, 50%, 0.22);
+}
+
+html[data-theme="default"].dark {
+  --app-background: hsl(220 10% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(220 10% 10%) 0%, hsl(220 8% 14%) 100%);
+  --decorative-accent: 220 10% 50%;
+  --glass-bg: hsla(220, 10%, 50%, 0.15);
+  --glass-border: hsla(220, 10%, 50%, 0.28);
+}
+
+/* OCEAN THEME - Bolder blues */
 html[data-theme="ocean"]:not(.dark) {
-  --app-background: hsl(197 71% 96%);
-  --app-gradient: linear-gradient(180deg, hsl(197 71% 96%) 0%, hsl(197 60% 92%) 100%);
-  --decorative-accent: 197 71% 52%;
-  --glass-bg: hsla(197, 71%, 52%, 0.1);
-  --glass-border: hsla(197, 71%, 52%, 0.2);
+  --app-background: hsl(197 80% 92%);
+  --app-gradient: linear-gradient(180deg, hsl(197 80% 92%) 0%, hsl(197 70% 85%) 100%);
+  --decorative-accent: 197 80% 48%;
+  --glass-bg: hsla(197, 80%, 48%, 0.14);
+  --glass-border: hsla(197, 80%, 48%, 0.26);
 }
 
 html[data-theme="ocean"].dark {
-  --app-background: hsl(200 50% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(200 50% 8%) 0%, hsl(200 60% 12%) 100%);
-  --decorative-accent: 197 71% 52%;
-  --glass-bg: hsla(197, 71%, 52%, 0.12);
-  --glass-border: hsla(197, 71%, 52%, 0.25);
+  --app-background: hsl(200 60% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(200 60% 10%) 0%, hsl(200 70% 15%) 100%);
+  --decorative-accent: 197 80% 52%;
+  --glass-bg: hsla(197, 80%, 52%, 0.16);
+  --glass-border: hsla(197, 80%, 52%, 0.32);
 }
 
-/* SUNSET THEME */
+/* SUNSET THEME - Bolder oranges/purples */
 html[data-theme="sunset"]:not(.dark) {
-  --app-background: hsl(24 100% 96%);
-  --app-gradient: linear-gradient(180deg, hsl(24 100% 96%) 0%, hsl(280 60% 94%) 100%);
-  --decorative-accent: 24 95% 53%;
-  --glass-bg: hsla(24, 95%, 53%, 0.1);
-  --glass-border: hsla(24, 95%, 53%, 0.2);
+  --app-background: hsl(24 100% 92%);
+  --app-gradient: linear-gradient(180deg, hsl(24 100% 92%) 0%, hsl(280 70% 88%) 100%);
+  --decorative-accent: 24 95% 50%;
+  --glass-bg: hsla(24, 95%, 50%, 0.14);
+  --glass-border: hsla(24, 95%, 50%, 0.26);
 }
 
 html[data-theme="sunset"].dark {
-  --app-background: hsl(24 50% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(24 50% 8%) 0%, hsl(280 40% 12%) 100%);
+  --app-background: hsl(24 60% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(24 60% 10%) 0%, hsl(280 50% 15%) 100%);
   --decorative-accent: 24 95% 53%;
-  --glass-bg: hsla(24, 95%, 53%, 0.12);
-  --glass-border: hsla(24, 95%, 53%, 0.25);
+  --glass-bg: hsla(24, 95%, 53%, 0.16);
+  --glass-border: hsla(24, 95%, 53%, 0.32);
 }
 
-/* FOREST THEME */
+/* FOREST THEME - Bolder greens */
 html[data-theme="forest"]:not(.dark) {
-  --app-background: hsl(142 50% 96%);
-  --app-gradient: linear-gradient(180deg, hsl(142 50% 96%) 0%, hsl(142 60% 92%) 100%);
-  --decorative-accent: 142 76% 36%;
-  --glass-bg: hsla(142, 76%, 36%, 0.1);
-  --glass-border: hsla(142, 76%, 36%, 0.2);
+  --app-background: hsl(142 60% 92%);
+  --app-gradient: linear-gradient(180deg, hsl(142 60% 92%) 0%, hsl(142 70% 85%) 100%);
+  --decorative-accent: 142 80% 32%;
+  --glass-bg: hsla(142, 80%, 32%, 0.14);
+  --glass-border: hsla(142, 80%, 32%, 0.26);
 }
 
 html[data-theme="forest"].dark {
-  --app-background: hsl(142 40% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(142 40% 8%) 0%, hsl(142 50% 12%) 100%);
-  --decorative-accent: 142 76% 36%;
-  --glass-bg: hsla(142, 76%, 36%, 0.12);
-  --glass-border: hsla(142, 76%, 36%, 0.25);
+  --app-background: hsl(142 50% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(142 50% 10%) 0%, hsl(142 60% 15%) 100%);
+  --decorative-accent: 142 80% 36%;
+  --glass-bg: hsla(142, 80%, 36%, 0.16);
+  --glass-border: hsla(142, 80%, 36%, 0.32);
 }
 
-/* PURPLE THEME */
+/* PURPLE THEME - Bolder purples */
 html[data-theme="purple"]:not(.dark) {
-  --app-background: hsl(262 60% 97%);
-  --app-gradient: linear-gradient(180deg, hsl(262 60% 97%) 0%, hsl(262 70% 94%) 100%);
-  --decorative-accent: 262 83% 58%;
-  --glass-bg: hsla(262, 83%, 58%, 0.1);
-  --glass-border: hsla(262, 83%, 58%, 0.2);
+  --app-background: hsl(262 70% 93%);
+  --app-gradient: linear-gradient(180deg, hsl(262 70% 93%) 0%, hsl(262 80% 88%) 100%);
+  --decorative-accent: 262 85% 55%;
+  --glass-bg: hsla(262, 85%, 55%, 0.14);
+  --glass-border: hsla(262, 85%, 55%, 0.26);
 }
 
 html[data-theme="purple"].dark {
-  --app-background: hsl(262 40% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(262 40% 8%) 0%, hsl(262 50% 12%) 100%);
-  --decorative-accent: 262 83% 58%;
-  --glass-bg: hsla(262, 83%, 58%, 0.12);
-  --glass-border: hsla(262, 83%, 58%, 0.25);
+  --app-background: hsl(262 50% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(262 50% 10%) 0%, hsl(262 60% 15%) 100%);
+  --decorative-accent: 262 85% 58%;
+  --glass-bg: hsla(262, 85%, 58%, 0.16);
+  --glass-border: hsla(262, 85%, 58%, 0.32);
 }
 
-/* ROSE THEME */
+/* ROSE THEME - Bolder pinks */
 html[data-theme="rose"]:not(.dark) {
-  --app-background: hsl(330 60% 97%);
-  --app-gradient: linear-gradient(180deg, hsl(330 60% 97%) 0%, hsl(346 70% 94%) 100%);
-  --decorative-accent: 330 81% 60%;
-  --glass-bg: hsla(330, 81%, 60%, 0.1);
-  --glass-border: hsla(330, 81%, 60%, 0.2);
+  --app-background: hsl(330 70% 93%);
+  --app-gradient: linear-gradient(180deg, hsl(330 70% 93%) 0%, hsl(346 80% 88%) 100%);
+  --decorative-accent: 330 85% 56%;
+  --glass-bg: hsla(330, 85%, 56%, 0.14);
+  --glass-border: hsla(330, 85%, 56%, 0.26);
 }
 
 html[data-theme="rose"].dark {
-  --app-background: hsl(330 40% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(330 40% 8%) 0%, hsl(346 50% 12%) 100%);
-  --decorative-accent: 330 81% 60%;
-  --glass-bg: hsla(330, 81%, 60%, 0.12);
-  --glass-border: hsla(330, 81%, 60%, 0.25);
+  --app-background: hsl(330 50% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(330 50% 10%) 0%, hsl(346 60% 15%) 100%);
+  --decorative-accent: 330 85% 60%;
+  --glass-bg: hsla(330, 85%, 60%, 0.16);
+  --glass-border: hsla(330, 85%, 60%, 0.32);
 }
 
-/* EMERALD THEME */
+/* EMERALD THEME - Bolder teals */
 html[data-theme="emerald"]:not(.dark) {
-  --app-background: hsl(158 50% 96%);
-  --app-gradient: linear-gradient(180deg, hsl(158 50% 96%) 0%, hsl(160 60% 92%) 100%);
-  --decorative-accent: 158 64% 52%;
-  --glass-bg: hsla(158, 64%, 52%, 0.1);
-  --glass-border: hsla(158, 64%, 52%, 0.2);
+  --app-background: hsl(158 60% 92%);
+  --app-gradient: linear-gradient(180deg, hsl(158 60% 92%) 0%, hsl(160 70% 85%) 100%);
+  --decorative-accent: 158 70% 48%;
+  --glass-bg: hsla(158, 70%, 48%, 0.14);
+  --glass-border: hsla(158, 70%, 48%, 0.26);
 }
 
 html[data-theme="emerald"].dark {
-  --app-background: hsl(158 40% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(158 40% 8%) 0%, hsl(160 50% 12%) 100%);
-  --decorative-accent: 158 64% 52%;
-  --glass-bg: hsla(158, 64%, 52%, 0.12);
-  --glass-border: hsla(158, 64%, 52%, 0.25);
+  --app-background: hsl(158 50% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(158 50% 10%) 0%, hsl(160 60% 15%) 100%);
+  --decorative-accent: 158 70% 52%;
+  --glass-bg: hsla(158, 70%, 52%, 0.16);
+  --glass-border: hsla(158, 70%, 52%, 0.32);
 }
 
-/* AMBER THEME */
+/* AMBER THEME - Bolder golds */
 html[data-theme="amber"]:not(.dark) {
-  --app-background: hsl(38 80% 96%);
-  --app-gradient: linear-gradient(180deg, hsl(38 80% 96%) 0%, hsl(25 85% 92%) 100%);
-  --decorative-accent: 38 92% 50%;
-  --glass-bg: hsla(38, 92%, 50%, 0.1);
-  --glass-border: hsla(38, 92%, 50%, 0.2);
+  --app-background: hsl(38 90% 92%);
+  --app-gradient: linear-gradient(180deg, hsl(38 90% 92%) 0%, hsl(25 95% 85%) 100%);
+  --decorative-accent: 38 95% 46%;
+  --glass-bg: hsla(38, 95%, 46%, 0.14);
+  --glass-border: hsla(38, 95%, 46%, 0.26);
 }
 
 html[data-theme="amber"].dark {
-  --app-background: hsl(38 50% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(38 50% 8%) 0%, hsl(25 60% 12%) 100%);
-  --decorative-accent: 38 92% 50%;
-  --glass-bg: hsla(38, 92%, 50%, 0.12);
-  --glass-border: hsla(38, 92%, 50%, 0.25);
+  --app-background: hsl(38 60% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(38 60% 10%) 0%, hsl(25 70% 15%) 100%);
+  --decorative-accent: 38 95% 50%;
+  --glass-bg: hsla(38, 95%, 50%, 0.16);
+  --glass-border: hsla(38, 95%, 50%, 0.32);
 }
 
-/* INDIGO THEME */
+/* INDIGO THEME - Bolder indigos */
 html[data-theme="indigo"]:not(.dark) {
-  --app-background: hsl(231 50% 97%);
-  --app-gradient: linear-gradient(180deg, hsl(231 50% 97%) 0%, hsl(217 60% 94%) 100%);
-  --decorative-accent: 231 48% 48%;
-  --glass-bg: hsla(231, 48%, 48%, 0.1);
-  --glass-border: hsla(231, 48%, 48%, 0.2);
+  --app-background: hsl(231 60% 93%);
+  --app-gradient: linear-gradient(180deg, hsl(231 60% 93%) 0%, hsl(217 70% 88%) 100%);
+  --decorative-accent: 231 55% 44%;
+  --glass-bg: hsla(231, 55%, 44%, 0.14);
+  --glass-border: hsla(231, 55%, 44%, 0.26);
 }
 
 html[data-theme="indigo"].dark {
-  --app-background: hsl(231 40% 8%);
-  --app-gradient: linear-gradient(180deg, hsl(231 40% 8%) 0%, hsl(217 50% 12%) 100%);
-  --decorative-accent: 231 48% 48%;
-  --glass-bg: hsla(231, 48%, 48%, 0.12);
-  --glass-border: hsla(231, 48%, 48%, 0.25);
+  --app-background: hsl(231 50% 10%);
+  --app-gradient: linear-gradient(180deg, hsl(231 50% 10%) 0%, hsl(217 60% 15%) 100%);
+  --decorative-accent: 231 55% 48%;
+  --glass-bg: hsla(231, 55%, 48%, 0.16);
+  --glass-border: hsla(231, 55%, 48%, 0.32);
 }
 
 /* =============================================================================

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZenVibe - Daily Motivation & Mindfulness</title>
   <meta name="description" content="Your daily dose of inspiration. Beautiful motivational quotes and affirmations to enhance your mindfulness and productivity.">
   <meta name="author" content="ZenVibe">
+  <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#FFDAB9">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon.png">
@@ -28,6 +29,7 @@
       const parsedTheme = savedTheme ? JSON.parse(savedTheme) : 'light';
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(parsedTheme === 'dark' ? 'dark' : 'light');
+      document.documentElement.style.colorScheme = parsedTheme === 'dark' ? 'dark' : 'light';
       
       // Apply background theme (default = no attribute)
       const savedBg = localStorage.getItem('zenvibes-background');

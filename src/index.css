@@ -442,3 +442,17 @@ html[data-theme="indigo"].dark {
     animation: glow-pulse 2s ease-in-out infinite;
   }
 }
+/* ===== FIX MOBILE BROWSERS LIGHT MODE BUG ===== */
+
+/* Force correct text color in light mode */
+html:not(.dark) body {
+  color: hsl(var(--foreground));
+  background: var(--app-background);
+}
+
+/* Force correct text color in dark mode */
+html.dark body {
+  color: hsl(var(--foreground));
+  background: var(--app-background);
+}
+

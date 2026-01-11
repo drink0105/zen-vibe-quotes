@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh } from "react-icons/md";
-import { useState } from "react";
+import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
+import { useState, useEffect } from "react";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface SettingsPageProps {
   theme: 'light' | 'dark';
@@ -29,6 +30,40 @@ export default function SettingsPage({
   onTestFreemiumModeChange
 }: SettingsPageProps) {
   const [newVersion, setNewVersion] = useState(appVersion);
+  
+  // Voice & Audio settings
+  const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");
+  const [voiceSpeed, setVoiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
+  const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = speechSynthesis.getVoices();
+      setAvailableVoices(voices);
+      if (voices.length > 0 && !selectedVoice) {
+        const defaultVoice = voices.find(v => v.default) || voices[0];
+        setSelectedVoice(defaultVoice.name);
+      }
+    };
+
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }, [selectedVoice, setSelectedVoice]);
+
+  const testVoice = () => {
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(
+        "You are capable of achieving great things today!"
+      );
+      const voice = availableVoices.find(v => v.name === selectedVoice);
+      if (voice) utterance.voice = voice;
+      utterance.rate = voiceSpeed;
+      utterance.pitch = voicePitch;
+      speechSynthesis.speak(utterance);
+    }
+  };
 
   const backgroundGradients = [
     { name: "Default", class: "default-gradient", tier: "free", id: "default" },
@@ -82,6 +117,86 @@ export default function SettingsPage({
               Dark
             </Button>
           </div>
+        </div>
+
+        {/* Voice & Audio */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <MdRecordVoiceOver className="w-5 h-5" />
+            Voice & Audio
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Configure text-to-speech for playlists and alarms
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Voice {!isPremium && "(Premium only)"}
+              </label>
+              <select
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                disabled={!isPremium}
+                className="glass-button w-full p-3 rounded-lg border text-foreground disabled:opacity-50"
+              >
+                {availableVoices.map((voice) => (
+                  <option key={voice.name} value={voice.name}>
+                    {voice.name} ({voice.lang})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {isPremium && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Voice Speed: {voiceSpeed}x
+                  </label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={voiceSpeed}
+                    onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Voice Pitch: {voicePitch}x
+                  </label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={voicePitch}
+                    onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
+
+            <Button
+              onClick={testVoice}
+              variant="outline"
+              size="sm"
+            >
+              <MdVolumeUp className="w-4 h-4 mr-2" />
+              Test Voice
+            </Button>
+          </div>
+          
+          {!isPremium && (
+            <p className="text-sm text-muted-foreground mt-4">
+              Upgrade to Premium for custom voice selection and speed/pitch controls
+            </p>
+          )}
         </div>
 
         {/* Background Themes */}

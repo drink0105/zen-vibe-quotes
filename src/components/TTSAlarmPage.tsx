@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { 
   MdAlarm, 
   MdAdd, 
   MdDelete, 
-  MdVolumeUp, 
-  MdAccessTime,
-  MdRecordVoiceOver
+  MdAccessTime
 } from "react-icons/md";
 
 interface TTSAlarm {
@@ -27,27 +25,13 @@ interface TTSAlarmPageProps {
 
 export function TTSAlarmPage({ isPremium, onPremiumUpgrade }: TTSAlarmPageProps) {
   const [alarms, setAlarms] = useLocalStorage<TTSAlarm[]>("tts-alarms", []);
-  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState("");
   const [newAlarmTime, setNewAlarmTime] = useState("08:00");
   const [newAlarmLabel, setNewAlarmLabel] = useState("");
-  const [voiceSpeed, setVoiceSpeed] = useState(1);
-  const [voicePitch, setVoicePitch] = useState(1);
-
-  useEffect(() => {
-    const loadVoices = () => {
-      const voices = speechSynthesis.getVoices();
-      setAvailableVoices(voices);
-      if (voices.length > 0 && !selectedVoice) {
-        // Get device default voice (usually first in list)
-        const defaultVoice = voices.find(v => v.default) || voices[0];
-        setSelectedVoice(defaultVoice.name);
-      }
-    };
-
-    loadVoices();
-    speechSynthesis.onvoiceschanged = loadVoices;
-  }, [selectedVoice]);
+  
+  // Read voice settings from shared storage (set in Settings page)
+  const [selectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");
+  const [voiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
+  const [voicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
 
   const addAlarm = () => {
     if (!isPremium && alarms.length >= 1) {
@@ -79,18 +63,6 @@ export function TTSAlarmPage({ isPremium, onPremiumUpgrade }: TTSAlarmPageProps)
     setAlarms(alarms.filter(alarm => alarm.id !== id));
   };
 
-  const testVoice = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(
-        "You are capable of achieving great things today!"
-      );
-      const voice = availableVoices.find(v => v.name === selectedVoice);
-      if (voice) utterance.voice = voice;
-      utterance.rate = voiceSpeed;
-      utterance.pitch = voicePitch;
-      speechSynthesis.speak(utterance);
-    }
-  };
 
   return (
     <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
@@ -137,67 +109,9 @@ export function TTSAlarmPage({ isPremium, onPremiumUpgrade }: TTSAlarmPageProps)
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <MdRecordVoiceOver className="w-4 h-4" />
-                Voice {!isPremium && "(Premium only)"}
-              </label>
-              <select
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-                disabled={!isPremium}
-                className="glass-button w-full p-3 rounded-lg border text-foreground"
-              >
-                {availableVoices.map((voice) => (
-                  <option key={voice.name} value={voice.name}>
-                    {voice.name} ({voice.lang})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {isPremium && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Voice Speed: {voiceSpeed}x
-                  </label>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="2"
-                    step="0.1"
-                    value={voiceSpeed}
-                    onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Voice Pitch: {voicePitch}x
-                  </label>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="2"
-                    step="0.1"
-                    value={voicePitch}
-                    onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-              </>
-            )}
-
-            <Button
-              onClick={testVoice}
-              variant="outline"
-              size="sm"
-            >
-              <MdVolumeUp className="w-4 h-4 mr-2" />
-              Test Voice
-            </Button>
+            <p className="text-xs text-muted-foreground mb-4">
+              Voice settings can be configured in Settings → Voice & Audio
+            </p>
 
             <Button onClick={addAlarm} variant="zen" className="w-full">
               <MdAdd className="w-4 h-4 mr-2" />

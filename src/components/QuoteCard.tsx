@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MdRefresh, MdFavorite, MdFavoriteBorder, MdShare } from "react-icons/md";
+import { MdRefresh, MdFavorite, MdFavoriteBorder, MdShare, MdVolumeUp, MdVolumeOff } from "react-icons/md";
+import { useSpeakQuote } from "@/hooks/useSpeakQuote";
 
 interface Quote {
   id: number;
@@ -40,6 +41,7 @@ const categoryGlows: Record<string, string> = {
 export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited, isPremium }: QuoteCardProps) {
   const [isFlipping, setIsFlipping] = useState(false);
   const [heartPulse, setHeartPulse] = useState(false);
+  const { speakQuote, isSpeaking } = useSpeakQuote(isPremium);
 
   const handleNewQuote = () => {
     setIsFlipping(true);
@@ -128,6 +130,20 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
             className="hover:scale-110 transition-all duration-300"
           >
             <MdShare className="w-6 h-6" />
+          </Button>
+
+          <Button
+            onClick={() => speakQuote(quote)}
+            variant="glass"
+            size="circle"
+            className={`hover:scale-110 transition-all duration-300 ${isSpeaking ? 'text-primary glow-pulse' : ''}`}
+            title={isSpeaking ? "Stop listening" : "Listen to quote"}
+          >
+            {isSpeaking ? (
+              <MdVolumeOff className="w-6 h-6" />
+            ) : (
+              <MdVolumeUp className="w-6 h-6" />
+            )}
           </Button>
         </div>
 

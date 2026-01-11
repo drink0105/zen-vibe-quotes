@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { MdSelfImprovement, MdWbSunny, MdNightlight, MdLocalFireDepartment, MdCheck } from "react-icons/md";
+import { useSpeakQuote } from "@/hooks/useSpeakQuote";
+import { MdSelfImprovement, MdWbSunny, MdNightlight, MdLocalFireDepartment, MdCheck, MdVolumeUp, MdVolumeOff } from "react-icons/md";
 
 interface Quote {
   id: number;
@@ -31,6 +32,8 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   const [reflection, setReflection] = useState("");
   const [showBreathing, setShowBreathing] = useState(false);
   const [breathPhase, setBreathPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
+  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
+  const { speakQuote, speakText, isSpeaking } = useSpeakQuote(isPremium);
 
   const today = new Date().toISOString().split("T")[0];
   const currentHour = new Date().getHours();
@@ -123,6 +126,8 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
 
     setLastCheckInDate(today);
     setReflection("");
+    setShowCompletionMessage(true);
+    setTimeout(() => setShowCompletionMessage(false), 3000);
   };
 
   const reflectionPrompts = isPremium 
@@ -183,9 +188,42 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
             <blockquote className="text-lg font-quote leading-relaxed text-white mb-2">
               "{dailyQuote.text}"
             </blockquote>
-            {dailyQuote.author && (
-              <p className="text-sm text-white/80">— {dailyQuote.author}</p>
-            )}
+            <div className="flex items-center justify-between">
+              {dailyQuote.author && (
+                <p className="text-sm text-white/80">— {dailyQuote.author}</p>
+              )}
+              <Button
+                onClick={() => speakQuote(dailyQuote)}
+                variant="ghost"
+                size="sm"
+                className={`ml-auto text-white hover:bg-white/20 ${isSpeaking ? 'animate-pulse' : ''}`}
+                title={isSpeaking ? "Stop listening" : "Listen to quote"}
+              >
+                {isSpeaking ? (
+                  <MdVolumeOff className="w-5 h-5" />
+                ) : (
+                  <MdVolumeUp className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Completion Celebration */}
+        {showCompletionMessage && (
+          <div className="glass-card p-4 mb-6 text-center bg-green-500/20 border-green-500/30">
+            <p className="text-green-600 dark:text-green-400 font-medium">
+              ✨ Check-in complete! You're doing great. ✨
+            </p>
+            <Button
+              onClick={() => speakText("Check-in complete! You're doing great. Keep nurturing your inner peace.")}
+              variant="ghost"
+              size="sm"
+              className="mt-2"
+            >
+              <MdVolumeUp className="w-4 h-4 mr-2" />
+              Hear Confirmation
+            </Button>
           </div>
         )}
 

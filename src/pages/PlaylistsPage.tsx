@@ -41,7 +41,11 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [selectedQuotes, setSelectedQuotes] = useState<Quote[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [ttsAlarms] = useLocalStorage<any[]>("tts-alarms", []);
+  
+  // Read voice settings from shared storage
+  const [selectedVoiceName] = useLocalStorage<string>("zenvibe-selected-voice", "");
+  const [voiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
+  const [voicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
 
   const createPlaylist = () => {
     if (!newPlaylistName.trim()) return;
@@ -114,18 +118,6 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
 
     setIsSpeaking(true);
     let index = 0;
-
-    // Get voice settings from alarms if premium user
-    let selectedVoiceName = '';
-    let voiceSpeed = 1;
-    let voicePitch = 1;
-
-    if (isPremium && ttsAlarms.length > 0) {
-      const firstAlarm = ttsAlarms[0];
-      selectedVoiceName = firstAlarm.voice || '';
-      voiceSpeed = firstAlarm.speed || 1;
-      voicePitch = firstAlarm.pitch || 1;
-    }
 
     const speakQuote = () => {
       if (index >= playlist.quotes.length) {

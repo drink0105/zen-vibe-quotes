@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { 
@@ -8,7 +8,8 @@ import {
   MdPlayArrow, 
   MdArrowForward,
   MdClose,
-  MdVolumeUp
+  MdVolumeUp,
+  MdVolumeOff
 } from "react-icons/md";
 
 interface Quote {
@@ -46,6 +47,15 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
   const [selectedVoiceName] = useLocalStorage<string>("zenvibe-selected-voice", "");
   const [voiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
   const [voicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
+
+  // Stop speaking on navigation/unmount
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const createPlaylist = () => {
     if (!newPlaylistName.trim()) return;
@@ -254,7 +264,11 @@ export default function PlaylistsPage({ allQuotes, isPremium, onPremiumUpgrade }
                       title={isSpeaking ? "Stop speaking" : "Play verbally"}
                       className={isSpeaking ? "animate-pulse" : ""}
                     >
-                      <MdVolumeUp className="w-4 h-4" />
+                      {isSpeaking ? (
+                        <MdVolumeOff className="w-4 h-4" />
+                      ) : (
+                        <MdVolumeUp className="w-4 h-4" />
+                      )}
                     </Button>
                     <Button
                       onClick={() => deletePlaylist(playlist.id)}

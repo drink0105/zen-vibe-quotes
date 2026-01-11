@@ -46,10 +46,10 @@ export function Navigation({ isPremium }: NavigationProps) {
                     : 'text-muted-foreground hover:text-foreground'
                   }
                 `}
-                style={{ fontSize: "7px", maxWidth: "16.666%", minWidth: 0 }}
+                style={{ fontSize: "9px", maxWidth: "16.666%", minWidth: 0 }}
               >
                 <Icon style={{ height: "14px", width: "14px", flexShrink: 0 }} />
-                <span className="font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-[7px] w-full text-center block">{item.label}</span>
+                <span className="font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-[9px] w-full text-center block">{item.label}</span>
               </Button>
             );
           })}

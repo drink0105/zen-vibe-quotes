@@ -6,7 +6,7 @@ import {
   MdPlaylistAdd, 
   MdSettings,
   MdTimer,
-  MdNotifications
+  MdSelfImprovement
 } from "react-icons/md";
 
 interface NavigationProps {
@@ -21,7 +21,7 @@ export function Navigation({ isPremium }: NavigationProps) {
     { id: "/favorites", label: "Favorites", icon: MdFavorite },
     { id: "/playlists", label: "Playlists", icon: MdPlaylistAdd },
     { id: "/timer", label: "Timer", icon: MdTimer },
-    { id: "/alarms", label: "Alarms", icon: MdNotifications },
+    { id: "/checkin", label: "Check-In", icon: MdSelfImprovement },
     { id: "/settings", label: "Settings", icon: MdSettings },
   ];
 

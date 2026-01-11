@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import FavoritesPage from "./pages/FavoritesPage";
 import PlaylistsPage from "./pages/PlaylistsPage";
 import TimerPage from "./pages/TimerPage";
-import AlarmsPage from "./pages/AlarmsPage";
+import CheckInPage from "./pages/CheckInPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
@@ -211,8 +211,9 @@ const App = () => {
                   isPremium={effectiveIsPremium}
                 />
               } />
-              <Route path="/alarms" element={
-                <AlarmsPage 
+              <Route path="/checkin" element={
+                <CheckInPage 
+                  allQuotes={allQuotes}
                   isPremium={effectiveIsPremium}
                   onPremiumUpgrade={handlePremiumUpgrade}
                 />

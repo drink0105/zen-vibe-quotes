@@ -92,22 +92,34 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   const [dailyQuote] = useState(() => getRandomQuote());
 
   const completeCheckIn = (type: "morning" | "evening") => {
+    const reflectionText = reflection.trim();
     const existingCheckIn = checkIns.find(c => c.date === today);
     
+    let updatedCheckIns: CheckInData[];
+    
     if (existingCheckIn) {
-      setCheckIns(checkIns.map(c => 
+      // Append to existing reflection, don't overwrite
+      const existingReflection = existingCheckIn.reflection || "";
+      const newReflection = reflectionText 
+        ? (existingReflection ? `${existingReflection}\n\n[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}` : `[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}`)
+        : existingReflection;
+      
+      updatedCheckIns = checkIns.map(c => 
         c.date === today 
-          ? { ...c, [type]: true, reflection: reflection || c.reflection }
+          ? { ...c, [type]: true, reflection: newReflection }
           : c
-      ));
+      );
     } else {
-      setCheckIns([...checkIns, {
+      updatedCheckIns = [...checkIns, {
         date: today,
         morning: type === "morning",
         evening: type === "evening",
-        reflection: reflection
-      }]);
+        reflection: reflectionText ? `[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}` : ""
+      }];
     }
+    
+    // Save to localStorage immediately
+    setCheckIns(updatedCheckIns);
 
     // Update streak
     const lastDate = new Date(lastCheckInDate);
@@ -384,6 +396,53 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
             >
               Upgrade for $2.99
             </Button>
+          </div>
+        )}
+
+        {/* Recent Check-Ins History */}
+        {checkIns.length > 0 && (
+          <div className="glass-card p-6 mt-6">
+            <h3 className="text-lg font-semibold mb-4">Your Reflections</h3>
+            <div className="space-y-4 max-h-64 overflow-y-auto">
+              {[...checkIns]
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .slice(0, 7)
+                .map((entry) => (
+                  <div key={entry.date} className="border-b border-border/50 pb-3 last:border-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium">
+                        {new Date(entry.date).toLocaleDateString('en-US', { 
+                          weekday: 'short', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}
+                      </span>
+                      <div className="flex gap-1 ml-auto">
+                        {entry.morning && (
+                          <span className="text-xs bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                            Morning
+                          </span>
+                        )}
+                        {entry.evening && (
+                          <span className="text-xs bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full">
+                            Evening
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {entry.reflection && (
+                      <p className="text-sm text-muted-foreground whitespace-pre-line">
+                        {entry.reflection}
+                      </p>
+                    )}
+                    {!entry.reflection && (
+                      <p className="text-sm text-muted-foreground/50 italic">
+                        No reflection written
+                      </p>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
         )}
       </div>

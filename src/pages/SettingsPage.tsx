@@ -3,6 +3,14 @@ import { Input } from "@/components/ui/input";
 import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { CheckInHistory } from "@/components/CheckInHistory";
+
+interface CheckInData {
+  date: string;
+  morning: boolean;
+  evening: boolean;
+  reflection: string;
+}
 
 interface SettingsPageProps {
   theme: 'light' | 'dark';
@@ -36,6 +44,10 @@ export default function SettingsPage({
   const [voiceSpeed, setVoiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
   const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  
+  // Check-In History data
+  const [checkIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
+  const [streak] = useLocalStorage<number>("zenvibe-streak", 0);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -309,7 +321,7 @@ export default function SettingsPage({
         </div>
 
         {/* App Info */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">About ZenVibe</h3>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>Version: 1.0.0</p>
@@ -321,6 +333,9 @@ export default function SettingsPage({
             </p>
           </div>
         </div>
+
+        {/* Check-In History */}
+        <CheckInHistory checkIns={checkIns} streak={streak} compact />
       </div>
     </div>
   );

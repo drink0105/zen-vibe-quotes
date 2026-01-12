@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useSpeakQuote } from "@/hooks/useSpeakQuote";
+import { CheckInHistory } from "@/components/CheckInHistory";
 import { MdSelfImprovement, MdWbSunny, MdNightlight, MdLocalFireDepartment, MdCheck, MdVolumeUp, MdVolumeOff } from "react-icons/md";
 
 interface Quote {
@@ -399,52 +400,10 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
           </div>
         )}
 
-        {/* Recent Check-Ins History */}
-        {checkIns.length > 0 && (
-          <div className="glass-card p-6 mt-6">
-            <h3 className="text-lg font-semibold mb-4">Your Reflections</h3>
-            <div className="space-y-4 max-h-64 overflow-y-auto">
-              {[...checkIns]
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .slice(0, 7)
-                .map((entry) => (
-                  <div key={entry.date} className="border-b border-border/50 pb-3 last:border-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium">
-                        {new Date(entry.date).toLocaleDateString('en-US', { 
-                          weekday: 'short', 
-                          month: 'short', 
-                          day: 'numeric' 
-                        })}
-                      </span>
-                      <div className="flex gap-1 ml-auto">
-                        {entry.morning && (
-                          <span className="text-xs bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full">
-                            Morning
-                          </span>
-                        )}
-                        {entry.evening && (
-                          <span className="text-xs bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full">
-                            Evening
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {entry.reflection && (
-                      <p className="text-sm text-muted-foreground whitespace-pre-line">
-                        {entry.reflection}
-                      </p>
-                    )}
-                    {!entry.reflection && (
-                      <p className="text-sm text-muted-foreground/50 italic">
-                        No reflection written
-                      </p>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
+        {/* Check-In History */}
+        <div className="mt-6">
+          <CheckInHistory checkIns={checkIns} streak={streak} />
+        </div>
       </div>
     </div>
   );

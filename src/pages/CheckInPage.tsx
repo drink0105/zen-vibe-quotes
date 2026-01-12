@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useSpeakQuote } from "@/hooks/useSpeakQuote";
 import { CheckInHistory } from "@/components/CheckInHistory";
+import { CheckInStats } from "@/components/CheckInStats";
 import { MdSelfImprovement, MdWbSunny, MdNightlight, MdLocalFireDepartment, MdCheck, MdVolumeUp, MdVolumeOff } from "react-icons/md";
 
 interface Quote {
@@ -179,21 +180,8 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
           </p>
         </div>
 
-        {/* Streak Display */}
-        <div className="glass-card p-4 mb-6 text-center">
-          <div className="flex items-center justify-center gap-2 text-2xl font-bold">
-            <MdLocalFireDepartment className={`w-8 h-8 ${streak > 0 ? 'text-orange-500' : 'text-muted-foreground'}`} />
-            <span>{streak} Day Streak</span>
-          </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            {streak === 0 
-              ? "Start your mindfulness journey today"
-              : streak === 1 
-                ? "Great start! Keep it going"
-                : `${streak} consecutive days of presence`
-            }
-          </p>
-        </div>
+        {/* Visual Stats Summary */}
+        <CheckInStats checkIns={checkIns} streak={streak} isPremium={isPremium} />
 
         {/* Daily Quote */}
         {dailyQuote && (

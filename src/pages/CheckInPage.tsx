@@ -185,18 +185,18 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
         {/* Daily Quote */}
         {dailyQuote && (
           <div className="glass-card p-6 mb-6 gradient-mindfulness">
-            <blockquote className="text-lg font-quote leading-relaxed text-white mb-2">
+            <blockquote className="text-lg font-quote leading-relaxed text-black mb-2">
               "{dailyQuote.text}"
             </blockquote>
             <div className="flex items-center justify-between">
               {dailyQuote.author && (
-                <p className="text-sm text-white/80">— {dailyQuote.author}</p>
+                <p className="text-sm text-black/70">— {dailyQuote.author}</p>
               )}
               <Button
                 onClick={() => speakQuote(dailyQuote)}
                 variant="ghost"
                 size="sm"
-                className={`ml-auto text-white hover:bg-white/20 ${isSpeaking ? 'animate-pulse' : ''}`}
+                className={`ml-auto text-black hover:bg-black/10 ${isSpeaking ? 'animate-pulse' : ''}`}
                 title={isSpeaking ? "Stop listening" : "Listen to quote"}
               >
                 {isSpeaking ? (

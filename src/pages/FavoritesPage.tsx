@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { MdFavorite, MdDelete, MdShare } from "react-icons/md";
+import { MdFavorite, MdDelete, MdShare, MdVolumeUp, MdStop } from "react-icons/md";
+import { useSpeakQuote } from "@/hooks/useSpeakQuote";
+import { useState } from "react";
 
 interface Quote {
   id: number;
@@ -26,6 +28,35 @@ const categoryGradients = {
 };
 
 export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, isPremium }: FavoritesPageProps) {
+  const { speakQuote, stopSpeaking, isSpeaking } = useSpeakQuote(isPremium);
+  const [speakingQuoteId, setSpeakingQuoteId] = useState<number | null>(null);
+
+  const handleListen = (quote: Quote) => {
+    if (isSpeaking && speakingQuoteId === quote.id) {
+      stopSpeaking();
+      setSpeakingQuoteId(null);
+    } else {
+      // Stop any current playback first
+      stopSpeaking();
+      setSpeakingQuoteId(quote.id);
+      speakQuote(quote);
+    }
+  };
+
+  // Reset speaking state when speech ends
+  const handleSpeakQuote = (quote: Quote) => {
+    handleListen(quote);
+    // Listen for speech end to reset state
+    if ('speechSynthesis' in window) {
+      const checkEnd = setInterval(() => {
+        if (!speechSynthesis.speaking) {
+          setSpeakingQuoteId(null);
+          clearInterval(checkEnd);
+        }
+      }, 100);
+    }
+  };
+
   if (favorites.length === 0) {
     return (
       <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
@@ -85,7 +116,25 @@ export default function FavoritesPage({ favorites, onRemoveFavorite, onShare, is
                 <p className="text-sm text-black/80 mb-4">— {quote.author}</p>
               )}
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  onClick={() => handleSpeakQuote(quote)}
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/20 border-black/20 text-black hover:bg-white/30"
+                >
+                  {isSpeaking && speakingQuoteId === quote.id ? (
+                    <>
+                      <MdStop className="w-4 h-4 mr-2" />
+                      Stop
+                    </>
+                  ) : (
+                    <>
+                      <MdVolumeUp className="w-4 h-4 mr-2" />
+                      Listen
+                    </>
+                  )}
+                </Button>
                 <Button
                   onClick={() => onShare(quote)}
                   variant="outline"

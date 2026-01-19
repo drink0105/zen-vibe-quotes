@@ -244,32 +244,6 @@ export default function SettingsPage({
           )}
         </div>
 
-        {/* Version Management */}
-        <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">App Version</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Update version number for Play Console submissions
-          </p>
-          <div className="flex gap-3">
-            <Input
-              value={newVersion}
-              onChange={(e) => setNewVersion(e.target.value)}
-              placeholder="1.0.0"
-              className="flex-1"
-            />
-            <Button 
-              onClick={handleVersionUpdate}
-              variant="zen"
-              className="px-4"
-            >
-              <MdRefresh className="w-4 h-4 mr-2" />
-              Update
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Current version: {appVersion} • Use semantic versioning (major.minor.patch)
-          </p>
-        </div>
 
         {/* Test Freemium Mode */}
         <div className="glass-card p-6 mb-6">

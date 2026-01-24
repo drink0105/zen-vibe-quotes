@@ -77,7 +77,7 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
         {/* Category tag with gradient */}
         <div className={`
           inline-block px-4 py-2 rounded-full text-sm font-semibold mb-6
-          ${gradientClass} shadow-lg
+          ${gradientClass} shadow-lg dark:text-black
         `}>
           {quote.category}
         </div>

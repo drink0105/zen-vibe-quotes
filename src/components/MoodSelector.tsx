@@ -44,8 +44,8 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
               size="sm"
               className={`
                 flex flex-col items-center gap-2 h-auto py-4 px-3 tilt-3d
-                ${isSelected ? 'bg-[#E3F2FD] text-black' : 'text-foreground'}
-                transition-all duration-300 hover:scale-105
+                ${isSelected ? 'bg-[#E3F2FD] text-black dark:text-white' : 'text-foreground'}
+                transition-all duration-300 hover:scale-105 dark:hover:text-white dark:active:text-white
               `}
             >
               <Icon className="w-6 h-6" />

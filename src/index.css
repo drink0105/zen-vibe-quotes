@@ -326,6 +326,10 @@ html[data-theme="indigo"].dark {
     background: var(--app-background);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
+     
+    /* 🔒 Samsung Internet forced-dark-mode kill switch */
+    forced-color-adjust: none;
+    -webkit-forced-color-adjust: none;
   }
   
   /* Apply gradient overlay if theme defines one */

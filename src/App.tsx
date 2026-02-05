@@ -97,8 +97,17 @@ const App = () => {
     // 1. Apply color mode (controls ALL semantic tokens)
     root.classList.remove("dark", "light");
     root.classList.add(theme);
+    
+    // 2. Update color-scheme for browser dark mode detection
+    root.style.colorScheme = theme;
+    
+    // 3. Update the meta tag to match - prevents Samsung/Opera forced dark mode
+    const metaColorScheme = document.getElementById('color-scheme-meta');
+    if (metaColorScheme) {
+      metaColorScheme.setAttribute('content', theme);
+    }
 
-    // 2. Apply background theme (ONLY decorative - never touches semantic tokens)
+    // 4. Apply background theme (ONLY decorative - never touches semantic tokens)
     // "default" = no data-theme attribute = pure defaults
     if (backgroundTheme === "default") {
       root.removeAttribute("data-theme");

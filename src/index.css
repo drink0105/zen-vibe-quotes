@@ -16,6 +16,9 @@
      LIGHT MODE - Default semantic tokens
      ========================================================================= */
   :root {
+    /* Tell browsers this page handles light mode - prevents forced dark mode */
+    color-scheme: light;
+    
     /* Core semantic colors - Light mode defaults */
     --background: 0 0% 100%;           /* Pure white */
     --foreground: 0 0% 0%;             /* Pure black text */
@@ -96,6 +99,9 @@
      DARK MODE - Overrides ALL semantic tokens
      ========================================================================= */
   .dark {
+    /* Tell browsers this page handles dark mode */
+    color-scheme: dark;
+    
     --background: 222 47% 6%;          /* Very dark blue-gray */
     --foreground: 0 0% 98%;            /* Near white text */
     
@@ -324,6 +330,7 @@ html[data-theme="indigo"].dark {
   body {
     @apply text-foreground;
     background: var(--app-background);
+    background-color: #ffffff; /* Explicit fallback for light mode - Samsung fix */
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
      
@@ -452,11 +459,13 @@ html[data-theme="indigo"].dark {
 html:not(.dark) body {
   color: hsl(var(--foreground));
   background: var(--app-background);
+  background-color: #ffffff; /* Explicit fallback */
 }
 
 /* Force correct text color in dark mode */
 html.dark body {
   color: hsl(var(--foreground));
   background: var(--app-background);
+  background-color: hsl(222, 47%, 6%); /* Explicit dark fallback */
 }
 

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
+import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
 
 interface CheckInData {
   date: string;
@@ -43,7 +43,7 @@ export default function SettingsPage({
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");
   const [voiceSpeed, setVoiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
   const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
-  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
   
   // Check-In History data
   const [checkIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
@@ -51,16 +51,28 @@ export default function SettingsPage({
 
   useEffect(() => {
     const loadVoices = () => {
-      const voices = speechSynthesis.getVoices();
-      setAvailableVoices(voices);
+      const voices = getEnglishVoices();
+      setEnglishVoices(voices);
+      
+      // Set default English voice if none selected
       if (voices.length > 0 && !selectedVoice) {
-        const defaultVoice = voices.find(v => v.default) || voices[0];
-        setSelectedVoice(defaultVoice.name);
+        const defaultVoice = getDefaultEnglishVoice();
+        if (defaultVoice) {
+          setSelectedVoice(defaultVoice.name);
+        }
       }
     };
 
     loadVoices();
-    speechSynthesis.onvoiceschanged = loadVoices;
+    if ('speechSynthesis' in window) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    
+    return () => {
+      if ('speechSynthesis' in window) {
+        speechSynthesis.onvoiceschanged = null;
+      }
+    };
   }, [selectedVoice, setSelectedVoice]);
 
   const testVoice = () => {
@@ -69,13 +81,53 @@ export default function SettingsPage({
       const utterance = new SpeechSynthesisUtterance(
         "You are capable of achieving great things today!"
       );
-      const voice = availableVoices.find(v => v.name === selectedVoice);
-      if (voice) utterance.voice = voice;
-      utterance.rate = voiceSpeed;
-      utterance.pitch = voicePitch;
+      
+      // Get voice to test
+      let voice: SpeechSynthesisVoice | null = null;
+      if (isPremium && selectedVoice) {
+        voice = englishVoices.find(v => v.name === selectedVoice) || null;
+      }
+      if (!voice) {
+        voice = getDefaultEnglishVoice();
+      }
+      
+      // Always set voice and language explicitly
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = 'en-US';
+      }
+      
+      // Apply speed/pitch for premium
+      if (isPremium) {
+        utterance.rate = voiceSpeed;
+        utterance.pitch = voicePitch;
+      }
+      
       speechSynthesis.speak(utterance);
     }
   };
+
+  // Get display name for voice (show accent info)
+  const getVoiceDisplayName = (voice: SpeechSynthesisVoice) => {
+    const langMap: Record<string, string> = {
+      'en-US': 'US',
+      'en-GB': 'UK',
+      'en-AU': 'AU',
+      'en-IN': 'IN',
+      'en-ZA': 'ZA',
+      'en-IE': 'IE',
+      'en-NZ': 'NZ',
+    };
+    const accent = langMap[voice.lang] || voice.lang.replace('en-', '');
+    return `${voice.name} (${accent})`;
+  };
+
+  // Get the current active voice for display
+  const activeVoiceName = isPremium && selectedVoice 
+    ? selectedVoice 
+    : (getDefaultEnglishVoice()?.name || 'Default English');
 
   const backgroundGradients = [
     { name: "Default", class: "default-gradient", tier: "free", id: "default" },
@@ -144,20 +196,25 @@ export default function SettingsPage({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                Voice {!isPremium && "(Premium only)"}
+                Voice {!isPremium && "(Default English)"}
               </label>
-              <select
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-                disabled={!isPremium}
-                className="glass-button w-full p-3 rounded-lg border text-foreground disabled:opacity-50"
-              >
-                {availableVoices.map((voice) => (
-                  <option key={voice.name} value={voice.name}>
-                    {voice.name} ({voice.lang})
-                  </option>
-                ))}
-              </select>
+              {isPremium ? (
+                <select
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                  className="glass-button w-full p-3 rounded-lg border text-foreground"
+                >
+                  {englishVoices.map((voice) => (
+                    <option key={voice.name} value={voice.name}>
+                      {getVoiceDisplayName(voice)}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="glass-button w-full p-3 rounded-lg border text-muted-foreground">
+                  {activeVoiceName}
+                </div>
+              )}
             </div>
 
             {isPremium && (
@@ -206,7 +263,7 @@ export default function SettingsPage({
           
           {!isPremium && (
             <p className="text-sm text-muted-foreground mt-4">
-              Upgrade to Premium for custom voice selection and speed/pitch controls
+              Upgrade to Premium for multiple English voice options (US/UK accents) and speed/pitch controls
             </p>
           )}
         </div>

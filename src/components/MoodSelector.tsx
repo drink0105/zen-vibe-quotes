@@ -44,7 +44,7 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
               size="sm"
               className={`
                 flex flex-col items-center gap-2 h-auto py-4 px-3 tilt-3d
-                ${isSelected ? 'bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary-foreground' : 'text-foreground'}
+                ${isSelected ? 'bg-primary/20 text-primary dark:bg-primary/30 dark:text-white' : 'text-foreground'}
                 transition-all duration-300 hover:scale-105 dark:hover:text-white dark:active:text-white
               `}
             >

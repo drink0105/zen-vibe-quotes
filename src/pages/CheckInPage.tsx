@@ -164,9 +164,15 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
     "What are you ready to release?"
   ];
 
-  const currentPrompt = isEvening && isPremium 
-    ? eveningPrompts[Math.floor(Math.random() * eveningPrompts.length)]
-    : reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)];
+  const [currentPrompt] = useState(() => 
+    isEvening && isPremium 
+      ? eveningPrompts[Math.floor(Math.random() * eveningPrompts.length)]
+      : reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)]
+  );
+
+  const [eveningPrompt] = useState(() => 
+    eveningPrompts[Math.floor(Math.random() * eveningPrompts.length)]
+  );
 
   return (
     <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
@@ -291,7 +297,7 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2 text-muted-foreground">
-                      {eveningPrompts[Math.floor(Math.random() * eveningPrompts.length)]}
+                      {eveningPrompt}
                     </label>
                     <textarea
                       value={reflection}

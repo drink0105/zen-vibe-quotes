@@ -44,6 +44,24 @@ export type Database = {
         }
         Relationships: []
       }
+      users: {
+        Row: {
+          created_at: string | null
+          id: string
+          premium: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          premium?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          premium?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

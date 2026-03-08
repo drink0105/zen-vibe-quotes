@@ -36,6 +36,7 @@ const App = () => {
   const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
   const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Check for premium purchase on app start
   useEffect(() => {

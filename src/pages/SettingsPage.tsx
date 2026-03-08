@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";

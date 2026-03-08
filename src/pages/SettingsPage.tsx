@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
@@ -43,11 +43,14 @@ export default function SettingsPage({
   const [searchParams, setSearchParams] = useSearchParams();
   const [newVersion, setNewVersion] = useState(appVersion);
 
-  // Handle Stripe payment return
+  // Handle Stripe payment return (run once)
+  const paymentHandled = useRef(false);
   useEffect(() => {
+    if (paymentHandled.current) return;
     const payment = searchParams.get('payment');
     const sessionId = searchParams.get('session_id');
     if (payment === 'success' && sessionId) {
+      paymentHandled.current = true;
       const confirmPayment = async () => {
         const userId = getUserId();
         const { data, error } = await supabase.functions.invoke('confirm-premium', {
@@ -59,13 +62,14 @@ export default function SettingsPage({
           console.error('Premium confirmation failed:', error || data?.error);
         }
         // Clean up URL params
-        searchParams.delete('payment');
-        searchParams.delete('session_id');
-        setSearchParams(searchParams, { replace: true });
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('payment');
+        newParams.delete('session_id');
+        setSearchParams(newParams, { replace: true });
       };
       confirmPayment();
     }
-  }, [searchParams]);
+  }, []);
   
   // Voice & Audio settings
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");

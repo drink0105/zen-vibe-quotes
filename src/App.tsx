@@ -35,12 +35,7 @@ const App = () => {
   const [isPremium, setIsPremium] = useLocalStorage<boolean>("zenvibes-premium", false);
   const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
   const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
-  const [testFreemiumMode, setTestFreemiumMode] = useState(false);
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Effective premium status (considers test mode)
-  const effectiveIsPremium = isPremium && !testFreemiumMode;
 
   // Check for premium purchase on app start
   useEffect(() => {

@@ -334,26 +334,6 @@ export default function SettingsPage({
         </div>
 
 
-        {/* Test Freemium Mode */}
-        <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Developer Testing</h3>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Test Freemium Mode</p>
-              <p className="text-sm text-muted-foreground">Temporarily disable premium features for testing</p>
-              <p className="text-xs text-muted-foreground mt-1">Resets on app restart</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={testFreemiumMode}
-                onChange={(e) => onTestFreemiumModeChange(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
-        </div>
 
         {/* Premium Status */}
         <div className="glass-card p-6 mb-6">

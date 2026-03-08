@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { getUserId } from "@/lib/user";
 
 interface CheckInData {
   date: string;
@@ -37,7 +40,32 @@ export default function SettingsPage({
   testFreemiumMode,
   onTestFreemiumModeChange
 }: SettingsPageProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [newVersion, setNewVersion] = useState(appVersion);
+
+  // Handle Stripe payment return
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    const sessionId = searchParams.get('session_id');
+    if (payment === 'success' && sessionId) {
+      const confirmPayment = async () => {
+        const userId = getUserId();
+        const { data, error } = await supabase.functions.invoke('confirm-premium', {
+          body: { session_id: sessionId, user_id: userId },
+        });
+        if (!error && data?.success) {
+          onPremiumChange(true);
+        } else {
+          console.error('Premium confirmation failed:', error || data?.error);
+        }
+        // Clean up URL params
+        searchParams.delete('payment');
+        searchParams.delete('session_id');
+        setSearchParams(searchParams, { replace: true });
+      };
+      confirmPayment();
+    }
+  }, [searchParams]);
   
   // Voice & Audio settings
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");

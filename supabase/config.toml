@@ -1,1 +1,7 @@
 project_id = "ghmjtkzrjddfdjautcfb"
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.confirm-premium]
+verify_jwt = false

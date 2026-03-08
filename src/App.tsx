@@ -154,20 +154,30 @@ const App = () => {
   };
 
   const handlePremiumUpgrade = async () => {
-    const { purchasePremium, mockPurchasePremium, isGooglePlayAvailable } = await import('@/services/googlePlayBilling');
-    
-    if (!isGooglePlayAvailable()) {
-      // For web testing: use mock purchase
-      mockPurchasePremium();
-      window.location.reload();
-    } else {
-      // Real Google Play purchase
+    const { isGooglePlayInstall } = await import('@/lib/installerDetect');
+
+    if (isGooglePlayInstall()) {
+      // Google Play Billing path
+      const { purchasePremium } = await import('@/services/googlePlayBilling');
       const result = await purchasePremium();
       if (result) {
-        window.location.reload();
+        setIsPremium(true);
       } else {
         alert('Purchase failed. Please try again.');
       }
+    } else {
+      // Stripe checkout path
+      const { getUserId } = await import('@/lib/user');
+      const userId = getUserId();
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { user_id: userId },
+      });
+      if (error || !data?.url) {
+        alert('Could not start checkout. Please try again.');
+        return;
+      }
+      window.open(data.url, '_blank');
     }
   };
 

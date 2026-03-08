@@ -24,8 +24,6 @@ interface SettingsPageProps {
   onBackgroundThemeChange: (theme: string) => void;
   appVersion: string;
   onVersionChange: (version: string) => void;
-  testFreemiumMode: boolean;
-  onTestFreemiumModeChange: (enabled: boolean) => void;
 }
 
 export default function SettingsPage({ 
@@ -37,8 +35,6 @@ export default function SettingsPage({
   onBackgroundThemeChange,
   appVersion,
   onVersionChange,
-  testFreemiumMode,
-  onTestFreemiumModeChange
 }: SettingsPageProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [newVersion, setNewVersion] = useState(appVersion);

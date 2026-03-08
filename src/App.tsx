@@ -202,7 +202,7 @@ const App = () => {
                   favorites={favorites}
                   onFavorite={handleFavorite}
                   onShare={handleShare}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                 />
               } />
               <Route path="/favorites" element={
@@ -210,26 +210,26 @@ const App = () => {
                   favorites={favorites}
                   onRemoveFavorite={handleRemoveFavorite}
                   onShare={handleShare}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                 />
               } />
               <Route path="/playlists" element={
                 <PlaylistsPage 
                   allQuotes={allQuotes}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                   onPremiumUpgrade={handlePremiumUpgrade}
                 />
               } />
               <Route path="/timer" element={
                 <TimerPage 
                   allQuotes={allQuotes}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                 />
               } />
               <Route path="/checkin" element={
                 <CheckInPage 
                   allQuotes={allQuotes}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                   onPremiumUpgrade={handlePremiumUpgrade}
                 />
               } />
@@ -237,21 +237,19 @@ const App = () => {
                 <SettingsPage 
                   theme={theme}
                   onThemeChange={setTheme}
-                  isPremium={effectiveIsPremium}
+                  isPremium={isPremium}
                   onPremiumChange={setIsPremium}
                   backgroundTheme={backgroundTheme}
                   onBackgroundThemeChange={setBackgroundTheme}
                   appVersion={appVersion}
                   onVersionChange={setAppVersion}
-                  testFreemiumMode={testFreemiumMode}
-                  onTestFreemiumModeChange={setTestFreemiumMode}
                 />
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Navigation isPremium={effectiveIsPremium} />
+            <Navigation isPremium={isPremium} />
           </div>
-          <AdMobBanner isPremium={effectiveIsPremium} />
+          <AdMobBanner isPremium={isPremium} />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

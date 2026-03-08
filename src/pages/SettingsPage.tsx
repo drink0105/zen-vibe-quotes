@@ -334,7 +334,7 @@ export default function SettingsPage({
         {/* Premium Status */}
         <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Premium Status</h3>
-          {isPremium && !testFreemiumMode ? (
+          {isPremium ? (
             <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg text-white">
               <MdStars className="w-6 h-6" />
               <div>

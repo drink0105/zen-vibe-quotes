@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { getUserId } from "@/lib/user";
 
 interface CheckInData {
   date: string;

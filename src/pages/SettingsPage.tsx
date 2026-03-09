@@ -319,7 +319,7 @@ export default function SettingsPage({
                 Unlock unlimited favorites, playlists, alarms, and premium content
               </p>
               <Button 
-                onClick={() => onPremiumChange(true)} 
+                onClick={onPremiumUpgrade} 
                 variant="zen"
                 className="px-8"
               >

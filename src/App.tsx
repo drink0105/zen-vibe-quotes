@@ -238,7 +238,7 @@ const App = () => {
                   theme={theme}
                   onThemeChange={setTheme}
                   isPremium={isPremium}
-                  onPremiumChange={setIsPremium}
+                  onPremiumUpgrade={handlePremiumUpgrade}
                   backgroundTheme={backgroundTheme}
                   onBackgroundThemeChange={setBackgroundTheme}
                   appVersion={appVersion}

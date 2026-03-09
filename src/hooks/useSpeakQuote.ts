@@ -6,23 +6,34 @@ interface Quote {
   author?: string;
 }
 
-// Get filtered English voices
-export function getEnglishVoices(): SpeechSynthesisVoice[] {
+type LangCode = "en" | "zh";
+
+// Get voices filtered by language
+export function getVoicesForLanguage(lang: LangCode): SpeechSynthesisVoice[] {
   if (!('speechSynthesis' in window)) return [];
-  return speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+  const prefix = lang === 'zh' ? 'zh' : 'en';
+  return speechSynthesis.getVoices().filter(v => v.lang.startsWith(prefix));
 }
 
-// Get default English voice
-export function getDefaultEnglishVoice(): SpeechSynthesisVoice | null {
-  const englishVoices = getEnglishVoices();
-  if (englishVoices.length === 0) return null;
-  
-  // Prefer default English voice, then US English, then first English
+// Get default voice for a language
+export function getDefaultVoiceForLanguage(lang: LangCode): SpeechSynthesisVoice | null {
+  const voices = getVoicesForLanguage(lang);
+  if (voices.length === 0) return null;
+  const defaultLang = lang === 'zh' ? 'zh-CN' : 'en-US';
   return (
-    englishVoices.find(v => v.default) ||
-    englishVoices.find(v => v.lang === 'en-US') ||
-    englishVoices[0]
+    voices.find(v => v.default) ||
+    voices.find(v => v.lang === defaultLang) ||
+    voices[0]
   );
+}
+
+// Legacy exports for backward compat
+export function getEnglishVoices(): SpeechSynthesisVoice[] {
+  return getVoicesForLanguage('en');
+}
+
+export function getDefaultEnglishVoice(): SpeechSynthesisVoice | null {
+  return getDefaultVoiceForLanguage('en');
 }
 
 export function useSpeakQuote(isPremium: boolean) {
@@ -30,48 +41,36 @@ export function useSpeakQuote(isPremium: boolean) {
   const [selectedVoiceName] = useLocalStorage<string>("zenvibe-selected-voice", "");
   const [voiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
   const [voicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
-  const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [currentLang] = useLocalStorage<LangCode>("zenvibe-language", "en");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
-  // Load English voices
   useEffect(() => {
     const loadVoices = () => {
-      setEnglishVoices(getEnglishVoices());
+      setVoices(getVoicesForLanguage(currentLang));
     };
-    
     loadVoices();
     if ('speechSynthesis' in window) {
       speechSynthesis.onvoiceschanged = loadVoices;
     }
-    
     return () => {
-      if ('speechSynthesis' in window) {
-        speechSynthesis.onvoiceschanged = null;
-      }
+      if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = null;
     };
-  }, []);
+  }, [currentLang]);
 
-  // Stop speaking on unmount (navigation)
   useEffect(() => {
     return () => {
-      if ('speechSynthesis' in window) {
-        speechSynthesis.cancel();
-      }
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
     };
   }, []);
 
-  // Get the voice to use based on premium status
   const activeVoice = useMemo(() => {
-    if (englishVoices.length === 0) return null;
-    
+    if (voices.length === 0) return null;
     if (isPremium && selectedVoiceName) {
-      // Premium users can use their selected voice
-      const selected = englishVoices.find(v => v.name === selectedVoiceName);
+      const selected = voices.find(v => v.name === selectedVoiceName);
       if (selected) return selected;
     }
-    
-    // Free users or fallback: use default English voice
-    return getDefaultEnglishVoice();
-  }, [isPremium, selectedVoiceName, englishVoices]);
+    return getDefaultVoiceForLanguage(currentLang);
+  }, [isPremium, selectedVoiceName, voices, currentLang]);
 
   const stopSpeaking = useCallback(() => {
     if ('speechSynthesis' in window) {
@@ -82,70 +81,41 @@ export function useSpeakQuote(isPremium: boolean) {
 
   const speakQuote = useCallback((quote: Quote) => {
     if (!('speechSynthesis' in window)) return;
-
-    // If already speaking, stop
-    if (isSpeaking) {
-      stopSpeaking();
-      return;
-    }
+    if (isSpeaking) { stopSpeaking(); return; }
 
     const text = quote.author 
       ? `${quote.text}. By ${quote.author}` 
       : quote.text;
 
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Always set English language
-    utterance.lang = activeVoice?.lang || 'en-US';
-    
-    // Always set voice explicitly
-    if (activeVoice) {
-      utterance.voice = activeVoice;
-    }
-
-    // Apply speed/pitch for premium users
+    utterance.lang = activeVoice?.lang || (currentLang === 'zh' ? 'zh-CN' : 'en-US');
+    if (activeVoice) utterance.voice = activeVoice;
     if (isPremium) {
       utterance.rate = voiceSpeed;
       utterance.pitch = voicePitch;
     }
-
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
-
     speechSynthesis.speak(utterance);
-  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking]);
+  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
 
   const speakText = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) return;
-
-    if (isSpeaking) {
-      stopSpeaking();
-      return;
-    }
+    if (isSpeaking) { stopSpeaking(); return; }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Always set English language
-    utterance.lang = activeVoice?.lang || 'en-US';
-    
-    // Always set voice explicitly
-    if (activeVoice) {
-      utterance.voice = activeVoice;
-    }
-
-    // Apply speed/pitch for premium users
+    utterance.lang = activeVoice?.lang || (currentLang === 'zh' ? 'zh-CN' : 'en-US');
+    if (activeVoice) utterance.voice = activeVoice;
     if (isPremium) {
       utterance.rate = voiceSpeed;
       utterance.pitch = voicePitch;
     }
-
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
-
     speechSynthesis.speak(utterance);
-  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking]);
+  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
 
-  return { speakQuote, speakText, stopSpeaking, isSpeaking, englishVoices, activeVoice };
+  return { speakQuote, speakText, stopSpeaking, isSpeaking, englishVoices: voices, activeVoice };
 }

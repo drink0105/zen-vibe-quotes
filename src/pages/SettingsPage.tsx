@@ -49,11 +49,6 @@ export default function SettingsPage({
     const loadVoices = () => {
       const voices = getVoicesForLanguage(language);
       setAvailableVoices(voices);
-      
-      if (voices.length > 0 && !selectedVoice) {
-        const defaultVoice = getDefaultVoiceForLanguage(language);
-        if (defaultVoice) setSelectedVoice(defaultVoice.name);
-      }
     };
 
     loadVoices();
@@ -64,7 +59,15 @@ export default function SettingsPage({
     return () => {
       if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = null;
     };
-  }, [selectedVoice, setSelectedVoice, language]);
+  }, [language]);
+
+  // Set default voice when voices load and none selected
+  useEffect(() => {
+    if (availableVoices.length > 0 && !selectedVoice) {
+      const defaultVoice = getDefaultVoiceForLanguage(language);
+      if (defaultVoice) setSelectedVoice(defaultVoice.name);
+    }
+  }, [availableVoices.length, language]);
 
   const testVoice = () => {
     if ('speechSynthesis' in window) {

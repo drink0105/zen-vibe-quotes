@@ -149,20 +149,38 @@ const App = () => {
     setFavorites(favorites.filter(fav => fav.id !== id));
   };
 
+  // Poll backend to check if premium was granted
+  const pollPremiumStatus = async (maxAttempts = 20, intervalMs = 3000) => {
+    const { isPremium: checkPremium } = await import('@/lib/premium');
+    for (let i = 0; i < maxAttempts; i++) {
+      const premium = await checkPremium();
+      if (premium) {
+        setIsPremium(true);
+        return true;
+      }
+      await new Promise(resolve => setTimeout(resolve, intervalMs));
+    }
+    return false;
+  };
+
   const handlePremiumUpgrade = async () => {
     const { isGooglePlayInstall } = await import('@/lib/installerDetect');
 
     if (isGooglePlayInstall()) {
-      // Google Play Billing path
+      // Google Play Billing path – purchase then poll backend for confirmation
       const { purchasePremium } = await import('@/services/googlePlayBilling');
       const result = await purchasePremium();
       if (result) {
-        setIsPremium(true);
+        // Do NOT set premium locally; poll until backend confirms
+        const confirmed = await pollPremiumStatus();
+        if (!confirmed) {
+          alert('Purchase is being verified. Please check back shortly.');
+        }
       } else {
         alert('Purchase failed. Please try again.');
       }
     } else {
-      // Stripe checkout path
+      // Stripe checkout path for non-Google-Play installs
       const { getUserId } = await import('@/lib/user');
       const userId = getUserId();
       const { supabase } = await import('@/integrations/supabase/client');
@@ -173,7 +191,12 @@ const App = () => {
         alert('Could not start checkout. Please try again.');
         return;
       }
+      // Open Stripe Checkout; poll for backend confirmation when user returns
       window.open(data.url, '_blank');
+      const confirmed = await pollPremiumStatus();
+      if (confirmed) {
+        alert('Premium unlocked! Enjoy all features.');
+      }
     }
   };
 

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { 
   MdHome, 
   MdFavorite, 
@@ -16,13 +17,15 @@ interface NavigationProps {
 export function Navigation({ isPremium }: NavigationProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
   const navItems = [
-    { id: "/", label: "Home", icon: MdHome },
-    { id: "/favorites", label: "Favorites", icon: MdFavorite },
-    { id: "/playlists", label: "Playlists", icon: MdPlaylistAdd },
-    { id: "/timer", label: "Timer", icon: MdTimer },
-    { id: "/checkin", label: "Check-In", icon: MdSelfImprovement },
-    { id: "/settings", label: "Settings", icon: MdSettings },
+    { id: "/", label: t("nav.home"), icon: MdHome },
+    { id: "/favorites", label: t("nav.favorites"), icon: MdFavorite },
+    { id: "/playlists", label: t("nav.playlists"), icon: MdPlaylistAdd },
+    { id: "/timer", label: t("nav.timer"), icon: MdTimer },
+    { id: "/checkin", label: t("nav.checkin"), icon: MdSelfImprovement },
+    { id: "/settings", label: t("nav.settings"), icon: MdSettings },
   ];
 
   return (

@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
+import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRecordVoiceOver, MdVolumeUp, MdLanguage } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
-import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
+import { getEnglishVoices, getDefaultEnglishVoice, getVoicesForLanguage, getDefaultVoiceForLanguage } from "@/hooks/useSpeakQuote";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface CheckInData {
   date: string;
@@ -33,30 +34,21 @@ export default function SettingsPage({
   appVersion,
   onVersionChange,
 }: SettingsPageProps) {
+  const { language, setLanguage, t } = useLanguage();
   const [newVersion, setNewVersion] = useState(appVersion);
   
-  // Voice & Audio settings
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");
   const [voiceSpeed, setVoiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
   const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
-  const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   
-  // Check-In History data
   const [checkIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
   const [streak] = useLocalStorage<number>("zenvibe-streak", 0);
 
   useEffect(() => {
     const loadVoices = () => {
-      const voices = getEnglishVoices();
-      setEnglishVoices(voices);
-      
-      // Set default English voice if none selected
-      if (voices.length > 0 && !selectedVoice) {
-        const defaultVoice = getDefaultEnglishVoice();
-        if (defaultVoice) {
-          setSelectedVoice(defaultVoice.name);
-        }
-      }
+      const voices = getVoicesForLanguage(language);
+      setAvailableVoices(voices);
     };
 
     loadVoices();
@@ -65,37 +57,38 @@ export default function SettingsPage({
     }
     
     return () => {
-      if ('speechSynthesis' in window) {
-        speechSynthesis.onvoiceschanged = null;
-      }
+      if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = null;
     };
-  }, [selectedVoice, setSelectedVoice]);
+  }, [language]);
+
+  // Set default voice when voices load and none selected
+  useEffect(() => {
+    if (availableVoices.length > 0 && !selectedVoice) {
+      const defaultVoice = getDefaultVoiceForLanguage(language);
+      if (defaultVoice) setSelectedVoice(defaultVoice.name);
+    }
+  }, [availableVoices.length, language]);
 
   const testVoice = () => {
     if ('speechSynthesis' in window) {
       speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(
-        "You are capable of achieving great things today!"
-      );
+      const utterance = new SpeechSynthesisUtterance(t("settings.testVoiceText"));
       
-      // Get voice to test
       let voice: SpeechSynthesisVoice | null = null;
       if (isPremium && selectedVoice) {
-        voice = englishVoices.find(v => v.name === selectedVoice) || null;
+        voice = availableVoices.find(v => v.name === selectedVoice) || null;
       }
       if (!voice) {
-        voice = getDefaultEnglishVoice();
+        voice = getDefaultVoiceForLanguage(language);
       }
       
-      // Always set voice and language explicitly
       if (voice) {
         utterance.voice = voice;
         utterance.lang = voice.lang;
       } else {
-        utterance.lang = 'en-US';
+        utterance.lang = language === 'zh' ? 'zh-CN' : 'en-US';
       }
       
-      // Apply speed/pitch for premium
       if (isPremium) {
         utterance.rate = voiceSpeed;
         utterance.pitch = voicePitch;
@@ -105,43 +98,39 @@ export default function SettingsPage({
     }
   };
 
-  // Get display name for voice (show accent info)
   const getVoiceDisplayName = (voice: SpeechSynthesisVoice) => {
+    if (language === 'zh') {
+      const langMap: Record<string, string> = {
+        'zh-CN': '普通话',
+        'zh-TW': '台湾',
+        'zh-HK': '香港',
+      };
+      const accent = langMap[voice.lang] || voice.lang;
+      return `${voice.name} (${accent})`;
+    }
     const langMap: Record<string, string> = {
-      'en-US': 'US',
-      'en-GB': 'UK',
-      'en-AU': 'AU',
-      'en-IN': 'IN',
-      'en-ZA': 'ZA',
-      'en-IE': 'IE',
-      'en-NZ': 'NZ',
+      'en-US': 'US', 'en-GB': 'UK', 'en-AU': 'AU', 'en-IN': 'IN',
+      'en-ZA': 'ZA', 'en-IE': 'IE', 'en-NZ': 'NZ',
     };
     const accent = langMap[voice.lang] || voice.lang.replace('en-', '');
     return `${voice.name} (${accent})`;
   };
 
-  // Get the current active voice for display
   const activeVoiceName = isPremium && selectedVoice 
     ? selectedVoice 
-    : (getDefaultEnglishVoice()?.name || 'Default English');
+    : (getDefaultVoiceForLanguage(language)?.name || t("settings.voiceDefault"));
 
   const backgroundGradients = [
-    { name: "Default", class: "default-gradient", tier: "free", id: "default" },
-    { name: "Ocean", class: "from-[#3B82F6] to-[#14B8A6]", tier: "free", id: "ocean" },
-    { name: "Sunset", class: "from-[#F97316] to-[#8B5CF6]", tier: "free", id: "sunset" },
-    { name: "Forest", class: "from-green-400 to-green-600", tier: "premium", id: "forest" },
-    { name: "Purple", class: "from-purple-400 to-purple-600", tier: "premium", id: "purple" },
-    { name: "Rose", class: "from-pink-400 to-rose-500", tier: "premium", id: "rose" },
-    { name: "Emerald", class: "from-emerald-400 to-emerald-600", tier: "premium", id: "emerald" },
-    { name: "Amber", class: "from-amber-400 to-orange-500", tier: "premium", id: "amber" },
-    { name: "Indigo", class: "from-indigo-400 to-blue-500", tier: "premium", id: "indigo" },
+    { name: t("bg.default"), class: "default-gradient", tier: "free", id: "default" },
+    { name: t("bg.ocean"), class: "from-[#3B82F6] to-[#14B8A6]", tier: "free", id: "ocean" },
+    { name: t("bg.sunset"), class: "from-[#F97316] to-[#8B5CF6]", tier: "free", id: "sunset" },
+    { name: t("bg.forest"), class: "from-green-400 to-green-600", tier: "premium", id: "forest" },
+    { name: t("bg.purple"), class: "from-purple-400 to-purple-600", tier: "premium", id: "purple" },
+    { name: t("bg.rose"), class: "from-pink-400 to-rose-500", tier: "premium", id: "rose" },
+    { name: t("bg.emerald"), class: "from-emerald-400 to-emerald-600", tier: "premium", id: "emerald" },
+    { name: t("bg.amber"), class: "from-amber-400 to-orange-500", tier: "premium", id: "amber" },
+    { name: t("bg.indigo"), class: "from-indigo-400 to-blue-500", tier: "premium", id: "indigo" },
   ];
-
-  const handleVersionUpdate = () => {
-    onVersionChange(newVersion);
-    // In a real app, this would update the manifest.json
-    console.log(`Version updated to ${newVersion}`);
-  };
 
   const availableGradients = isPremium ? backgroundGradients : backgroundGradients.filter(g => g.tier === "free");
 
@@ -150,15 +139,37 @@ export default function SettingsPage({
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdSettings className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
-          <h1 className="text-3xl font-bold mb-2">Settings</h1>
-          <p className="text-muted-foreground">
-            Customize your ZenVibe experience
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t("settings.title")}</h1>
+          <p className="text-muted-foreground">{t("settings.subtitle")}</p>
+        </div>
+
+        {/* Language Toggle */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <MdLanguage className="w-5 h-5" />
+            {t("settings.language")}
+          </h3>
+          <div className="flex gap-4">
+            <Button
+              onClick={() => setLanguage('en')}
+              variant={language === 'en' ? "zen" : "outline"}
+              className="flex-1"
+            >
+              English
+            </Button>
+            <Button
+              onClick={() => setLanguage('zh')}
+              variant={language === 'zh' ? "zen" : "outline"}
+              className="flex-1"
+            >
+              中文
+            </Button>
+          </div>
         </div>
 
         {/* Theme Toggle */}
         <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Theme</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("settings.theme")}</h3>
           <div className="flex gap-4">
             <Button
               onClick={() => onThemeChange('light')}
@@ -166,7 +177,7 @@ export default function SettingsPage({
               className="flex-1"
             >
               <MdLightMode className="w-4 h-4 mr-2" />
-              Light
+              {t("settings.light")}
             </Button>
             <Button
               onClick={() => onThemeChange('dark')}
@@ -174,7 +185,7 @@ export default function SettingsPage({
               className="flex-1"
             >
               <MdDarkMode className="w-4 h-4 mr-2" />
-              Dark
+              {t("settings.dark")}
             </Button>
           </div>
         </div>
@@ -183,16 +194,14 @@ export default function SettingsPage({
         <div className="glass-card p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <MdRecordVoiceOver className="w-5 h-5" />
-            Voice & Audio
+            {t("settings.voiceAudio")}
           </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Configure text-to-speech for playlists and alarms
-          </p>
+          <p className="text-sm text-muted-foreground mb-4">{t("settings.voiceAudioDesc")}</p>
           
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                Voice {!isPremium && "(Default English)"}
+                {t("settings.voice")} {!isPremium && `(${t("settings.voiceDefault")})`}
               </label>
               {isPremium ? (
                 <select
@@ -200,7 +209,7 @@ export default function SettingsPage({
                   onChange={(e) => setSelectedVoice(e.target.value)}
                   className="glass-button w-full p-3 rounded-lg border text-foreground"
                 >
-                  {englishVoices.map((voice) => (
+                  {availableVoices.map((voice) => (
                     <option key={voice.name} value={voice.name}>
                       {getVoiceDisplayName(voice)}
                     </option>
@@ -217,28 +226,21 @@ export default function SettingsPage({
               <>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Voice Speed: {voiceSpeed}x
+                    {t("settings.voiceSpeed")}: {voiceSpeed}x
                   </label>
                   <input
-                    type="range"
-                    min="0.5"
-                    max="2"
-                    step="0.1"
+                    type="range" min="0.5" max="2" step="0.1"
                     value={voiceSpeed}
                     onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
                     className="w-full"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Voice Pitch: {voicePitch}x
+                    {t("settings.voicePitch")}: {voicePitch}x
                   </label>
                   <input
-                    type="range"
-                    min="0.5"
-                    max="2"
-                    step="0.1"
+                    type="range" min="0.5" max="2" step="0.1"
                     value={voicePitch}
                     onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
                     className="w-full"
@@ -247,29 +249,21 @@ export default function SettingsPage({
               </>
             )}
 
-            <Button
-              onClick={testVoice}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={testVoice} variant="outline" size="sm">
               <MdVolumeUp className="w-4 h-4 mr-2" />
-              Test Voice
+              {t("settings.testVoice")}
             </Button>
           </div>
           
           {!isPremium && (
-            <p className="text-sm text-muted-foreground mt-4">
-              Upgrade to Premium for multiple English voice options (US/UK accents) and speed/pitch controls
-            </p>
+            <p className="text-sm text-muted-foreground mt-4">{t("settings.voiceUpgrade")}</p>
           )}
         </div>
 
         {/* Background Themes */}
         <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Background Themes</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Choose a background theme that applies across all screens
-          </p>
+          <h3 className="text-lg font-semibold mb-4">{t("settings.bgThemes")}</h3>
+          <p className="text-sm text-muted-foreground mb-4">{t("settings.bgThemesDesc")}</p>
           <div className="grid grid-cols-2 gap-3">
             {availableGradients.map((gradient) => (
               <div
@@ -284,44 +278,32 @@ export default function SettingsPage({
                 } ${gradient.id === "default" ? 'text-foreground' : 'text-white'}`}
               >
                 {gradient.name}
-                {gradient.tier === "premium" && (
-                  <MdStars className="w-4 h-4 ml-2" />
-                )}
+                {gradient.tier === "premium" && <MdStars className="w-4 h-4 ml-2" />}
               </div>
             ))}
           </div>
           {!isPremium && (
-            <p className="text-sm text-muted-foreground mt-4">
-              Upgrade to Premium to unlock 6 additional background themes
-            </p>
+            <p className="text-sm text-muted-foreground mt-4">{t("settings.bgUpgrade")}</p>
           )}
         </div>
 
-
-
         {/* Premium Status */}
         <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Premium Status</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("settings.premiumStatus")}</h3>
           {isPremium ? (
             <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg text-white">
               <MdStars className="w-6 h-6" />
               <div>
-                <p className="font-semibold">Premium Active</p>
-                <p className="text-sm opacity-90">Enjoy all premium features!</p>
+                <p className="font-semibold">{t("settings.premiumActive")}</p>
+                <p className="text-sm opacity-90">{t("settings.premiumActiveDesc")}</p>
               </div>
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">
-                Unlock unlimited favorites, playlists, alarms, and premium content
-              </p>
-              <Button 
-                onClick={onPremiumUpgrade} 
-                variant="zen"
-                className="px-8"
-              >
+              <p className="text-muted-foreground mb-4">{t("settings.premiumUpgradeDesc")}</p>
+              <Button onClick={onPremiumUpgrade} variant="zen" className="px-8">
                 <MdStars className="w-4 h-4 mr-2" />
-                Upgrade to Premium - $2.99
+                {t("settings.upgradePremium")}
               </Button>
             </div>
           )}
@@ -329,19 +311,18 @@ export default function SettingsPage({
 
         {/* App Info */}
         <div className="glass-card p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">About ZenVibe</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("settings.about")}</h3>
           <div className="space-y-2 text-sm text-muted-foreground">
-            <p>Version: 1.0.0</p>
-            <p>500+ motivational quotes and affirmations</p>
-            <p>6 categories: Motivation, Mindfulness, Humor, Productivity, Creativity, Resilience</p>
-            <p>Fully offline experience</p>
+            <p>{t("settings.version")}</p>
+            <p>{t("settings.quotesCount")}</p>
+            <p>{t("settings.categories")}</p>
+            <p>{t("settings.offline")}</p>
             <p className="pt-2">
-              <a href="/privacy.html" className="text-primary hover:underline">Privacy Policy</a>
+              <a href="/privacy.html" className="text-primary hover:underline">{t("settings.privacy")}</a>
             </p>
           </div>
         </div>
 
-        {/* Check-In History */}
         <CheckInHistory checkIns={checkIns} streak={streak} compact />
       </div>
     </div>

@@ -30,42 +30,13 @@ export default function SettingsPage({
   theme, 
   onThemeChange, 
   isPremium, 
-  onPremiumChange,
+  onPremiumUpgrade,
   backgroundTheme,
   onBackgroundThemeChange,
   appVersion,
   onVersionChange,
 }: SettingsPageProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [newVersion, setNewVersion] = useState(appVersion);
-
-  // Handle Stripe payment return (run once)
-  const paymentHandled = useRef(false);
-  useEffect(() => {
-    if (paymentHandled.current) return;
-    const payment = searchParams.get('payment');
-    const sessionId = searchParams.get('session_id');
-    if (payment === 'success' && sessionId) {
-      paymentHandled.current = true;
-      const confirmPayment = async () => {
-        const userId = getUserId();
-        const { data, error } = await supabase.functions.invoke('confirm-premium', {
-          body: { session_id: sessionId, user_id: userId },
-        });
-        if (!error && data?.success) {
-          onPremiumChange(true);
-        } else {
-          console.error('Premium confirmation failed:', error || data?.error);
-        }
-        // Clean up URL params
-        const newParams = new URLSearchParams(searchParams);
-        newParams.delete('payment');
-        newParams.delete('session_id');
-        setSearchParams(newParams, { replace: true });
-      };
-      confirmPayment();
-    }
-  }, []);
   
   // Voice & Audio settings
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");

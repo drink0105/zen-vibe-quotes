@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index";
 import FavoritesPage from "./pages/FavoritesPage";
 import PlaylistsPage from "./pages/PlaylistsPage";
@@ -64,7 +65,6 @@ const App = () => {
         setAllQuotes(combined);
       } catch (error) {
         console.error('Failed to load quotes:', error);
-        // Fallback to empty array if loading fails
         setAllQuotes([]);
       } finally {
         setLoading(false);
@@ -75,27 +75,15 @@ const App = () => {
   }, []);
 
   // Apply color mode (.dark class) and background theme (data-theme attribute)
-  // These are SEPARATE concerns:
-  // - .dark/.light controls semantic tokens (text, card, border colors)
-  // - data-theme controls decorative elements (app background, gradients)
   useEffect(() => {
     const root = document.documentElement;
-
-    // 1. Apply color mode (controls ALL semantic tokens)
     root.classList.remove("dark", "light");
     root.classList.add(theme);
-    
-    // 2. Update color-scheme for browser dark mode detection
     root.style.colorScheme = theme;
-    
-    // 3. Update the meta tag to match - prevents Samsung/Opera forced dark mode
     const metaColorScheme = document.getElementById('color-scheme-meta');
     if (metaColorScheme) {
       metaColorScheme.setAttribute('content', theme);
     }
-
-    // 4. Apply background theme (ONLY decorative - never touches semantic tokens)
-    // "default" = no data-theme attribute = pure defaults
     if (backgroundTheme === "default") {
       root.removeAttribute("data-theme");
     } else {
@@ -103,7 +91,6 @@ const App = () => {
     }
   }, [theme, backgroundTheme]);
 
-  // Shared handlers
   const handleShare = async (quote: Quote) => {
     const shareText = quote.author 
       ? `"${quote.text}" - ${quote.author}`
@@ -111,10 +98,7 @@ const App = () => {
     
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: "ZenVibe Quote",
-          text: shareText,
-        });
+        await navigator.share({ title: "ZenVibe Quote", text: shareText });
       } catch (error) {
         console.log("Error sharing:", error);
       }
@@ -140,7 +124,6 @@ const App = () => {
     setFavorites(favorites.filter(fav => fav.id !== id));
   };
 
-  // Poll backend to check if premium was granted
   const pollPremiumStatus = async (maxAttempts = 20, intervalMs = 3000) => {
     const { isPremium: checkPremium } = await import('@/lib/premium');
     for (let i = 0; i < maxAttempts; i++) {
@@ -158,11 +141,9 @@ const App = () => {
     const { isGooglePlayInstall } = await import('@/lib/installerDetect');
 
     if (isGooglePlayInstall()) {
-      // Google Play Billing path – purchase then poll backend for confirmation
       const { purchasePremium } = await import('@/services/googlePlayBilling');
       const result = await purchasePremium();
       if (result) {
-        // Do NOT set premium locally; poll until backend confirms
         const confirmed = await pollPremiumStatus();
         if (!confirmed) {
           alert('Purchase is being verified. Please check back shortly.');
@@ -171,7 +152,6 @@ const App = () => {
         alert('Purchase failed. Please try again.');
       }
     } else {
-      // Stripe checkout path for non-Google-Play installs
       const { getUserId } = await import('@/lib/user');
       const userId = getUserId();
       const { supabase } = await import('@/integrations/supabase/client');
@@ -182,7 +162,6 @@ const App = () => {
         alert('Could not start checkout. Please try again.');
         return;
       }
-      // Open Stripe Checkout; poll for backend confirmation when user returns
       window.open(data.url, '_blank');
       const confirmed = await pollPremiumStatus();
       if (confirmed) {
@@ -205,66 +184,68 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter basename="">
-          <div className="min-h-screen bg-background">
-            <Routes>
-              <Route path="/" element={
-                <Index 
-                  allQuotes={allQuotes}
-                  favorites={favorites}
-                  onFavorite={handleFavorite}
-                  onShare={handleShare}
-                  isPremium={isPremium}
-                />
-              } />
-              <Route path="/favorites" element={
-                <FavoritesPage 
-                  favorites={favorites}
-                  onRemoveFavorite={handleRemoveFavorite}
-                  onShare={handleShare}
-                  isPremium={isPremium}
-                />
-              } />
-              <Route path="/playlists" element={
-                <PlaylistsPage 
-                  allQuotes={allQuotes}
-                  isPremium={isPremium}
-                  onPremiumUpgrade={handlePremiumUpgrade}
-                />
-              } />
-              <Route path="/timer" element={
-                <TimerPage 
-                  allQuotes={allQuotes}
-                  isPremium={isPremium}
-                />
-              } />
-              <Route path="/checkin" element={
-                <CheckInPage 
-                  allQuotes={allQuotes}
-                  isPremium={isPremium}
-                  onPremiumUpgrade={handlePremiumUpgrade}
-                />
-              } />
-              <Route path="/settings" element={
-                <SettingsPage 
-                  theme={theme}
-                  onThemeChange={setTheme}
-                  isPremium={isPremium}
-                  onPremiumUpgrade={handlePremiumUpgrade}
-                  backgroundTheme={backgroundTheme}
-                  onBackgroundThemeChange={setBackgroundTheme}
-                  appVersion={appVersion}
-                  onVersionChange={setAppVersion}
-                />
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Navigation isPremium={isPremium} />
-          </div>
-          <AdMobBanner isPremium={isPremium} />
-        </BrowserRouter>
+        <LanguageProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter basename="">
+            <div className="min-h-screen bg-background">
+              <Routes>
+                <Route path="/" element={
+                  <Index 
+                    allQuotes={allQuotes}
+                    favorites={favorites}
+                    onFavorite={handleFavorite}
+                    onShare={handleShare}
+                    isPremium={isPremium}
+                  />
+                } />
+                <Route path="/favorites" element={
+                  <FavoritesPage 
+                    favorites={favorites}
+                    onRemoveFavorite={handleRemoveFavorite}
+                    onShare={handleShare}
+                    isPremium={isPremium}
+                  />
+                } />
+                <Route path="/playlists" element={
+                  <PlaylistsPage 
+                    allQuotes={allQuotes}
+                    isPremium={isPremium}
+                    onPremiumUpgrade={handlePremiumUpgrade}
+                  />
+                } />
+                <Route path="/timer" element={
+                  <TimerPage 
+                    allQuotes={allQuotes}
+                    isPremium={isPremium}
+                  />
+                } />
+                <Route path="/checkin" element={
+                  <CheckInPage 
+                    allQuotes={allQuotes}
+                    isPremium={isPremium}
+                    onPremiumUpgrade={handlePremiumUpgrade}
+                  />
+                } />
+                <Route path="/settings" element={
+                  <SettingsPage 
+                    theme={theme}
+                    onThemeChange={setTheme}
+                    isPremium={isPremium}
+                    onPremiumUpgrade={handlePremiumUpgrade}
+                    backgroundTheme={backgroundTheme}
+                    onBackgroundThemeChange={setBackgroundTheme}
+                    appVersion={appVersion}
+                    onVersionChange={setAppVersion}
+                  />
+                } />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Navigation isPremium={isPremium} />
+            </div>
+            <AdMobBanner isPremium={isPremium} />
+          </BrowserRouter>
+        </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

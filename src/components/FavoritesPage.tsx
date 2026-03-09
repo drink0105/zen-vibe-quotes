@@ -1,5 +1,6 @@
 import { Trash2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Quote {
   id: number;
@@ -25,14 +26,16 @@ const categoryGradients = {
 };
 
 export function FavoritesPage({ favorites, onRemoveFavorite, onShare }: FavoritesPageProps) {
+  const { t } = useLanguage();
+
   if (favorites.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 pb-20">
         <div className="text-center">
           <div className="text-6xl mb-4">💝</div>
-          <h2 className="text-2xl font-semibold mb-2">No favorites yet</h2>
+          <h2 className="text-2xl font-semibold mb-2">{t("fav.empty")}</h2>
           <p className="text-muted-foreground">
-            Start saving quotes you love by tapping the heart icon
+            {t("fav.emptyDesc")}
           </p>
         </div>
       </div>
@@ -42,7 +45,7 @@ export function FavoritesPage({ favorites, onRemoveFavorite, onShare }: Favorite
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Your Favorites</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">{t("fav.title")}</h1>
         
         <div className="space-y-4">
           {favorites.map((quote) => {
@@ -50,16 +53,13 @@ export function FavoritesPage({ favorites, onRemoveFavorite, onShare }: Favorite
             
             return (
               <div key={quote.id} className="quote-card">
-                {/* Background gradient overlay */}
                 <div className={`absolute inset-0 ${gradientClass} opacity-10 rounded-2xl`} />
                 
                 <div className="relative">
-                  {/* Category tag */}
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium text-white ${gradientClass} mb-4`}>
-                    {quote.category}
+                    {t(`cat.${quote.category}`)}
                   </span>
                   
-                  {/* Quote text */}
                   <blockquote className="text-lg font-medium text-foreground leading-relaxed mb-2">
                     "{quote.text}"
                   </blockquote>
@@ -70,7 +70,6 @@ export function FavoritesPage({ favorites, onRemoveFavorite, onShare }: Favorite
                     </cite>
                   )}
                   
-                  {/* Action buttons */}
                   <div className="flex justify-end gap-2">
                     <Button
                       onClick={() => onShare(quote)}

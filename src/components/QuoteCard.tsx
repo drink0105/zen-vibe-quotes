@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MdRefresh, MdFavorite, MdFavoriteBorder, MdShare, MdVolumeUp, MdVolumeOff } from "react-icons/md";
 import { useSpeakQuote } from "@/hooks/useSpeakQuote";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Quote {
   id: number;
@@ -42,6 +43,7 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
   const [isFlipping, setIsFlipping] = useState(false);
   const [heartPulse, setHeartPulse] = useState(false);
   const { speakQuote, isSpeaking } = useSpeakQuote(isPremium);
+  const { t } = useLanguage();
 
   const handleNewQuote = () => {
     setIsFlipping(true);
@@ -67,34 +69,29 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
         ${isFlipping ? 'flip-exit-active' : 'flip-enter-active'}
         ${glowClass}
       `}>
-        {/* Premium indicator */}
         {quote.tier === "premium" && !isPremium && (
           <div className="absolute top-4 right-4 premium-glow px-2 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-            Premium
+            {t("quote.premium")}
           </div>
         )}
         
-        {/* Category tag with gradient */}
         <div className={`
           inline-block px-4 py-2 rounded-full text-sm font-semibold mb-6
           ${gradientClass} shadow-lg dark:text-black
         `}>
-          {quote.category}
+          {t(`cat.${quote.category}`)}
         </div>
 
-        {/* Quote text */}
         <blockquote className="text-xl md:text-2xl font-quote leading-relaxed text-foreground mb-6">
           "{quote.text}"
         </blockquote>
 
-        {/* Author */}
         {quote.author && (
           <p className="text-muted-foreground font-medium mb-8">
             — {quote.author}
           </p>
         )}
 
-        {/* Action buttons */}
         <div className="flex justify-center gap-4">
           <Button
             onClick={handleNewQuote}
@@ -137,7 +134,7 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
             variant="glass"
             size="circle"
             className={`hover:scale-110 transition-all duration-300 ${isSpeaking ? 'text-primary glow-pulse' : ''}`}
-            title={isSpeaking ? "Stop listening" : "Listen to quote"}
+            title={isSpeaking ? t("quote.stopListening") : t("quote.listen")}
           >
             {isSpeaking ? (
               <MdVolumeOff className="w-6 h-6" />
@@ -147,7 +144,6 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
           </Button>
         </div>
 
-        {/* Decorative background elements */}
         <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-10 blur-3xl bg-gradient-to-br from-primary to-purple-600 animate-pulse"></div>
         <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full opacity-10 blur-2xl bg-gradient-to-br from-blue-600 to-cyan-500 animate-pulse delay-1000"></div>
       </div>

@@ -4,6 +4,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useSpeakQuote } from "@/hooks/useSpeakQuote";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { CheckInStats } from "@/components/CheckInStats";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { MdSelfImprovement, MdWbSunny, MdNightlight, MdLocalFireDepartment, MdCheck, MdVolumeUp, MdVolumeOff } from "react-icons/md";
 
 interface Quote {
@@ -36,6 +37,7 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   const [breathPhase, setBreathPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const { speakQuote, speakText, isSpeaking } = useSpeakQuote(isPremium);
+  const { t } = useLanguage();
 
   const today = new Date().toISOString().split("T")[0];
   const currentHour = new Date().getHours();
@@ -46,38 +48,27 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   const canDoMorning = !todayCheckIn?.morning;
   const canDoEvening = isPremium && !todayCheckIn?.evening && isEvening;
 
-  // Calculate streak on mount
   useEffect(() => {
     if (!lastCheckInDate) return;
-    
     const lastDate = new Date(lastCheckInDate);
     const todayDate = new Date(today);
     const diffDays = Math.floor((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    // Reset streak if more than 1 day has passed
-    if (diffDays > 1) {
-      setStreak(0);
-    }
+    if (diffDays > 1) setStreak(0);
   }, [lastCheckInDate, today, setStreak]);
 
-  // Breathing animation
   useEffect(() => {
     if (!showBreathing) return;
-
     const phases = [
       { phase: "inhale" as const, duration: 4000 },
       { phase: "hold" as const, duration: 4000 },
       { phase: "exhale" as const, duration: 6000 },
     ];
-
     let phaseIndex = 0;
     setBreathPhase(phases[0].phase);
-
     const interval = setInterval(() => {
       phaseIndex = (phaseIndex + 1) % phases.length;
       setBreathPhase(phases[phaseIndex].phase);
     }, phases[phaseIndex].duration);
-
     return () => clearInterval(interval);
   }, [showBreathing]);
 
@@ -98,12 +89,12 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
     const existingCheckIn = checkIns.find(c => c.date === today);
     
     let updatedCheckIns: CheckInData[];
+    const typeLabel = type === "morning" ? t("history.morning") : t("history.evening");
     
     if (existingCheckIn) {
-      // Append to existing reflection, don't overwrite
       const existingReflection = existingCheckIn.reflection || "";
       const newReflection = reflectionText 
-        ? (existingReflection ? `${existingReflection}\n\n[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}` : `[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}`)
+        ? (existingReflection ? `${existingReflection}\n\n[${typeLabel}] ${reflectionText}` : `[${typeLabel}] ${reflectionText}`)
         : existingReflection;
       
       updatedCheckIns = checkIns.map(c => 
@@ -116,25 +107,21 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
         date: today,
         morning: type === "morning",
         evening: type === "evening",
-        reflection: reflectionText ? `[${type === "morning" ? "Morning" : "Evening"}] ${reflectionText}` : ""
+        reflection: reflectionText ? `[${typeLabel}] ${reflectionText}` : ""
       }];
     }
     
-    // Save to localStorage immediately
     setCheckIns(updatedCheckIns);
 
-    // Update streak
     const lastDate = new Date(lastCheckInDate);
     const todayDate = new Date(today);
     const diffDays = Math.floor((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
 
     if (lastCheckInDate === today) {
-      // Already checked in today, no streak change
+      // no streak change
     } else if (diffDays === 1 || !lastCheckInDate) {
-      // Consecutive day or first check-in
       setStreak(streak + 1);
     } else if (diffDays > 1) {
-      // Missed days, start new streak
       setStreak(1);
     }
 
@@ -145,24 +132,10 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   };
 
   const reflectionPrompts = isPremium 
-    ? [
-        "What intention will guide your day?",
-        "What are you grateful for in this moment?",
-        "How do you want to feel today?",
-        "What is one small act of kindness you can offer?",
-        "What would make today meaningful?"
-      ]
-    : [
-        "What's one thing you're looking forward to?"
-      ];
+    ? [t("prompt.morning1"), t("prompt.morning2"), t("prompt.morning3"), t("prompt.morning4"), t("prompt.morning5")]
+    : [t("prompt.morningFree")];
 
-  const eveningPrompts = [
-    "What went well today?",
-    "What did you learn about yourself?",
-    "How did you show up for yourself today?",
-    "What moment brought you joy?",
-    "What are you ready to release?"
-  ];
+  const eveningPrompts = [t("prompt.evening1"), t("prompt.evening2"), t("prompt.evening3"), t("prompt.evening4"), t("prompt.evening5")];
 
   const [currentPrompt] = useState(() => 
     isEvening && isPremium 
@@ -177,19 +150,14 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   return (
     <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <MdSelfImprovement className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
-          <h1 className="text-3xl font-bold mb-2">Daily Check-In</h1>
-          <p className="text-muted-foreground">
-            A gentle moment to center yourself
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t("checkin.title")}</h1>
+          <p className="text-muted-foreground">{t("checkin.subtitle")}</p>
         </div>
 
-        {/* Visual Stats Summary */}
         <CheckInStats checkIns={checkIns} streak={streak} isPremium={isPremium} />
 
-        {/* Daily Quote */}
         {dailyQuote && (
           <div className="glass-card p-6 mb-6 gradient-mindfulness">
             <blockquote className="text-lg font-quote leading-relaxed text-black mb-2">
@@ -204,46 +172,39 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
                 variant="ghost"
                 size="sm"
                 className={`ml-auto text-black hover:bg-black/10 ${isSpeaking ? 'animate-pulse' : ''}`}
-                title={isSpeaking ? "Stop listening" : "Listen to quote"}
+                title={isSpeaking ? t("quote.stopListening") : t("quote.listen")}
               >
-                {isSpeaking ? (
-                  <MdVolumeOff className="w-5 h-5" />
-                ) : (
-                  <MdVolumeUp className="w-5 h-5" />
-                )}
+                {isSpeaking ? <MdVolumeOff className="w-5 h-5" /> : <MdVolumeUp className="w-5 h-5" />}
               </Button>
             </div>
           </div>
         )}
 
-        {/* Completion Celebration */}
         {showCompletionMessage && (
           <div className="glass-card p-4 mb-6 text-center bg-green-500/20 border-green-500/30">
             <p className="text-green-600 dark:text-green-400 font-medium">
-              ✨ Check-in complete! You're doing great. ✨
+              {t("checkin.completionMsg")}
             </p>
             <Button
-              onClick={() => speakText("Check-in complete! You're doing great. Keep nurturing your inner peace.")}
+              onClick={() => speakText(t("checkin.completionSpeak"))}
               variant="ghost"
               size="sm"
               className="mt-2"
             >
               <MdVolumeUp className="w-4 h-4 mr-2" />
-              Hear Confirmation
+              {t("checkin.hearConfirmation")}
             </Button>
           </div>
         )}
 
-        {/* Check-In Sections */}
         <div className="space-y-4 mb-6">
-          {/* Morning Check-In */}
           <div className="glass-card p-6">
             <div className="flex items-center gap-3 mb-4">
               <MdWbSunny className="w-6 h-6 text-amber-500" />
-              <h3 className="text-lg font-semibold">Morning Check-In</h3>
+              <h3 className="text-lg font-semibold">{t("checkin.morningTitle")}</h3>
               {todayCheckIn?.morning && (
                 <span className="ml-auto flex items-center gap-1 text-green-500 text-sm">
-                  <MdCheck className="w-4 h-4" /> Complete
+                  <MdCheck className="w-4 h-4" /> {t("checkin.complete")}
                 </span>
               )}
             </div>
@@ -257,42 +218,33 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
                   <textarea
                     value={reflection}
                     onChange={(e) => setReflection(e.target.value)}
-                    placeholder="Take a moment to reflect..."
+                    placeholder={t("checkin.reflectPlaceholder")}
                     className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none"
                   />
                 </div>
-                <Button 
-                  onClick={() => completeCheckIn("morning")} 
-                  variant="zen" 
-                  className="w-full"
-                >
-                  Complete Morning Check-In
+                <Button onClick={() => completeCheckIn("morning")} variant="zen" className="w-full">
+                  {t("checkin.completeMorning")}
                 </Button>
               </div>
             ) : (
-              <p className="text-muted-foreground text-sm">
-                You've completed your morning check-in. Wonderful! 🌅
-              </p>
+              <p className="text-muted-foreground text-sm">{t("checkin.morningDone")}</p>
             )}
           </div>
 
-          {/* Evening Check-In (Premium) */}
           {isPremium ? (
             <div className="glass-card p-6">
               <div className="flex items-center gap-3 mb-4">
                 <MdNightlight className="w-6 h-6 text-indigo-500" />
-                <h3 className="text-lg font-semibold">Evening Check-In</h3>
+                <h3 className="text-lg font-semibold">{t("checkin.eveningTitle")}</h3>
                 {todayCheckIn?.evening && (
                   <span className="ml-auto flex items-center gap-1 text-green-500 text-sm">
-                    <MdCheck className="w-4 h-4" /> Complete
+                    <MdCheck className="w-4 h-4" /> {t("checkin.complete")}
                   </span>
                 )}
               </div>
               
               {!isEvening ? (
-                <p className="text-muted-foreground text-sm">
-                  Available after 5 PM. Take your time. ✨
-                </p>
+                <p className="text-muted-foreground text-sm">{t("checkin.eveningAvailableAfter")}</p>
               ) : canDoEvening ? (
                 <div className="space-y-4">
                   <div>
@@ -302,42 +254,33 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
                     <textarea
                       value={reflection}
                       onChange={(e) => setReflection(e.target.value)}
-                      placeholder="Reflect on your day..."
+                      placeholder={t("checkin.eveningReflectPlaceholder")}
                       className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none"
                     />
                   </div>
-                  <Button 
-                    onClick={() => completeCheckIn("evening")} 
-                    variant="zen" 
-                    className="w-full"
-                  >
-                    Complete Evening Check-In
+                  <Button onClick={() => completeCheckIn("evening")} variant="zen" className="w-full">
+                    {t("checkin.completeEvening")}
                   </Button>
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">
-                  You've completed your evening check-in. Rest well. 🌙
-                </p>
+                <p className="text-muted-foreground text-sm">{t("checkin.eveningDone")}</p>
               )}
             </div>
           ) : (
             <div className="glass-card p-6 opacity-60">
               <div className="flex items-center gap-3 mb-2">
                 <MdNightlight className="w-6 h-6 text-indigo-500" />
-                <h3 className="text-lg font-semibold">Evening Check-In</h3>
-                <span className="ml-auto text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">Premium</span>
+                <h3 className="text-lg font-semibold">{t("checkin.eveningTitle")}</h3>
+                <span className="ml-auto text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">{t("quote.premium")}</span>
               </div>
-              <p className="text-muted-foreground text-sm">
-                Unlock evening reflections with Premium
-              </p>
+              <p className="text-muted-foreground text-sm">{t("checkin.eveningPremium")}</p>
             </div>
           )}
         </div>
 
-        {/* Breathing Exercise (Premium) */}
         {isPremium && (
           <div className="glass-card p-6 mb-6">
-            <h3 className="text-lg font-semibold mb-4">Mindful Breathing</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("checkin.mindfulBreathing")}</h3>
             
             {showBreathing ? (
               <div className="text-center py-8">
@@ -348,53 +291,42 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
                     "scale-75"
                   }`}
                 >
-                  <span className="text-lg font-medium capitalize">{breathPhase}</span>
+                  <span className="text-lg font-medium">{t(`checkin.${breathPhase}`)}</span>
                 </div>
                 <p className="text-muted-foreground mt-4 text-sm">
-                  {breathPhase === "inhale" && "Breathe in slowly..."}
-                  {breathPhase === "hold" && "Hold gently..."}
-                  {breathPhase === "exhale" && "Release slowly..."}
+                  {breathPhase === "inhale" && t("checkin.breatheIn")}
+                  {breathPhase === "hold" && t("checkin.holdGently")}
+                  {breathPhase === "exhale" && t("checkin.releaseSlowly")}
                 </p>
-                <Button 
-                  onClick={() => setShowBreathing(false)} 
-                  variant="outline" 
-                  size="sm"
-                  className="mt-6"
-                >
-                  End Session
+                <Button onClick={() => setShowBreathing(false)} variant="outline" size="sm" className="mt-6">
+                  {t("checkin.endSession")}
                 </Button>
               </div>
             ) : (
               <div className="text-center">
-                <p className="text-muted-foreground text-sm mb-4">
-                  A simple 4-4-6 breathing pattern to calm your mind
-                </p>
+                <p className="text-muted-foreground text-sm mb-4">{t("checkin.breathingDesc")}</p>
                 <Button onClick={() => setShowBreathing(true)} variant="outline">
-                  Start Breathing Exercise
+                  {t("checkin.startBreathing")}
                 </Button>
               </div>
             )}
           </div>
         )}
 
-        {/* Premium Upsell */}
         {!isPremium && (
           <div className="glass-card p-6 text-center gradient-creativity">
-            <h3 className="text-lg font-semibold mb-2 text-white">Deepen Your Practice</h3>
-            <p className="text-white/90 text-sm mb-4">
-              Unlock evening check-ins, breathing exercises, and expanded reflection prompts
-            </p>
+            <h3 className="text-lg font-semibold mb-2 text-white">{t("checkin.premiumTitle")}</h3>
+            <p className="text-white/90 text-sm mb-4">{t("checkin.premiumDesc")}</p>
             <Button 
               onClick={onPremiumUpgrade}
               variant="outline" 
               className="bg-white/20 border-white/30 text-white hover:bg-white/30"
             >
-              Upgrade for $2.99
+              {t("shared.upgradeFor")}
             </Button>
           </div>
         )}
 
-        {/* Check-In History */}
         <div className="mt-6">
           <CheckInHistory checkIns={checkIns} streak={streak} />
         </div>

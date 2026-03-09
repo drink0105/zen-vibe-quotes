@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { 
   MdRocket, 
   MdSelfImprovement, 
@@ -14,21 +15,23 @@ interface MoodSelectorProps {
   onMoodChange: (mood: string) => void;
 }
 
-const moods = [
-  { id: "all", label: "All", icon: MdAutoAwesome, gradient: "gradient-default" },
-  { id: "motivation", label: "Motivated", icon: MdRocket, gradient: "gradient-motivation" },
-  { id: "mindfulness", label: "Peaceful", icon: MdSelfImprovement, gradient: "gradient-mindfulness" },
-  { id: "humor", label: "Cheerful", icon: MdEmojiEmotions, gradient: "gradient-humor" },
-  { id: "productivity", label: "Focused", icon: MdBolt, gradient: "gradient-productivity" },
-  { id: "creativity", label: "Creative", icon: MdPalette, gradient: "gradient-creativity" },
-  { id: "resilience", label: "Strong", icon: MdFitnessCenter, gradient: "gradient-resilience" },
-];
-
 export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) {
+  const { t } = useLanguage();
+
+  const moods = [
+    { id: "all", labelKey: "mood.all", icon: MdAutoAwesome, gradient: "gradient-default" },
+    { id: "motivation", labelKey: "mood.motivated", icon: MdRocket, gradient: "gradient-motivation" },
+    { id: "mindfulness", labelKey: "mood.peaceful", icon: MdSelfImprovement, gradient: "gradient-mindfulness" },
+    { id: "humor", labelKey: "mood.cheerful", icon: MdEmojiEmotions, gradient: "gradient-humor" },
+    { id: "productivity", labelKey: "mood.focused", icon: MdBolt, gradient: "gradient-productivity" },
+    { id: "creativity", labelKey: "mood.creative", icon: MdPalette, gradient: "gradient-creativity" },
+    { id: "resilience", labelKey: "mood.strong", icon: MdFitnessCenter, gradient: "gradient-resilience" },
+  ];
+
   return (
     <div className="w-full max-w-4xl mx-auto px-4 mb-8">
       <h3 className="text-lg font-medium text-center mb-6 text-foreground">
-        How are you feeling today?
+        {t("mood.title")}
       </h3>
 
       <div className="grid grid-cols-3 md:grid-cols-7 gap-3">
@@ -49,7 +52,7 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
               `}
             >
               <Icon className="w-6 h-6" />
-              <span className="text-xs font-medium">{mood.label}</span>
+              <span className="text-xs font-medium">{t(mood.labelKey)}</span>
             </Button>
           );
         })}
@@ -57,4 +60,3 @@ export function MoodSelector({ selectedMood, onMoodChange }: MoodSelectorProps) 
     </div>
   );
 }
-

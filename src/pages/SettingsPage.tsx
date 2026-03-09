@@ -19,7 +19,7 @@ interface SettingsPageProps {
   theme: 'light' | 'dark';
   onThemeChange: (theme: 'light' | 'dark') => void;
   isPremium: boolean;
-  onPremiumChange: (premium: boolean) => void;
+  onPremiumUpgrade: () => Promise<void>;
   backgroundTheme: string;
   onBackgroundThemeChange: (theme: string) => void;
   appVersion: string;

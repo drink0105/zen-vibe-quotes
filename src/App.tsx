@@ -32,31 +32,22 @@ interface QuotesData {
 const App = () => {
   const [favorites, setFavorites] = useLocalStorage<Quote[]>("zenvibes-favorites", []);
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("zenvibes-theme", "light");
-  const [isPremium, setIsPremium] = useLocalStorage<boolean>("zenvibes-premium", false);
+  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
   const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Check for premium purchase on app start
+  // Check premium status from backend on app start
   useEffect(() => {
     const checkPremium = async () => {
-      // Check mock purchase first (for web testing)
-      const mockPremium = localStorage.getItem('zenvibe-mock-premium');
-      if (mockPremium === 'true') {
-        setIsPremium(true);
-        return;
-      }
-
-      // Check real Google Play purchase
       try {
-        const { verifyPremiumPurchase } = await import('@/services/googlePlayBilling');
-        const hasPremium = await verifyPremiumPurchase();
-        if (hasPremium) {
-          setIsPremium(true);
-        }
+        const { isPremium: checkBackendPremium } = await import('@/lib/premium');
+        const premium = await checkBackendPremium();
+        setIsPremium(premium);
       } catch (error) {
-        console.log('Premium check skipped:', error);
+        console.log('Premium check failed:', error);
+        setIsPremium(false);
       }
     };
 

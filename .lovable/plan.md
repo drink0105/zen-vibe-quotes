@@ -1,185 +1,75 @@
 
-# Fix Samsung Internet & Opera Brown Background in Light Mode
 
-## Problem Summary
-When viewing the app in light mode on Samsung Internet or Opera mobile browsers, users see a dark brown/sepia ugly background instead of the expected light colors. This happens because these browsers apply their own "forced dark mode" color transformation algorithm, which ignores the app's actual CSS and creates distorted colors.
+## Plan: Add Chinese Mandarin Language Support
 
-## Root Cause
-Samsung Internet and Opera have proprietary forced dark mode features that:
-- Ignore your CSS `prefers-color-scheme` rules
-- Apply unpredictable color inversion algorithms
-- Create brown/sepia backgrounds from light colors
-- Only respect the `color-scheme` CSS property when properly configured
+### Approach
 
-The current code has `forced-color-adjust: none` which only addresses Windows High Contrast mode, not these browser-specific forced dark modes.
+Create a lightweight i18n system using React Context + a translations dictionary. A language toggle (English / 中文) will be added to the Settings page. All hardcoded UI strings across every component will be replaced with translation keys. The TTS hook will also respect the selected language, speaking in Chinese when Chinese is active.
 
-## Solution
+### Files to Create
 
-### 1. Add `color-scheme` CSS Property
-Add the `color-scheme` property to `:root` to signal that your app properly handles both light and dark themes, telling browsers not to apply their forced transformations.
+1. **`src/i18n/translations.ts`** -- A single dictionary file mapping every UI string to English and Chinese. Example structure:
+   ```ts
+   export const translations = {
+     en: {
+       "home.subtitle": "Your daily dose of inspiration",
+       "mood.title": "How are you feeling today?",
+       "mood.all": "All",
+       "mood.motivated": "Motivated",
+       // ... all strings
+     },
+     zh: {
+       "home.subtitle": "每日灵感之源",
+       "mood.title": "你今天感觉怎么样？",
+       "mood.all": "全部",
+       "mood.motivated": "积极",
+       // ... all strings
+     }
+   }
+   ```
 
-**File: `src/index.css`**
-
-In the `:root` section (around line 18), add:
-```css
-:root {
-  color-scheme: light;  /* Tell browser we're in light mode */
-  /* ... existing variables ... */
-}
-```
-
-In the `.dark` section (around line 98), add:
-```css
-.dark {
-  color-scheme: dark;  /* Tell browser we're in dark mode */
-  /* ... existing variables ... */
-}
-```
-
-### 2. Update Meta Tag to Match App State
-The current `<meta name="color-scheme" content="light dark">` is static. We need to update it dynamically based on the actual theme.
-
-**File: `index.html`**
-
-Change line 10 from:
-```html
-<meta name="color-scheme" content="light dark">
-```
-to have an `id` so it can be updated:
-```html
-<meta name="color-scheme" content="light" id="color-scheme-meta">
-```
-
-Then update the inline script (around line 27-40) to also update this meta tag:
-```javascript
-try {
-  const savedTheme = localStorage.getItem('zenvibes-theme');
-  const parsedTheme = savedTheme ? JSON.parse(savedTheme) : 'light';
-  const isDark = parsedTheme === 'dark';
-  
-  // Apply color mode class
-  document.documentElement.classList.remove('light', 'dark');
-  document.documentElement.classList.add(isDark ? 'dark' : 'light');
-  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-  
-  // Update meta tag to match
-  const metaColorScheme = document.getElementById('color-scheme-meta');
-  if (metaColorScheme) {
-    metaColorScheme.setAttribute('content', isDark ? 'dark' : 'light');
-  }
-  
-  // Apply background theme
-  const savedBg = localStorage.getItem('zenvibes-background');
-  const parsedBg = savedBg ? JSON.parse(savedBg) : 'default';
-  if (parsedBg && parsedBg !== 'default') {
-    document.documentElement.setAttribute('data-theme', parsedBg.toLowerCase());
-  }
-} catch(e) {}
-```
-
-### 3. Update React Theme Handler
-Ensure the meta tag is also updated when the user toggles themes within the app.
-
-**File: `src/App.tsx`**
-
-Update the `useEffect` that applies themes (around line 94-108):
-```typescript
-useEffect(() => {
-  const root = document.documentElement;
-
-  // 1. Apply color mode (controls ALL semantic tokens)
-  root.classList.remove("dark", "light");
-  root.classList.add(theme);
-  
-  // 2. Update color-scheme for browser dark mode detection
-  root.style.colorScheme = theme;
-  
-  // 3. Update the meta tag to match
-  const metaColorScheme = document.getElementById('color-scheme-meta');
-  if (metaColorScheme) {
-    metaColorScheme.setAttribute('content', theme);
-  }
-
-  // 4. Apply background theme (ONLY decorative)
-  if (backgroundTheme === "default") {
-    root.removeAttribute("data-theme");
-  } else {
-    root.setAttribute("data-theme", backgroundTheme.toLowerCase());
-  }
-}, [theme, backgroundTheme]);
-```
-
-### 4. Add Explicit Background Colors
-Samsung's algorithm sometimes ignores CSS variables. Add explicit fallback colors.
-
-**File: `src/index.css`**
-
-Update the body styles (around line 324-333):
-```css
-body {
-  @apply text-foreground;
-  background: var(--app-background);
-  background-color: #ffffff; /* Explicit fallback for light mode */
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-   
-  /* Samsung Internet forced-dark-mode kill switch */
-  forced-color-adjust: none;
-  -webkit-forced-color-adjust: none;
-}
-
-/* Override body background for dark mode */
-.dark body,
-html.dark body {
-  background-color: hsl(222, 47%, 6%); /* Explicit dark background */
-}
-```
-
-### 5. Add `only` Keyword for Stronger Signal (Optional Enhancement)
-For maximum browser compliance, the `only` keyword tells browsers the page MUST use this color scheme:
-
-**File: `src/index.css`**
-
-```css
-:root {
-  color-scheme: only light;
-}
-
-.dark {
-  color-scheme: only dark;
-}
-```
-
-Note: Using `only` prevents users from using browser extensions to force a different color scheme, so this is a trade-off.
-
----
-
-## Technical Details
-
-### Why This Works
-- `color-scheme: light` tells Samsung/Opera "this page is designed for light mode, don't apply your forced dark transformation"
-- The meta tag provides this signal before CSS loads, preventing flash of wrong colors
-- Dynamic updates ensure the signal stays in sync when users toggle themes
-- Explicit hex/hsl color fallbacks bypass CSS variable parsing issues in some browsers
-
-### Browser Behavior
-| Browser | Forced Dark Mode | Respects `color-scheme` |
-|---------|-----------------|------------------------|
-| Samsung Internet | Yes, aggressive | Yes, when properly set |
-| Opera | Yes | Yes |
-| Chrome | Optional flag | Yes |
-| Firefox | No forced dark | N/A |
-| Safari | No forced dark | N/A |
+2. **`src/i18n/LanguageContext.tsx`** -- React context providing `language`, `setLanguage`, and a `t(key)` translation function. Language stored in localStorage (`zenvibe-language`).
 
 ### Files to Modify
-1. `src/index.css` - Add `color-scheme` properties and explicit background colors
-2. `index.html` - Update meta tag with ID and improve inline script
-3. `src/App.tsx` - Update theme effect to sync meta tag
 
-### Testing Recommendations
-After implementation:
-1. Test on Samsung Internet with the browser's dark mode enabled
-2. Test on Opera with Force Dark Pages enabled
-3. Verify light mode shows white/light backgrounds
-4. Verify dark mode still works correctly
-5. Verify theme switching updates colors immediately
+3. **`src/App.tsx`** -- Wrap app in `<LanguageProvider>`. Pass `language` down or let components consume context.
+
+4. **`src/pages/SettingsPage.tsx`** -- Add a "Language" section with English/中文 toggle buttons (similar to theme toggle). Translate all existing text.
+
+5. **`src/pages/Index.tsx`** -- Replace all hardcoded strings with `t()` calls. Keep "ZenVibe" as-is.
+
+6. **`src/components/Navigation.tsx`** -- Translate nav labels (Home, Favorites, Playlists, Timer, Check-In, Settings).
+
+7. **`src/components/MoodSelector.tsx`** -- Translate mood labels and title.
+
+8. **`src/components/QuoteCard.tsx`** -- Translate button titles and category names.
+
+9. **`src/components/QuoteOfTheDay.tsx`** -- Translate "Quote of the Day" header.
+
+10. **`src/components/FavoritesPage.tsx`** -- Translate empty state and header.
+
+11. **`src/components/PlaylistPage.tsx`** -- Translate all playlist UI text.
+
+12. **`src/components/ZenTimerPage.tsx`** -- Translate timer UI text.
+
+13. **`src/pages/CheckInPage.tsx`** -- Translate check-in labels, prompts, and completion messages.
+
+14. **`src/components/CheckInHistory.tsx`** -- Translate history labels (Today, Yesterday, Morning, Evening, etc.).
+
+15. **`src/components/CheckInStats.tsx`** -- Translate stats labels.
+
+16. **`src/components/PWAInstallPrompt.tsx`** -- Translate install prompt text.
+
+17. **`src/hooks/useSpeakQuote.ts`** -- When language is `zh`, filter voices to `zh` (Mandarin) instead of `en`, and set `utterance.lang` to `zh-CN`. Free users get default Chinese voice; premium users can pick from available Chinese voices.
+
+### Key Details
+
+- **Quote text stays in English** -- The quote content from `ZenVibeContent.json` will not be translated (those are curated English quotes). Only the UI chrome is translated.
+- **Voice language switching** -- The `useSpeakQuote` hook will accept the current language and switch between English and Chinese voices accordingly. When Chinese is selected, `utterance.lang = 'zh-CN'` and voices are filtered to `zh`.
+- **Settings voice section** -- The voice selector will show Chinese voices when language is Chinese, English voices when English.
+- **"ZenVibe" preserved** -- The app name in headers, navigation references, and about section will remain "ZenVibe" in both languages.
+
+### Translation Coverage
+
+Every user-facing string will be covered including: page titles, subtitles, button labels, empty states, premium upsell text, check-in prompts, timer states ("Breathing...", "Ready"), breathing phases, streak labels, date labels, alert messages, and settings section headers.
+

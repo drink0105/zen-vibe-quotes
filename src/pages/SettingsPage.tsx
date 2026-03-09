@@ -1,12 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRefresh, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
-import { useState, useEffect, useRef } from "react";
+import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRecordVoiceOver, MdVolumeUp } from "react-icons/md";
+import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getEnglishVoices, getDefaultEnglishVoice } from "@/hooks/useSpeakQuote";
-import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { getUserId } from "@/lib/user";
 
 interface CheckInData {
   date: string;
@@ -19,7 +16,7 @@ interface SettingsPageProps {
   theme: 'light' | 'dark';
   onThemeChange: (theme: 'light' | 'dark') => void;
   isPremium: boolean;
-  onPremiumChange: (premium: boolean) => void;
+  onPremiumUpgrade: () => Promise<void>;
   backgroundTheme: string;
   onBackgroundThemeChange: (theme: string) => void;
   appVersion: string;
@@ -30,42 +27,13 @@ export default function SettingsPage({
   theme, 
   onThemeChange, 
   isPremium, 
-  onPremiumChange,
+  onPremiumUpgrade,
   backgroundTheme,
   onBackgroundThemeChange,
   appVersion,
   onVersionChange,
 }: SettingsPageProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [newVersion, setNewVersion] = useState(appVersion);
-
-  // Handle Stripe payment return (run once)
-  const paymentHandled = useRef(false);
-  useEffect(() => {
-    if (paymentHandled.current) return;
-    const payment = searchParams.get('payment');
-    const sessionId = searchParams.get('session_id');
-    if (payment === 'success' && sessionId) {
-      paymentHandled.current = true;
-      const confirmPayment = async () => {
-        const userId = getUserId();
-        const { data, error } = await supabase.functions.invoke('confirm-premium', {
-          body: { session_id: sessionId, user_id: userId },
-        });
-        if (!error && data?.success) {
-          onPremiumChange(true);
-        } else {
-          console.error('Premium confirmation failed:', error || data?.error);
-        }
-        // Clean up URL params
-        const newParams = new URLSearchParams(searchParams);
-        newParams.delete('payment');
-        newParams.delete('session_id');
-        setSearchParams(newParams, { replace: true });
-      };
-      confirmPayment();
-    }
-  }, []);
   
   // Voice & Audio settings
   const [selectedVoice, setSelectedVoice] = useLocalStorage<string>("zenvibe-selected-voice", "");
@@ -348,7 +316,7 @@ export default function SettingsPage({
                 Unlock unlimited favorites, playlists, alarms, and premium content
               </p>
               <Button 
-                onClick={() => onPremiumChange(true)} 
+                onClick={onPremiumUpgrade} 
                 variant="zen"
                 className="px-8"
               >

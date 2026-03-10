@@ -157,11 +157,9 @@ const App = () => {
     } else {
       // Stripe path (non-Play-Store installs)
       console.log('[ZenVibe] Launching Stripe checkout');
-      const { getUserId } = await import('@/lib/user');
-      const userId = getUserId();
       const { supabase } = await import('@/integrations/supabase/client');
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { user_id: userId },
+        body: {},
       });
       if (error || !data?.url) {
         alert('Could not start checkout. Please try again.');

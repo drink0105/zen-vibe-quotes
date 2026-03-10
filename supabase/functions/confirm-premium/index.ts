@@ -14,9 +14,36 @@ serve(async (req) => {
   }
 
   try {
-    const { session_id, user_id } = await req.json();
-    if (!session_id || !user_id) {
-      throw new Error("session_id and user_id are required");
+    // Verify JWT and extract user identity
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+
+    const anonClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await anonClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+    if (!userId) throw new Error("No user ID in token");
+
+    const { session_id } = await req.json();
+    if (!session_id) {
+      throw new Error("session_id is required");
     }
 
     // Verify the Stripe session was paid
@@ -30,27 +57,27 @@ serve(async (req) => {
       throw new Error("Payment not completed");
     }
 
-    // Verify the session belongs to this user
-    if (session.metadata?.user_id !== user_id) {
+    // Verify the session belongs to this user (metadata was set server-side)
+    if (session.metadata?.user_id !== userId) {
       throw new Error("User mismatch");
     }
 
-    // Update premium status in Supabase
-    const supabase = createClient(
+    // Update premium status using service role
+    const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("users")
       .update({ premium: true })
-      .eq("id", user_id);
+      .eq("id", userId);
 
     if (updateError) throw new Error(`DB update failed: ${updateError.message}`);
 
-    // Also record the purchase
-    await supabase.from("purchases").insert({
-      user_id,
+    // Record the purchase
+    await supabaseAdmin.from("purchases").insert({
+      user_id: userId,
       store: "stripe",
       product_id: "zenvibe_premium",
       purchase_token: session_id,

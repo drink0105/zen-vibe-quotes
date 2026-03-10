@@ -1,8 +1,8 @@
-import { supabase } from "./supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { getUserId } from "./user";
 
-export async function isPremium() {
-  const id = getUserId();
+export async function isPremium(): Promise<boolean> {
+  const id = await getUserId();
 
   const { data } = await supabase
     .from("users")

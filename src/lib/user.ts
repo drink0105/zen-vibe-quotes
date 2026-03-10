@@ -1,18 +1,29 @@
-import { supabase } from "./supabase";
+import { supabase } from "@/integrations/supabase/client";
 
-export function getUserId() {
-  let id = localStorage.getItem("zenvibe_user_id");
-
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem("zenvibe_user_id", id);
+/**
+ * Get the current authenticated user's ID.
+ * Uses Supabase anonymous auth — no localStorage spoofing possible.
+ */
+export async function getUserId(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user?.id) {
+    return session.user.id;
   }
 
-  return id;
+  // Sign in anonymously if no session exists
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error || !data.user) {
+    throw new Error("Failed to create anonymous session");
+  }
+  return data.user.id;
 }
 
-export async function ensureUser() {
-  const id = getUserId();
+/**
+ * Ensure user row exists in the users table.
+ * Called once on app startup after anonymous auth.
+ */
+export async function ensureUser(): Promise<string> {
+  const id = await getUserId();
 
   const { data } = await supabase
     .from("users")

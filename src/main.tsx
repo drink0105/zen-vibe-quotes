@@ -4,7 +4,12 @@ import './index.css'
 import { ensureUser } from "./lib/user";
 import { detectInstallerPackage } from "./lib/installerDetect";
 
-ensureUser();
+// Initialize anonymous auth session and ensure user row exists
+ensureUser().then(id => {
+  console.log('[ZenVibe] User session initialized:', id);
+}).catch(err => {
+  console.error('[ZenVibe] Failed to initialize user session:', err);
+});
 
 // Detect and log installer on startup
 detectInstallerPackage().then(installer => {

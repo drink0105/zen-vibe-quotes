@@ -138,9 +138,12 @@ const App = () => {
   };
 
   const handlePremiumUpgrade = async () => {
-    const { isGooglePlayInstall } = await import('@/lib/installerDetect');
+    const { shouldUseStripe } = await import('@/lib/installerDetect');
+    const useStripe = await shouldUseStripe();
 
-    if (isGooglePlayInstall()) {
+    if (!useStripe) {
+      // Google Play Billing path (default)
+      console.log('[ZenVibe] Launching Play Billing for zenvibe_premium ($2.99)');
       const { purchasePremium } = await import('@/services/googlePlayBilling');
       const result = await purchasePremium();
       if (result) {
@@ -152,6 +155,8 @@ const App = () => {
         alert('Purchase failed. Please try again.');
       }
     } else {
+      // Stripe path (non-Play-Store installs)
+      console.log('[ZenVibe] Launching Stripe checkout');
       const { getUserId } = await import('@/lib/user');
       const userId = getUserId();
       const { supabase } = await import('@/integrations/supabase/client');

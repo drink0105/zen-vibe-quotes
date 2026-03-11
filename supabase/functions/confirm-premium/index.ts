@@ -89,10 +89,15 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
+    console.error("[confirm-premium] internal error:", error);
+    // Return specific messages for known validation errors, generic for everything else
     const msg = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: msg }), {
+    const safeMessages = ["Payment not completed", "User mismatch", "session_id is required", "No user ID in token", "Unauthorized"];
+    const clientMessage = safeMessages.some(m => msg.includes(m)) ? msg : "Internal server error";
+    const status = clientMessage === "Internal server error" ? 500 : 400;
+    return new Response(JSON.stringify({ error: clientMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status,
     });
   }
 });

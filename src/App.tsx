@@ -205,6 +205,7 @@ const App = () => {
                     onFavorite={handleFavorite}
                     onShare={handleShare}
                     isPremium={isPremium}
+                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/favorites" element={

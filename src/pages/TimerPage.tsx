@@ -23,7 +23,7 @@ export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
   const [selectedSound, setSelectedSound] = useState("bell1");
   const [vibrateEnabled, setVibrateEnabled] = useState(true);
   
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const availableQuotes = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");

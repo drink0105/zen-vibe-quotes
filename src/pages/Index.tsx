@@ -19,6 +19,7 @@ interface IndexProps {
   onFavorite: (quote: Quote) => void;
   onShare: (quote: Quote) => void;
   isPremium: boolean;
+  onPremiumUpgrade: () => void;
 }
 
 export default function Index({
@@ -27,6 +28,7 @@ export default function Index({
   onFavorite,
   onShare,
   isPremium,
+  onPremiumUpgrade,
 }: IndexProps) {
   const [selectedMood, setSelectedMood] = useState("all");
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
@@ -124,25 +126,7 @@ export default function Index({
               {t("home.premiumDesc")}
             </p>
             <button
-              onClick={async () => {
-                const {
-                  purchasePremium,
-                  mockPurchasePremium,
-                  isGooglePlayAvailable,
-                } = await import("@/services/googlePlayBilling");
-
-                if (!isGooglePlayAvailable()) {
-                  mockPurchasePremium();
-                  window.location.reload();
-                } else {
-                  const result = await purchasePremium();
-                  if (result) {
-                    window.location.reload();
-                  } else {
-                    alert("Purchase failed. Please try again.");
-                  }
-                }
-              }}
+              onClick={onPremiumUpgrade}
               className="bg-white/20 border border-black/30 text-black px-6 py-2 rounded-lg hover:bg-white/30 transition-all hover:scale-105"
             >
               {t("home.upgradeFor")}

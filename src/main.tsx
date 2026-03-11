@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { ensureUser } from "./lib/user";
-import { detectInstallerPackage, getInstallerDebugInfo, shouldUsePlayBilling } from "./lib/installerDetect";
+import { detectInstallerPackage } from "./lib/installerDetect";
 
 // Initialize anonymous auth session and ensure user row exists
 ensureUser().then(id => {
@@ -11,20 +11,9 @@ ensureUser().then(id => {
   console.error('[ZenVibe] Failed to initialize user session:', err);
 });
 
-// Detect and log installer on startup with full debug info
-detectInstallerPackage().then(async (installer) => {
-  const usePlay = await shouldUsePlayBilling();
-  const debugInfo = getInstallerDebugInfo();
-  console.log('[ZenVibe] Installer debug:', debugInfo);
-  console.log('[ZenVibe] Will use Play Billing:', usePlay);
-
-  // Show visible debug banner for on-device testing (auto-hides after 8s)
-  const msg = `Installer: ${installer ?? 'none'}\nPlay Billing: ${usePlay}\nUA: ${navigator.userAgent.substring(0, 60)}`;
-  const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#000;color:#0f0;font-size:11px;padding:8px;font-family:monospace;white-space:pre-wrap;opacity:0.9';
-  banner.textContent = msg;
-  document.body.appendChild(banner);
-  setTimeout(() => banner.remove(), 8000);
+// Detect and log installer on startup
+detectInstallerPackage().then(installer => {
+  console.log('[ZenVibe] App installer package:', installer ?? 'unknown (defaulting to Play Billing)');
 });
 
 // Register Service Worker for PWA

@@ -1,26 +1,18 @@
 /**
  * Detect the installer package name for billing routing.
  *
- * IMPORTANT: Default to Play Billing on Android devices.
- * Only use Stripe for clearly non-Play installs (e.g. web browser on desktop).
- *
- * Multi-method detection:
+ * Priority:
  *   1. Android native bridge: window.Android.getInstaller()
- *   2. Capacitor App API
- *   3. User-Agent heuristic (Android device → assume Play)
- *   4. Meta tag / query param (testing)
- *   5. Ultimate fallback: Android → Play Billing, else Stripe
+ *   2. Capacitor App API (if available)
+ *   3. Meta tag / query param (testing)
+ *   4. Default: null
+ *
+ * Billing routing:
+ *   - "com.android.vending" → Google Play Billing via window.AndroidBilling
+ *   - anything else (or null on web) → Stripe
  */
 
 let cachedInstaller: string | null | undefined = undefined;
-let cachedIsAndroid: boolean | undefined = undefined;
-
-function isAndroidDevice(): boolean {
-  if (cachedIsAndroid !== undefined) return cachedIsAndroid;
-  const ua = navigator.userAgent.toLowerCase();
-  cachedIsAndroid = ua.includes('android');
-  return cachedIsAndroid;
-}
 
 export async function detectInstallerPackage(): Promise<string | null> {
   if (cachedInstaller !== undefined) return cachedInstaller;
@@ -53,7 +45,7 @@ export async function detectInstallerPackage(): Promise<string | null> {
     console.log("[ZenVibe] Capacitor App API not available");
   }
 
-  // 3. Meta tag or query param (for testing)
+  // 3. Fallback: meta tag or query param (for testing)
   const meta = document.querySelector('meta[name="installer-package"]');
   if (meta) {
     cachedInstaller = meta.getAttribute("content");
@@ -69,47 +61,31 @@ export async function detectInstallerPackage(): Promise<string | null> {
     return cachedInstaller;
   }
 
-  // 4. Android UA heuristic — if on Android, assume Play Store
-  if (isAndroidDevice()) {
-    cachedInstaller = "com.android.vending";
-    console.log("[ZenVibe] Android device detected via UA — assuming Play Store");
-    return cachedInstaller;
-  }
-
-  // 5. No detection — web browser on desktop
+  // 4. No detection — web browser or unknown
   cachedInstaller = null;
-  console.log("[ZenVibe] No installer detected (desktop web) — will use Stripe");
+  console.log("[ZenVibe] No installer detected — will use Stripe");
   return cachedInstaller;
 }
 
 /**
- * Returns true when we should use Play Billing:
- * - Positively detected Google Play installer
- * - OR on Android device (default to Play even without bridge, for review safety)
+ * Returns true ONLY when we positively detect Google Play as the installer
+ * AND the AndroidBilling bridge is available.
  */
 export async function shouldUsePlayBilling(): Promise<boolean> {
   const installer = await detectInstallerPackage();
-  const isPlay = installer === "com.android.vending" ||
-                 installer === "com.google.android";
-
-  if (isPlay) {
+  if (installer === "com.android.vending") {
     const hasPlayBilling = typeof (window as any).AndroidBilling?.purchasePremium === "function";
     console.log("[ZenVibe] Play Store detected, billing bridge available:", hasPlayBilling);
-    return true;
+    return hasPlayBilling;
   }
-
-  if (isAndroidDevice()) {
-    console.log("[ZenVibe] Android device — defaulting to Play Billing");
-    return true;
-  }
-
   return false;
 }
 
 /**
  * Returns true when we should use Stripe:
- * - Desktop web browser (no installer, not Android)
- * - Explicitly non-Play store installs
+ * - Web browser (no installer)
+ * - Non-Play-Store installs
+ * - Play Store install but no billing bridge available
  */
 export async function shouldUseStripe(): Promise<boolean> {
   const usePlay = await shouldUsePlayBilling();
@@ -119,16 +95,7 @@ export async function shouldUseStripe(): Promise<boolean> {
 /** Synchronous legacy check */
 export function isGooglePlayInstall(): boolean {
   if (cachedInstaller !== undefined) {
-    return cachedInstaller === "com.android.vending" || cachedInstaller === "com.google.android";
+    return cachedInstaller === "com.android.vending";
   }
-  return isAndroidDevice();
-}
-
-/** Get debug info string for diagnostics */
-export function getInstallerDebugInfo(): string {
-  const ua = navigator.userAgent;
-  const isAndroid = isAndroidDevice();
-  const hasBridge = typeof (window as any).Android?.getInstaller === "function";
-  const hasBilling = typeof (window as any).AndroidBilling?.purchasePremium === "function";
-  return `installer=${cachedInstaller ?? 'pending'}, android=${isAndroid}, bridge=${hasBridge}, billing=${hasBilling}, ua=${ua.substring(0, 80)}`;
+  return false;
 }

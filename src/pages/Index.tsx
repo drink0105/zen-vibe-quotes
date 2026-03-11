@@ -19,6 +19,7 @@ interface IndexProps {
   onFavorite: (quote: Quote) => void;
   onShare: (quote: Quote) => void;
   isPremium: boolean;
+  onPremiumUpgrade: () => void;
 }
 
 export default function Index({

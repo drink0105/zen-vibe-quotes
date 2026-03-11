@@ -28,6 +28,7 @@ export default function Index({
   onFavorite,
   onShare,
   isPremium,
+  onPremiumUpgrade,
 }: IndexProps) {
   const [selectedMood, setSelectedMood] = useState("all");
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);

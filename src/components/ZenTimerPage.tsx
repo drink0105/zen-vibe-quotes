@@ -30,7 +30,7 @@ export function ZenTimerPage({ isPremium, allQuotes }: ZenTimerPageProps) {
   const [vibrateEnabled, setVibrateEnabled] = useState(true);
   const { t } = useLanguage();
   
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const maxDuration = isPremium ? 300 : 60;
   
   const mindfulnessQuotes = allQuotes.filter(q => 

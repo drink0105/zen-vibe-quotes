@@ -54,16 +54,8 @@ export const getProductDetails = async (productId: string = 'zenvibe_premium') =
 // Purchase premium ($2.99)
 export const purchasePremium = async (): Promise<PurchaseDetails | null> => {
   if (!isGooglePlayAvailable()) {
-    console.log('Google Play Billing not available - using mock purchase');
-    // For testing/web: simulate purchase
-    return {
-      productId: 'zenvibe_premium',
-      purchaseToken: 'mock_token_' + Date.now(),
-      orderId: 'mock_order_' + Date.now(),
-      packageName: 'app.zenvibe',
-      purchaseTime: Date.now(),
-      purchaseState: 1, // Purchased
-    };
+    console.log('Google Play Billing not available — this only works on Android via Play Store');
+    return null;
   }
 
   try {

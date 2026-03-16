@@ -139,38 +139,40 @@ const App = () => {
 
   const handlePremiumUpgrade = async () => {
     try {
-      const { shouldUsePlayBilling } = await import('@/lib/installerDetect');
-      const usePlay = await shouldUsePlayBilling();
-
-      if (usePlay) {
-        // Google Play Billing path via Android TWA bridge
-        console.log('[ZenVibe] Launching Play Billing for zenvibe_premium ($2.99)');
-        const { purchasePremium } = await import('@/services/googlePlayBilling');
-        const success = await purchasePremium();
-        if (success) {
-          const confirmed = await pollPremiumStatus();
-          if (!confirmed) {
-            alert('Purchase is being verified. Please check back shortly.');
+      // Direct bridge check — no installer detection needed
+      if (typeof (window as any).AndroidBilling?.purchasePremium === 'function') {
+        console.log('[ZenVibe] Play Billing bridge detected — launching purchase');
+        try {
+          const result = await (window as any).AndroidBilling.purchasePremium();
+          if (result) {
+            const confirmed = await pollPremiumStatus();
+            if (!confirmed) {
+              alert('Purchase is being verified. Please check back shortly.');
+            }
+          } else {
+            alert('Purchase was not completed. Please try again.');
           }
-        } else {
-          alert('Purchase was not completed. Please try again.');
+        } catch (billingError) {
+          console.error('[ZenVibe] Play Billing error:', billingError);
+          alert('Purchase failed. Please try again.');
         }
-      } else {
-        // Stripe path (web, non-Play installs, or no billing bridge)
-        console.log('[ZenVibe] Launching Stripe checkout');
-        const { supabase } = await import('@/integrations/supabase/client');
-        const { data, error } = await supabase.functions.invoke('create-checkout', {
-          body: {},
-        });
-        if (error || !data?.url) {
-          alert('Could not start checkout. Please try again.');
-          return;
-        }
-        window.open(data.url, '_blank');
-        const confirmed = await pollPremiumStatus();
-        if (confirmed) {
-          alert('Premium unlocked! Enjoy all features.');
-        }
+        return;
+      }
+
+      // Fallback: Stripe (web, non-Play installs, no billing bridge)
+      console.log('[ZenVibe] No Play Billing bridge — launching Stripe checkout');
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {},
+      });
+      if (error || !data?.url) {
+        alert('Could not start checkout. Please try again.');
+        return;
+      }
+      window.open(data.url, '_blank');
+      const confirmed = await pollPremiumStatus();
+      if (confirmed) {
+        alert('Premium unlocked! Enjoy all features.');
       }
     } catch (error) {
       console.error('[ZenVibe] Upgrade error:', error);

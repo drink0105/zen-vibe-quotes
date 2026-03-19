@@ -137,25 +137,20 @@ const App = () => {
     return false;
   };
 
-  const confirmPremiumPurchase = async (purchaseToken?: string) => {
+  const confirmPremiumPurchase = async () => {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('No session');
 
-      const { getUserId } = await import('@/lib/user');
-      const userId = await getUserId();
-
-      // Record purchase and unlock premium via service-role function
-      const supabaseAdmin = await import('@/integrations/supabase/client');
-      await supabaseAdmin.supabase.from('purchases').insert({
-        user_id: userId,
-        store: 'google_play',
-        product_id: 'zenvibe_premium',
-        purchase_token: purchaseToken || 'dgapi',
-        premium_unlocked: true,
+      await fetch('https://ghmjtkzrjddfdjautcfb.supabase.co/functions/v1/confirm-premium', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + session.access_token,
+          'Content-Type': 'application/json',
+        },
       });
-      await supabaseAdmin.supabase.rpc('unlock_premium', { user_id: userId });
+
       setIsPremium(true);
       console.log('[ZenVibe] Premium unlocked successfully');
     } catch (err) {
@@ -164,48 +159,7 @@ const App = () => {
     }
   };
 
-  const handlePremiumUpgrade = async () => {
-    // Try Digital Goods API (works inside Android TWA with Play Billing)
-    if ('getDigitalGoodsService' in window) {
-      try {
-        console.log('[ZenVibe] Digital Goods API detected, requesting Play Billing service...');
-        const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
-        console.log('[ZenVibe] Play Billing service obtained, launching purchase...');
-
-        // Use PaymentRequest API for the actual purchase
-        const paymentMethod = [{
-          supportedMethods: 'https://play.google.com/billing',
-          data: { sku: 'zenvibe_premium' },
-        }];
-        const paymentDetails = {
-          total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
-        };
-        const request = new PaymentRequest(paymentMethod, paymentDetails);
-        const paymentResponse = await request.show();
-        await paymentResponse.complete('success');
-
-        console.log('[ZenVibe] Play Billing purchase completed:', paymentResponse);
-
-        // Acknowledge the purchase via Digital Goods API
-        const { purchaseToken } = paymentResponse.details;
-        if (purchaseToken) {
-          await service.acknowledge(purchaseToken, 'onetime');
-          console.log('[ZenVibe] Purchase acknowledged');
-        }
-
-        // Confirm with backend and unlock premium
-        await confirmPremiumPurchase(purchaseToken);
-        return;
-      } catch (err) {
-        console.error('[ZenVibe] Play Billing failed:', err);
-        alert('Play Billing error: ' + (err instanceof Error ? err.message : String(err)));
-        // Fall through to Stripe
-      }
-    } else {
-      console.log('[ZenVibe] Digital Goods API not available, using Stripe fallback');
-    }
-
-    // Stripe fallback for web / non-Play installs
+  const launchStripeCheckout = async () => {
     try {
       const { getUserId } = await import('@/lib/user');
       const userId = await getUserId();
@@ -221,6 +175,51 @@ const App = () => {
       console.error('[ZenVibe] Stripe checkout failed:', err);
       alert('Could not start checkout. Please try again.');
     }
+  };
+
+  const handlePremiumUpgrade = async () => {
+    if ('getDigitalGoodsService' in window) {
+      try {
+        const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
+
+        const paymentMethod = [{
+          supportedMethods: 'https://play.google.com/billing',
+          data: { sku: 'zenvibe_premium' },
+        }];
+        const paymentDetails = {
+          total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
+        };
+        const request = new PaymentRequest(paymentMethod, paymentDetails);
+        const paymentResponse = await request.show();
+        await paymentResponse.complete('success');
+
+        const { purchaseToken } = paymentResponse.details;
+        if (purchaseToken) {
+          await service.acknowledge(purchaseToken, 'onetime');
+        }
+
+        // Only runs if purchase succeeds
+        await confirmPremiumPurchase();
+        return;
+      } catch (err: any) {
+        console.log('[ZenVibe] Play Billing result:', err);
+
+        // If user canceled, DO NOT fallback to Stripe
+        const msg = err?.message || String(err);
+        if (msg.includes('canceled') || msg.includes('cancelled') || err?.code === 'USER_CANCELED' || msg.includes('AbortError') || msg.includes('user closed')) {
+          console.log('[ZenVibe] User canceled purchase — staying in freemium');
+          return;
+        }
+
+        // Only fallback to Stripe for real errors
+        console.log('[ZenVibe] Falling back to Stripe');
+        await launchStripeCheckout();
+        return;
+      }
+    }
+
+    // No Play Billing available → use Stripe
+    await launchStripeCheckout();
   };
 
   if (loading) {

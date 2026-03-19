@@ -137,7 +137,7 @@ const App = () => {
     return false;
   };
 
-  const handlePremiumUpgrade = () => {
+  const handlePremiumUpgrade = async () => {
     const billingType = typeof (window as any).AndroidBilling;
     const purchaseType = typeof (window as any).AndroidBilling?.purchasePremium;
     const userAgent = navigator.userAgent;

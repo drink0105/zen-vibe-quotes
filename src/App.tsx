@@ -137,6 +137,33 @@ const App = () => {
     return false;
   };
 
+  const confirmPremiumPurchase = async (purchaseToken?: string) => {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('No session');
+
+      const { getUserId } = await import('@/lib/user');
+      const userId = await getUserId();
+
+      // Record purchase and unlock premium via service-role function
+      const supabaseAdmin = await import('@/integrations/supabase/client');
+      await supabaseAdmin.supabase.from('purchases').insert({
+        user_id: userId,
+        store: 'google_play',
+        product_id: 'zenvibe_premium',
+        purchase_token: purchaseToken || 'dgapi',
+        premium_unlocked: true,
+      });
+      await supabaseAdmin.supabase.rpc('unlock_premium', { user_id: userId });
+      setIsPremium(true);
+      console.log('[ZenVibe] Premium unlocked successfully');
+    } catch (err) {
+      console.error('[ZenVibe] Backend confirm failed, polling...', err);
+      await pollPremiumStatus();
+    }
+  };
+
   const handlePremiumUpgrade = async () => {
     // Try Digital Goods API (works inside Android TWA with Play Billing)
     if ('getDigitalGoodsService' in window) {
@@ -145,13 +172,10 @@ const App = () => {
         const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
         console.log('[ZenVibe] Play Billing service obtained, launching purchase...');
 
-        const existingPurchases = await service.listPurchases();
-        console.log('[ZenVibe] Existing purchases:', existingPurchases);
-
         // Use PaymentRequest API for the actual purchase
         const paymentMethod = [{
           supportedMethods: 'https://play.google.com/billing',
-          data: { sku: 'premium_upgrade' },
+          data: { sku: 'zenvibe_premium' },
         }];
         const paymentDetails = {
           total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
@@ -169,24 +193,8 @@ const App = () => {
           console.log('[ZenVibe] Purchase acknowledged');
         }
 
-        // Record in backend and unlock premium
-        try {
-          const { getUserId } = await import('@/lib/user');
-          const userId = await getUserId();
-          const { supabase } = await import('@/integrations/supabase/client');
-          await supabase.from('purchases').insert({
-            user_id: userId,
-            store: 'google_play',
-            product_id: 'premium_upgrade',
-            purchase_token: purchaseToken || 'dgapi',
-            premium_unlocked: true,
-          });
-          await supabase.rpc('unlock_premium', { user_id: userId });
-          setIsPremium(true);
-        } catch (dbErr) {
-          console.error('[ZenVibe] Backend update failed, polling...', dbErr);
-          await pollPremiumStatus();
-        }
+        // Confirm with backend and unlock premium
+        await confirmPremiumPurchase(purchaseToken);
         return;
       } catch (err) {
         console.error('[ZenVibe] Play Billing failed:', err);

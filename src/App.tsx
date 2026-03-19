@@ -138,46 +138,19 @@ const App = () => {
   };
 
   const handlePremiumUpgrade = async () => {
-    try {
-      // Direct bridge check — no installer detection needed
-      if (typeof (window as any).AndroidBilling?.purchasePremium === 'function') {
-        console.log('[ZenVibe] Play Billing bridge detected — launching purchase');
-        try {
-          const result = await (window as any).AndroidBilling.purchasePremium();
-          if (result) {
-            const confirmed = await pollPremiumStatus();
-            if (!confirmed) {
-              alert('Purchase is being verified. Please check back shortly.');
-            }
-          } else {
-            alert('Purchase was not completed. Please try again.');
-          }
-        } catch (billingError) {
-          console.error('[ZenVibe] Play Billing error:', billingError);
-          alert('Purchase failed. Please try again.');
-        }
-        return;
-      }
+    const billingType = typeof (window as any).AndroidBilling;
+    const purchaseType = typeof (window as any).AndroidBilling?.purchasePremium;
+    const userAgent = navigator.userAgent;
 
-      // Fallback: Stripe (web, non-Play installs, no billing bridge)
-      console.log('[ZenVibe] No Play Billing bridge — launching Stripe checkout');
-      const { supabase } = await import('@/integrations/supabase/client');
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {},
-      });
-      if (error || !data?.url) {
-        alert('Could not start checkout. Please try again.');
-        return;
-      }
-      window.open(data.url, '_blank');
-      const confirmed = await pollPremiumStatus();
-      if (confirmed) {
-        alert('Premium unlocked! Enjoy all features.');
-      }
-    } catch (error) {
-      console.error('[ZenVibe] Upgrade error:', error);
-      alert('Something went wrong. Please try again.');
-    }
+    console.log('[ZenVibe] AndroidBilling:', billingType);
+    console.log('[ZenVibe] purchasePremium:', purchaseType);
+    console.log('[ZenVibe] UserAgent:', userAgent);
+
+    alert(
+      'AndroidBilling: ' + billingType +
+      '\npurchasePremium: ' + purchaseType +
+      '\nUserAgent: ' + userAgent
+    );
   };
 
   if (loading) {

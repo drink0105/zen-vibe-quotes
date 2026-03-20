@@ -13,6 +13,7 @@ interface Quote {
 interface TimerPageProps {
   allQuotes: Quote[];
   isPremium: boolean;
+  onPremiumUpgrade: () => void;
 }
 
 export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {

@@ -266,6 +266,7 @@ const App = () => {
                   <TimerPage 
                     allQuotes={allQuotes}
                     isPremium={isPremium}
+                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/checkin" element={

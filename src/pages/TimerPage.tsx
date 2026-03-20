@@ -274,7 +274,7 @@ export default function TimerPage({ allQuotes, isPremium, onPremiumUpgrade }: Ti
             <p className="text-black/80 text-sm mb-4">
               Unlock 1-5 minute timers, background sounds, and access to all premium quotes
             </p>
-            <Button variant="outline" className="bg-white/20 border-black/30 text-black hover:bg-white/30">
+            <Button onClick={onPremiumUpgrade} variant="outline" className="bg-white/20 border-black/30 text-black hover:bg-white/30">
               Upgrade for $2.99
             </Button>
           </div>

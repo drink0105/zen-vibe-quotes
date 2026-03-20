@@ -182,23 +182,43 @@ const App = () => {
       try {
         const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
 
-        await service.purchase({
-          sku: 'zenvibe_premium',
-        });
+        const paymentMethod = [{
+          supportedMethods: 'https://play.google.com/billing',
+          data: { sku: 'zenvibe_premium' },
+        }];
+        const paymentDetails = {
+          total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
+        };
+        const request = new PaymentRequest(paymentMethod, paymentDetails);
+        const paymentResponse = await request.show();
+        await paymentResponse.complete('success');
+
+        const { purchaseToken } = paymentResponse.details;
+        if (purchaseToken) {
+          await service.acknowledge(purchaseToken, 'onetime');
+        }
 
         // Only runs if purchase succeeds
         await confirmPremiumPurchase();
-      } catch (err) {
-        console.log('[ZenVibe] Play Billing canceled or failed:', err);
+        return;
+      } catch (err: any) {
+        console.log('[ZenVibe] Play Billing result:', err);
 
-        // IMPORTANT: Do nothing on error (prevents Stripe from launching)
+        // If user canceled, DO NOT fallback to Stripe
+        const msg = err?.message || String(err);
+        if (msg.includes('canceled') || msg.includes('cancelled') || err?.code === 'USER_CANCELED' || msg.includes('AbortError') || msg.includes('user closed')) {
+          console.log('[ZenVibe] User canceled purchase — staying in freemium');
+          return;
+        }
+
+        // Only fallback to Stripe for real errors
+        console.log('[ZenVibe] Falling back to Stripe');
+        await launchStripeCheckout();
         return;
       }
-
-      return;
     }
 
-    // Only fallback to Stripe if Play Billing is NOT available at all
+    // No Play Billing available → use Stripe
     await launchStripeCheckout();
   };
 

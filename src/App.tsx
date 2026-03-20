@@ -178,8 +178,11 @@ const App = () => {
   };
 
   const handlePremiumUpgrade = async () => {
+    let playAttempted = false;
+
     if ('getDigitalGoodsService' in window) {
       try {
+        playAttempted = true;
         const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
 
         const paymentMethod = [{
@@ -198,28 +201,20 @@ const App = () => {
           await service.acknowledge(purchaseToken, 'onetime');
         }
 
-        // Only runs if purchase succeeds
+        // Success → unlock premium
         await confirmPremiumPurchase();
         return;
-      } catch (err: any) {
+      } catch (err) {
         console.log('[ZenVibe] Play Billing result:', err);
-
-        // If user canceled, DO NOT fallback to Stripe
-        const msg = err?.message || String(err);
-        if (msg.includes('canceled') || msg.includes('cancelled') || err?.code === 'USER_CANCELED' || msg.includes('AbortError') || msg.includes('user closed')) {
-          console.log('[ZenVibe] User canceled purchase — staying in freemium');
-          return;
-        }
-
-        // Only fallback to Stripe for real errors
-        console.log('[ZenVibe] Falling back to Stripe');
-        await launchStripeCheckout();
+        // If Play was attempted, NEVER fallback to Stripe
         return;
       }
     }
 
-    // No Play Billing available → use Stripe
-    await launchStripeCheckout();
+    // Only fallback if Play Billing is not available at all
+    if (!playAttempted) {
+      await launchStripeCheckout();
+    }
   };
 
   if (loading) {

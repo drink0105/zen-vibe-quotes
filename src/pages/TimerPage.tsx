@@ -16,7 +16,7 @@ interface TimerPageProps {
   onPremiumUpgrade: () => void;
 }
 
-export default function TimerPage({ allQuotes, isPremium }: TimerPageProps) {
+export default function TimerPage({ allQuotes, isPremium, onPremiumUpgrade }: TimerPageProps) {
   const [duration, setDuration] = useState(60); // seconds
   const [timeLeft, setTimeLeft] = useState(60);
   const [isRunning, setIsRunning] = useState(false);

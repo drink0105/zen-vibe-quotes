@@ -1,17 +1,31 @@
 import { useEffect } from "react";
 
-interface AdSenseBannerProps {
+interface AdMobBannerProps {
   isPremium: boolean;
 }
 
-export function AdMobBanner({ isPremium }: AdSenseBannerProps) {
+export function AdMobBanner({ isPremium }: AdMobBannerProps) {
+
   useEffect(() => {
     if (isPremium) return;
+
+    // Inject AdSense script
+    const scriptId = "adsbygoogle-js";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.async = true;
+      script.src =
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544";
+      script.crossOrigin = "anonymous";
+      document.body.appendChild(script);
+    }
+
     try {
       // @ts-ignore
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {
-      console.log("AdSense error:", e);
+      console.log("Ad error:", e);
     }
   }, [isPremium]);
 
@@ -36,11 +50,10 @@ export function AdMobBanner({ isPremium }: AdSenseBannerProps) {
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", height: "50px" }}
-        data-ad-client="ca-pub-4014613680442567"
-        data-ad-slot="8272900040"
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+        data-ad-client="ca-pub-3940256099942544"
+        data-ad-slot="6300978111"
       />
     </div>
   );
 }
+

@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 
-interface AdMobBannerProps {
+interface AdSenseBannerProps {
   isPremium: boolean;
 }
 
-export function AdMobBanner({ isPremium }: AdMobBannerProps) {
+export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
 
   useEffect(() => {
     if (isPremium) return;
 
-    // Inject AdSense script
+    // Load AdSense script only once
     const scriptId = "adsbygoogle-js";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -18,14 +18,7 @@ export function AdMobBanner({ isPremium }: AdMobBannerProps) {
       script.src =
         "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4014613680442567";
       script.crossOrigin = "anonymous";
-      document.body.appendChild(script);
-    }
-
-    try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.log("Ad error:", e);
+      document.head.appendChild(script);  // append to head, not body
     }
   }, [isPremium]);
 
@@ -52,7 +45,12 @@ export function AdMobBanner({ isPremium }: AdMobBannerProps) {
         style={{ display: "block", width: "100%", height: "50px" }}
         data-ad-client="ca-pub-4014613680442567"
         data-ad-slot="8272900040"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
       />
+      <script>
+        {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+      </script>
     </div>
   );
 }

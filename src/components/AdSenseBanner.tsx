@@ -5,11 +5,9 @@ interface AdSenseBannerProps {
 }
 
 export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
-
   useEffect(() => {
     if (isPremium) return;
 
-    // Load AdSense script only once
     const scriptId = "adsbygoogle-js";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -18,7 +16,15 @@ export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
       script.src =
         "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4014613680442567";
       script.crossOrigin = "anonymous";
-      document.head.appendChild(script);  // append to head, not body
+      script.onload = () => {
+        // Push only after script loads
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error("AdSense push error:", e);
+        }
+      };
+      document.head.appendChild(script);
     }
   }, [isPremium]);
 
@@ -48,10 +54,6 @@ export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
-      <script>
-        {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-      </script>
     </div>
   );
 }
-

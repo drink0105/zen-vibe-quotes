@@ -16,7 +16,7 @@ export function AdMobBanner({ isPremium }: AdMobBannerProps) {
       script.id = scriptId;
       script.async = true;
       script.src =
-        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3940256099942544";
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4014613680442567";
       script.crossOrigin = "anonymous";
       document.body.appendChild(script);
     }
@@ -50,7 +50,7 @@ export function AdMobBanner({ isPremium }: AdMobBannerProps) {
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", height: "50px" }}
-        data-ad-client="ca-pub-3940256099942544"
+        data-ad-client="ca-pub-4014613680442567"
         data-ad-slot="6300978111"
       />
     </div>

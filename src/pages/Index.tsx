@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { QuoteCard } from "@/components/QuoteCard";
 import { MoodSelector } from "@/components/MoodSelector";
-import { AdMobBanner } from "@/components/AdMobBanner";
+import { AdSenseBanner } from "@/components/AdSenseBanner";
 import { QuoteOfTheDay } from "@/components/QuoteOfTheDay";
 import { useLanguage } from "@/i18n/LanguageContext";
 

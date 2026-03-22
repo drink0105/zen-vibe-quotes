@@ -14,7 +14,7 @@ import CheckInPage from "./pages/CheckInPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
-import { AdMobBanner } from "@/components/AdMobBanner";
+import { AdSenseBanner } from "@/components/AdSenseBanner";
 const queryClient = new QueryClient();
 
 interface Quote {

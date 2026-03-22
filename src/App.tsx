@@ -292,7 +292,7 @@ const App = () => {
               </Routes>
               <Navigation isPremium={isPremium} />
             </div>
-            <AdMobBanner isPremium={isPremium} />
+            <AdSenseBanner isPremium={isPremium} />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

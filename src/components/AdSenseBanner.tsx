@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-interface AdMobBannerProps {
+interface AdSenseBannerProps {
   isPremium: boolean;
 }
 
-export function AdMobBanner({ isPremium }: AdMobBannerProps) {
+export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
 
   useEffect(() => {
     if (isPremium) return;

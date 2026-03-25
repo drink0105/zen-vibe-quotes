@@ -178,42 +178,41 @@ const App = () => {
   };
 
   const handlePremiumUpgrade = async () => {
-    let playAttempted = false;
-
+    // If Play Billing exists, try it
     if ('getDigitalGoodsService' in window) {
       try {
-        playAttempted = true;
         const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
+        const details = await service.getDetails(['zenvibe_premium']);
 
-        const paymentMethod = [{
-          supportedMethods: 'https://play.google.com/billing',
-          data: { sku: 'zenvibe_premium' },
-        }];
-        const paymentDetails = {
-          total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
-        };
-        const request = new PaymentRequest(paymentMethod, paymentDetails);
-        const paymentResponse = await request.show();
-        await paymentResponse.complete('success');
+        if (details && details.length > 0) {
+          const purchase = await service.purchase({
+            sku: 'zenvibe_premium',
+          });
 
-        const { purchaseToken } = paymentResponse.details;
-        if (purchaseToken) {
-          await service.acknowledge(purchaseToken, 'onetime');
+          await confirmPremiumPurchase();
+          return;
         }
-
-        // Success → unlock premium
-        await confirmPremiumPurchase();
-        return;
       } catch (err) {
-        console.log('[ZenVibe] Play Billing result:', err);
-        // If Play was attempted, NEVER fallback to Stripe
-        return;
+        console.log('Play Billing not available:', err);
       }
     }
 
-    // Only fallback if Play Billing is not available at all
-    if (!playAttempted) {
-      await launchStripeCheckout();
+    // IMPORTANT: Use direct navigation for mobile compatibility
+    // This ensures the navigation happens directly from the user gesture
+    try {
+      const { getUserId } = await import('@/lib/user');
+      const userId = await getUserId();
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_self');
+      }
+    } catch (err) {
+      console.error('[ZenVibe] Stripe checkout failed:', err);
+      alert('Could not start checkout. Please try again.');
     }
   };
 

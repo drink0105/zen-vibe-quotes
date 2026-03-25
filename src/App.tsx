@@ -169,7 +169,13 @@ const App = () => {
       });
       if (error) throw error;
       if (data?.url) {
-        window.location.href = data.url;
+        const a = document.createElement("a");
+        a.href = data.url;
+        a.target = "_self";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
     } catch (err) {
       console.error('[ZenVibe] Stripe checkout failed:', err);

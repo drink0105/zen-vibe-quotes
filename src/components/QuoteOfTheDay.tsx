@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { MdOpenInNew, MdStars } from "react-icons/md";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Quote {
@@ -13,14 +11,12 @@ interface Quote {
 
 interface QuoteOfTheDayProps {
   allQuotes: Quote[];
-  isPremium: boolean;
   customFont?: string;
   customGradient?: string;
 }
 
 export function QuoteOfTheDay({ 
   allQuotes, 
-  isPremium,
   customFont = "font-quote",
   customGradient = "gradient-motivation"
 }: QuoteOfTheDayProps) {
@@ -43,13 +39,9 @@ export function QuoteOfTheDay({
         }
       }
 
-      const availableQuotes = isPremium 
-        ? allQuotes 
-        : allQuotes.filter(q => q.tier === "free");
-      
-      if (availableQuotes.length > 0) {
-        const randomIndex = Math.floor(Math.random() * availableQuotes.length);
-        const newQuote = availableQuotes[randomIndex];
+      if (allQuotes.length > 0) {
+        const randomIndex = Math.floor(Math.random() * allQuotes.length);
+        const newQuote = allQuotes[randomIndex];
         setDailyQuote(newQuote);
         
         localStorage.setItem("zenvibe-qotd", JSON.stringify({
@@ -71,36 +63,24 @@ export function QuoteOfTheDay({
     }, msUntilMidnight);
 
     return () => clearTimeout(timer);
-  }, [allQuotes, isPremium]);
+  }, [allQuotes]);
 
   if (!dailyQuote) return null;
 
   return (
     <div className="w-full max-w-md mx-auto px-4 mb-6">
       <div className="glass-card gradient-blue relative overflow-hidden p-6 border-2 border-blue-400">
-        {isPremium && (
-          <div className="absolute top-3 right-3">
-            <MdStars className="w-5 h-5 text-yellow-400 animate-glow-pulse" />
-          </div>
-        )}
-
         <div className="flex items-center gap-2 mb-4">
           <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <h3 className="text-sm font-semibold text-black">
-            {t("qotd.title")}
-          </h3>
+          <h3 className="text-sm font-semibold text-black">{t("qotd.title")}</h3>
         </div>
 
-        <blockquote className={`
-          ${customFont} text-lg leading-relaxed mb-3 text-black
-        `}>
+        <blockquote className={`${customFont} text-lg leading-relaxed mb-3 text-black`}>
           "{dailyQuote.text}"
         </blockquote>
 
         {dailyQuote.author && (
-          <p className="text-sm mb-4 text-black/80">
-            — {dailyQuote.author}
-          </p>
+          <p className="text-sm mb-4 text-black/80">— {dailyQuote.author}</p>
         )}
 
         <div className="flex items-center justify-center">

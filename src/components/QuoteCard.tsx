@@ -18,7 +18,6 @@ interface QuoteCardProps {
   onFavorite: (quote: Quote) => void;
   onShare: (quote: Quote) => void;
   isFavorited: boolean;
-  isPremium: boolean;
 }
 
 const categoryGradients: Record<string, string> = {
@@ -39,10 +38,10 @@ const categoryGlows: Record<string, string> = {
   Resilience: "glow-resilience",
 };
 
-export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited, isPremium }: QuoteCardProps) {
+export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited }: QuoteCardProps) {
   const [isFlipping, setIsFlipping] = useState(false);
   const [heartPulse, setHeartPulse] = useState(false);
-  const { speakQuote, isSpeaking } = useSpeakQuote(isPremium);
+  const { speakQuote, isSpeaking } = useSpeakQuote();
   const { t } = useLanguage();
 
   const handleNewQuote = () => {
@@ -69,12 +68,6 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
         ${isFlipping ? 'flip-exit-active' : 'flip-enter-active'}
         ${glowClass}
       `}>
-        {quote.tier === "premium" && !isPremium && (
-          <div className="absolute top-4 right-4 premium-glow px-2 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-            {t("quote.premium")}
-          </div>
-        )}
-        
         <div className={`
           inline-block px-4 py-2 rounded-full text-sm font-semibold mb-6
           ${gradientClass} shadow-lg dark:text-black
@@ -93,54 +86,17 @@ export function QuoteCard({ quote, onNewQuote, onFavorite, onShare, isFavorited,
         )}
 
         <div className="flex justify-center gap-4">
-          <Button
-            onClick={handleNewQuote}
-            variant="glass"
-            size="circle"
-            className="hover:scale-110 transition-all duration-300"
-            disabled={isFlipping}
-          >
+          <Button onClick={handleNewQuote} variant="glass" size="circle" className="hover:scale-110 transition-all duration-300" disabled={isFlipping}>
             <MdRefresh className={`w-6 h-6 ${isFlipping ? 'animate-spin' : ''}`} />
           </Button>
-
-          <Button
-            onClick={handleFavorite}
-            variant="glass"
-            size="circle"
-            className={`
-              hover:scale-110 transition-all duration-300
-              ${heartPulse ? 'pulse-heart' : ''}
-              ${isFavorited ? 'text-red-500 glow-pulse' : ''}
-            `}
-          >
-            {isFavorited ? (
-              <MdFavorite className="w-6 h-6" />
-            ) : (
-              <MdFavoriteBorder className="w-6 h-6" />
-            )}
+          <Button onClick={handleFavorite} variant="glass" size="circle" className={`hover:scale-110 transition-all duration-300 ${heartPulse ? 'pulse-heart' : ''} ${isFavorited ? 'text-red-500 glow-pulse' : ''}`}>
+            {isFavorited ? <MdFavorite className="w-6 h-6" /> : <MdFavoriteBorder className="w-6 h-6" />}
           </Button>
-
-          <Button
-            onClick={() => onShare(quote)}
-            variant="glass"
-            size="circle"
-            className="hover:scale-110 transition-all duration-300"
-          >
+          <Button onClick={() => onShare(quote)} variant="glass" size="circle" className="hover:scale-110 transition-all duration-300">
             <MdShare className="w-6 h-6" />
           </Button>
-
-          <Button
-            onClick={() => speakQuote(quote)}
-            variant="glass"
-            size="circle"
-            className={`hover:scale-110 transition-all duration-300 ${isSpeaking ? 'text-primary glow-pulse' : ''}`}
-            title={isSpeaking ? t("quote.stopListening") : t("quote.listen")}
-          >
-            {isSpeaking ? (
-              <MdVolumeOff className="w-6 h-6" />
-            ) : (
-              <MdVolumeUp className="w-6 h-6" />
-            )}
+          <Button onClick={() => speakQuote(quote)} variant="glass" size="circle" className={`hover:scale-110 transition-all duration-300 ${isSpeaking ? 'text-primary glow-pulse' : ''}`} title={isSpeaking ? t("quote.stopListening") : t("quote.listen")}>
+            {isSpeaking ? <MdVolumeOff className="w-6 h-6" /> : <MdVolumeUp className="w-6 h-6" />}
           </Button>
         </div>
 

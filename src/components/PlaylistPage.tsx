@@ -28,11 +28,10 @@ interface Playlist {
 }
 
 interface PlaylistPageProps {
-  isPremium: boolean;
   allQuotes: Quote[];
 }
 
-export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
+export function PlaylistPage({ allQuotes }: PlaylistPageProps) {
   const [playlists, setPlaylists] = useLocalStorage<Playlist[]>("playlists", []);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingPlaylist, setEditingPlaylist] = useState<Playlist | null>(null);
@@ -41,14 +40,9 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<{playlistId: string, quoteIndex: number} | null>(null);
   const { t } = useLanguage();
 
-  const maxQuotes = isPremium ? 10 : 5;
-  const maxPlaylists = isPremium ? Infinity : 1;
+  const maxQuotes = 10;
 
   const createPlaylist = () => {
-    if (!isPremium && playlists.length >= maxPlaylists) {
-      alert(t("playlist.freeLimit"));
-      return;
-    }
     if (selectedQuotes.length === 0) {
       alert(t("playlist.selectAtLeast"));
       return;
@@ -86,7 +80,7 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
       setSelectedQuotes(selectedQuotes.filter(q => q.id !== quote.id));
     } else {
       if (selectedQuotes.length >= maxQuotes) {
-        alert(`${isPremium ? 'Premium' : 'Free'} ${t("playlist.maxQuotes")} ${maxQuotes} ${t("playlist.quotesPerPlaylist")}`);
+        alert(`${t("playlist.maxQuotes")} ${maxQuotes} ${t("playlist.quotesPerPlaylist")}`);
         return;
       }
       setSelectedQuotes([...selectedQuotes, quote]);
@@ -94,7 +88,6 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
   };
 
   const categories = Array.from(new Set(allQuotes.map(q => q.category)));
-  const availableQuotes = allQuotes.filter(q => isPremium || q.tier === "free");
 
   const currentPlayingQuote = currentlyPlaying ? 
     playlists.find(p => p.id === currentlyPlaying.playlistId)?.quotes[currentlyPlaying.quoteIndex] : null;
@@ -105,53 +98,28 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
         <div className="text-center mb-8">
           <MdPlaylistAdd className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
           <h1 className="text-3xl font-bold mb-2">{t("playlist.title")}</h1>
-          <p className="text-muted-foreground">
-            {t("playlist.subtitle")}
-          </p>
+          <p className="text-muted-foreground">{t("playlist.subtitle")}</p>
         </div>
 
         {currentPlayingQuote && (
           <div className="glass-card p-6 mb-6 gradient-creativity">
             <div className="text-center text-white">
               <h3 className="text-lg font-semibold mb-4 flex items-center justify-center gap-2">
-                <MdPlayArrow className="w-5 h-5" />
-                {t("playlist.nowPlaying")}
+                <MdPlayArrow className="w-5 h-5" /> {t("playlist.nowPlaying")}
               </h3>
-              <blockquote className="text-xl font-quote mb-4">
-                "{currentPlayingQuote.text}"
-              </blockquote>
-              {currentPlayingQuote.author && (
-                <p className="text-white/80 mb-4">— {currentPlayingQuote.author}</p>
-              )}
+              <blockquote className="text-xl font-quote mb-4">"{currentPlayingQuote.text}"</blockquote>
+              {currentPlayingQuote.author && <p className="text-white/80 mb-4">— {currentPlayingQuote.author}</p>}
               <div className="flex justify-center gap-4">
-                <Button 
-                  onClick={nextQuote}
-                  variant="outline"
-                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-                >
-                  {t("playlist.nextQuote")}
-                </Button>
-                <Button 
-                  onClick={() => setCurrentlyPlaying(null)}
-                  variant="outline"
-                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-                >
-                  <MdClose className="w-4 h-4" />
-                </Button>
+                <Button onClick={nextQuote} variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">{t("playlist.nextQuote")}</Button>
+                <Button onClick={() => setCurrentlyPlaying(null)} variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30"><MdClose className="w-4 h-4" /></Button>
               </div>
             </div>
           </div>
         )}
 
         <div className="mb-6 text-center">
-          <Button 
-            onClick={() => setShowCreateModal(true)}
-            variant="zen"
-            size="lg"
-            className="glow-primary"
-          >
-            <MdAdd className="w-5 h-5 mr-2" />
-            {t("playlist.createNew")}
+          <Button onClick={() => setShowCreateModal(true)} variant="zen" size="lg" className="glow-primary">
+            <MdAdd className="w-5 h-5 mr-2" /> {t("playlist.createNew")}
           </Button>
         </div>
 
@@ -165,46 +133,17 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
             playlists.map((playlist) => (
               <div key={playlist.id} className="glass-card p-6 tilt-3d">
                 <h3 className="text-lg font-semibold mb-2">{playlist.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {playlist.quotes.length} {t("playlist.quotes")}
-                </p>
-                
+                <p className="text-sm text-muted-foreground mb-4">{playlist.quotes.length} {t("playlist.quotes")}</p>
                 <div className="flex gap-2 mb-4">
-                  <Button 
-                    onClick={() => playPlaylist(playlist)}
-                    variant="zen" 
-                    size="sm"
-                  >
-                    <MdPlayArrow className="w-4 h-4 mr-1" />
-                    {t("playlist.play")}
-                  </Button>
-                  <Button 
-                    onClick={() => setEditingPlaylist(playlist)}
-                    variant="outline" 
-                    size="sm"
-                  >
-                    <MdEdit className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    onClick={() => deletePlaylist(playlist.id)}
-                    variant="destructive" 
-                    size="sm"
-                  >
-                    <MdDelete className="w-4 h-4" />
-                  </Button>
+                  <Button onClick={() => playPlaylist(playlist)} variant="zen" size="sm"><MdPlayArrow className="w-4 h-4 mr-1" /> {t("playlist.play")}</Button>
+                  <Button onClick={() => setEditingPlaylist(playlist)} variant="outline" size="sm"><MdEdit className="w-4 h-4" /></Button>
+                  <Button onClick={() => deletePlaylist(playlist.id)} variant="destructive" size="sm"><MdDelete className="w-4 h-4" /></Button>
                 </div>
-
                 <div className="space-y-2">
                   {playlist.quotes.slice(0, 2).map((quote) => (
-                    <p key={quote.id} className="text-sm text-muted-foreground truncate">
-                      "{quote.text}"
-                    </p>
+                    <p key={quote.id} className="text-sm text-muted-foreground truncate">"{quote.text}"</p>
                   ))}
-                  {playlist.quotes.length > 2 && (
-                    <p className="text-xs text-muted-foreground">
-                      +{playlist.quotes.length - 2} {t("playlist.more")}
-                    </p>
-                  )}
+                  {playlist.quotes.length > 2 && <p className="text-xs text-muted-foreground">+{playlist.quotes.length - 2} {t("playlist.more")}</p>}
                 </div>
               </div>
             ))
@@ -214,50 +153,25 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
         {(showCreateModal || editingPlaylist) && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="glass-card max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
-              <h3 className="text-xl font-semibold mb-4">
-                {editingPlaylist ? t("playlist.editPlaylist") : t("playlist.createPlaylist")}
-              </h3>
-              
+              <h3 className="text-xl font-semibold mb-4">{editingPlaylist ? t("playlist.editPlaylist") : t("playlist.createPlaylist")}</h3>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">{t("playlist.playlistName")}</label>
-                <input
-                  type="text"
-                  value={newPlaylistName}
-                  onChange={(e) => setNewPlaylistName(e.target.value)}
-                  placeholder={t("playlist.namePlaceholder")}
-                  className="glass-button w-full p-3 rounded-lg border text-foreground"
-                />
+                <input type="text" value={newPlaylistName} onChange={(e) => setNewPlaylistName(e.target.value)} placeholder={t("playlist.namePlaceholder")} className="glass-button w-full p-3 rounded-lg border text-foreground" />
               </div>
-
               <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-2">
-                  {t("playlist.selected")}: {selectedQuotes.length}/{maxQuotes} {t("playlist.quotes")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">{t("playlist.selected")}: {selectedQuotes.length}/{maxQuotes} {t("playlist.quotes")}</p>
               </div>
-
               <div className="space-y-4 mb-6">
                 {categories.map(category => {
-                  const categoryQuotes = availableQuotes.filter(q => q.category === category);
+                  const categoryQuotes = allQuotes.filter(q => q.category === category);
                   return (
                     <div key={category}>
                       <h4 className="font-medium mb-2">{t(`cat.${category}`)}</h4>
                       <div className="grid gap-2">
                         {categoryQuotes.slice(0, 5).map(quote => (
-                          <div 
-                            key={quote.id}
-                            onClick={() => toggleQuoteSelection(quote)}
-                            className={`
-                              p-3 rounded-lg border cursor-pointer transition-all duration-200
-                              ${selectedQuotes.find(q => q.id === quote.id) 
-                                ? 'bg-primary/20 border-primary' 
-                                : 'glass-button hover:scale-105'
-                              }
-                            `}
-                          >
+                          <div key={quote.id} onClick={() => toggleQuoteSelection(quote)} className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${selectedQuotes.find(q => q.id === quote.id) ? 'bg-primary/20 border-primary' : 'glass-button hover:scale-105'}`}>
                             <p className="text-sm">{quote.text}</p>
-                            {quote.author && (
-                              <p className="text-xs text-muted-foreground mt-1">— {quote.author}</p>
-                            )}
+                            {quote.author && <p className="text-xs text-muted-foreground mt-1">— {quote.author}</p>}
                           </div>
                         ))}
                       </div>
@@ -265,36 +179,11 @@ export function PlaylistPage({ isPremium, allQuotes }: PlaylistPageProps) {
                   );
                 })}
               </div>
-
               <div className="flex gap-4">
-                <Button onClick={createPlaylist} variant="zen" className="flex-1">
-                  {editingPlaylist ? t("playlist.update") : t("playlist.create")} {t("playlist.title")}
-                </Button>
-                <Button 
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    setEditingPlaylist(null);
-                    setSelectedQuotes([]);
-                    setNewPlaylistName("");
-                  }}
-                  variant="outline"
-                >
-                  {t("playlist.cancel")}
-                </Button>
+                <Button onClick={createPlaylist} variant="zen" className="flex-1">{editingPlaylist ? t("playlist.update") : t("playlist.create")} {t("playlist.title")}</Button>
+                <Button onClick={() => { setShowCreateModal(false); setEditingPlaylist(null); setSelectedQuotes([]); setNewPlaylistName(""); }} variant="outline">{t("playlist.cancel")}</Button>
               </div>
             </div>
-          </div>
-        )}
-
-        {!isPremium && (
-          <div className="glass-card p-6 mt-6 text-center gradient-creativity">
-            <h3 className="text-lg font-semibold mb-2 text-white">{t("playlist.premiumTitle")}</h3>
-            <p className="text-white/90 text-sm mb-4">
-              {t("playlist.premiumDesc")}
-            </p>
-            <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
-              {t("shared.upgradeFor")}
-            </Button>
           </div>
         )}
       </div>

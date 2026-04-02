@@ -1,14 +1,7 @@
 import { useEffect } from "react";
 
-interface AdSenseBannerProps {
-  isPremium: boolean;
-}
-
-export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
-
+export function AdSenseBanner() {
   useEffect(() => {
-    if (isPremium) return;
-
     // Inject AdSense script
     const scriptId = "adsbygoogle-js";
     if (!document.getElementById(scriptId)) {
@@ -27,9 +20,7 @@ export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
     } catch (e) {
       console.log("Ad error:", e);
     }
-  }, [isPremium]);
-
-  if (isPremium) return null;
+  }, []);
 
   return (
     <div
@@ -56,4 +47,3 @@ export function AdSenseBanner({ isPremium }: AdSenseBannerProps) {
     </div>
   );
 }
-

@@ -10,11 +10,7 @@ import {
   MdSelfImprovement
 } from "react-icons/md";
 
-interface NavigationProps {
-  isPremium: boolean;
-}
-
-export function Navigation({ isPremium }: NavigationProps) {
+export function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -29,7 +25,7 @@ export function Navigation({ isPremium }: NavigationProps) {
   ];
 
   return (
-    <nav className={`fixed left-0 right-0 z-50 ${isPremium ? 'bottom-0' : 'bottom-[52px]'}`} style={{ height: "50px" }}>
+    <nav className="fixed left-0 right-0 z-50 bottom-[52px]" style={{ height: "50px" }}>
       <div className="glass-card mx-1 mb-1 rounded-2xl h-full overflow-hidden">
         <div className="flex flex-row flex-nowrap justify-around items-center h-full px-0.5 gap-0" style={{ flexWrap: 'nowrap' }}>
           {navItems.map((item) => {

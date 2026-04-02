@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 export function Banner() {
   useEffect(() => {
-    // Adsterra script
+    // Load Adsterra scripts
     const script1 = document.createElement("script");
     script1.innerHTML = `
       atOptions = {

@@ -13,10 +13,9 @@ interface CheckInData {
 interface CheckInStatsProps {
   checkIns: CheckInData[];
   streak: number;
-  isPremium: boolean;
 }
 
-export function CheckInStats({ checkIns, streak, isPremium }: CheckInStatsProps) {
+export function CheckInStats({ checkIns, streak }: CheckInStatsProps) {
   const { t, language } = useLanguage();
 
   const stats = useMemo(() => {
@@ -31,7 +30,7 @@ export function CheckInStats({ checkIns, streak, isPremium }: CheckInStatsProps)
       
       const checkIn = checkIns.find(c => c.date === dateStr);
       const completedCount = checkIn 
-        ? (checkIn.morning ? 1 : 0) + (checkIn.evening && isPremium ? 1 : 0)
+        ? (checkIn.morning ? 1 : 0) + (checkIn.evening ? 1 : 0)
         : 0;
       
       const isToday = i === 0;
@@ -46,7 +45,7 @@ export function CheckInStats({ checkIns, streak, isPremium }: CheckInStatsProps)
     const completionRate = Math.round((last14Completed / 13) * 100);
     
     return { totalCompleted, last14Completed, last14Missed, completionRate, chartData: last14Days };
-  }, [checkIns, isPremium, language]);
+  }, [checkIns, language]);
 
   const getBarColor = (completed: number, missed: boolean) => {
     if (completed >= 2) return "hsl(142, 76%, 36%)";
@@ -100,7 +99,7 @@ export function CheckInStats({ checkIns, streak, isPremium }: CheckInStatsProps)
                 tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                 interval={1}
               />
-              <YAxis hide domain={[0, isPremium ? 2 : 1]} />
+              <YAxis hide domain={[0, 2]} />
               <Bar dataKey="completed" radius={[4, 4, 0, 0]} minPointSize={4}>
                 {stats.chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={getBarColor(entry.completed, entry.missed)} />
@@ -114,14 +113,12 @@ export function CheckInStats({ checkIns, streak, isPremium }: CheckInStatsProps)
       <div className="flex justify-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-sm bg-green-500"></div>
-          <span>{isPremium ? t("stats.both") : t("stats.completeStat")}</span>
+          <span>{t("stats.both")}</span>
         </div>
-        {isPremium && (
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-sm bg-amber-500"></div>
-            <span>{t("stats.one")}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-sm bg-amber-500"></div>
+          <span>{t("stats.one")}</span>
+        </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-sm bg-gray-300"></div>
           <span>{t("stats.missed")}</span>

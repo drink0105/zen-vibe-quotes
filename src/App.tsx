@@ -33,27 +33,10 @@ interface QuotesData {
 const App = () => {
   const [favorites, setFavorites] = useLocalStorage<Quote[]>("zenvibes-favorites", []);
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("zenvibes-theme", "light");
-  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [backgroundTheme, setBackgroundTheme] = useLocalStorage<string>("zenvibes-background", "default");
   const [appVersion, setAppVersion] = useLocalStorage<string>("zenvibes-version", "1.0.0");
   const [allQuotes, setAllQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Check premium status from backend on app start
-  useEffect(() => {
-    const checkPremium = async () => {
-      try {
-        const { isPremium: checkBackendPremium } = await import('@/lib/premium');
-        const premium = await checkBackendPremium();
-        setIsPremium(premium);
-      } catch (error) {
-        console.log('Premium check failed:', error);
-        setIsPremium(false);
-      }
-    };
-
-    checkPremium();
-  }, []);
 
   // Load quotes from public folder on app start
   useEffect(() => {
@@ -112,115 +95,12 @@ const App = () => {
     if (isFavorite) {
       setFavorites(favorites.filter(fav => fav.id !== quote.id));
     } else {
-      if (!isPremium && favorites.length >= 10) {
-        alert("Free tier allows up to 10 favorites. Upgrade to Premium for unlimited favorites!");
-        return;
-      }
       setFavorites([...favorites, quote]);
     }
   };
 
   const handleRemoveFavorite = (id: number) => {
     setFavorites(favorites.filter(fav => fav.id !== id));
-  };
-
-  const pollPremiumStatus = async (maxAttempts = 20, intervalMs = 3000) => {
-    const { isPremium: checkPremium } = await import('@/lib/premium');
-    for (let i = 0; i < maxAttempts; i++) {
-      const premium = await checkPremium();
-      if (premium) {
-        setIsPremium(true);
-        return true;
-      }
-      await new Promise(resolve => setTimeout(resolve, intervalMs));
-    }
-    return false;
-  };
-
-  const confirmPremiumPurchase = async () => {
-    try {
-      const { supabase } = await import('@/integrations/supabase/client');
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('No session');
-
-      await fetch('https://ghmjtkzrjddfdjautcfb.supabase.co/functions/v1/confirm-premium', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + session.access_token,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      setIsPremium(true);
-      console.log('[ZenVibe] Premium unlocked successfully');
-    } catch (err) {
-      console.error('[ZenVibe] Backend confirm failed, polling...', err);
-      await pollPremiumStatus();
-    }
-  };
-
-  const launchStripeCheckout = async () => {
-    try {
-      const { getUserId } = await import('@/lib/user');
-      const userId = await getUserId();
-      const { supabase } = await import('@/integrations/supabase/client');
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { user_id: userId },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        const a = document.createElement("a");
-        a.href = data.url;
-        a.target = "_self";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    } catch (err) {
-      console.error('[ZenVibe] Stripe checkout failed:', err);
-      alert('Could not start checkout. Please try again.');
-    }
-  };
-
-  const handlePremiumUpgrade = async () => {
-    let playAttempted = false;
-
-    if ('getDigitalGoodsService' in window) {
-      try {
-        playAttempted = true;
-        const service = await (window as any).getDigitalGoodsService('https://play.google.com/billing');
-
-        const paymentMethod = [{
-          supportedMethods: 'https://play.google.com/billing',
-          data: { sku: 'zenvibe_premium' },
-        }];
-        const paymentDetails = {
-          total: { label: 'ZenVibe Premium', amount: { currency: 'USD', value: '2.99' } },
-        };
-        const request = new PaymentRequest(paymentMethod, paymentDetails);
-        const paymentResponse = await request.show();
-        await paymentResponse.complete('success');
-
-        const { purchaseToken } = paymentResponse.details;
-        if (purchaseToken) {
-          await service.acknowledge(purchaseToken, 'onetime');
-        }
-
-        // Success → unlock premium
-        await confirmPremiumPurchase();
-        return;
-      } catch (err) {
-        console.log('[ZenVibe] Play Billing result:', err);
-        // If Play was attempted, NEVER fallback to Stripe
-        return;
-      }
-    }
-
-    // Only fallback if Play Billing is not available at all
-    if (!playAttempted) {
-      await launchStripeCheckout();
-    }
   };
 
   if (loading) {
@@ -249,8 +129,6 @@ const App = () => {
                     favorites={favorites}
                     onFavorite={handleFavorite}
                     onShare={handleShare}
-                    isPremium={isPremium}
-                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/favorites" element={
@@ -258,36 +136,27 @@ const App = () => {
                     favorites={favorites}
                     onRemoveFavorite={handleRemoveFavorite}
                     onShare={handleShare}
-                    isPremium={isPremium}
                   />
                 } />
                 <Route path="/playlists" element={
                   <PlaylistsPage 
                     allQuotes={allQuotes}
-                    isPremium={isPremium}
-                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/timer" element={
                   <TimerPage 
                     allQuotes={allQuotes}
-                    isPremium={isPremium}
-                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/checkin" element={
                   <CheckInPage 
                     allQuotes={allQuotes}
-                    isPremium={isPremium}
-                    onPremiumUpgrade={handlePremiumUpgrade}
                   />
                 } />
                 <Route path="/settings" element={
                   <SettingsPage 
                     theme={theme}
                     onThemeChange={setTheme}
-                    isPremium={isPremium}
-                    onPremiumUpgrade={handlePremiumUpgrade}
                     backgroundTheme={backgroundTheme}
                     onBackgroundThemeChange={setBackgroundTheme}
                     appVersion={appVersion}
@@ -296,9 +165,9 @@ const App = () => {
                 } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <Navigation isPremium={isPremium} />
+              <Navigation />
             </div>
-            <AdSenseBanner isPremium={isPremium} />
+            <AdSenseBanner />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

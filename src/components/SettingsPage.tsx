@@ -50,17 +50,6 @@ export function SettingsPage({ theme, onThemeChange }: SettingsPageProps) {
               <p>© 2024 ZenVibe. All rights reserved.</p>
             </div>
           </div>
-          
-          {/* Premium section (placeholder) */}
-          <div className="quote-card gradient-motivation">
-            <h3 className="text-lg font-semibold mb-2 text-black">Go Premium</h3>
-            <p className="text-black/80 text-sm mb-4">
-              Unlock unlimited quotes, custom themes, and advanced features
-            </p>
-            <Button variant="outline" className="bg-white/20 border-black/30 text-black hover:bg-white/30">
-              Coming Soon - $2.99
-            </Button>
-          </div>
         </div>
       </div>
     </div>

@@ -8,14 +8,12 @@ interface Quote {
 
 type LangCode = "en" | "zh";
 
-// Get voices filtered by language
 export function getVoicesForLanguage(lang: LangCode): SpeechSynthesisVoice[] {
   if (!('speechSynthesis' in window)) return [];
   const prefix = lang === 'zh' ? 'zh' : 'en';
   return speechSynthesis.getVoices().filter(v => v.lang.startsWith(prefix));
 }
 
-// Get default voice for a language
 export function getDefaultVoiceForLanguage(lang: LangCode): SpeechSynthesisVoice | null {
   const voices = getVoicesForLanguage(lang);
   if (voices.length === 0) return null;
@@ -27,7 +25,6 @@ export function getDefaultVoiceForLanguage(lang: LangCode): SpeechSynthesisVoice
   );
 }
 
-// Legacy exports for backward compat
 export function getEnglishVoices(): SpeechSynthesisVoice[] {
   return getVoicesForLanguage('en');
 }
@@ -36,7 +33,7 @@ export function getDefaultEnglishVoice(): SpeechSynthesisVoice | null {
   return getDefaultVoiceForLanguage('en');
 }
 
-export function useSpeakQuote(isPremium: boolean) {
+export function useSpeakQuote() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [selectedVoiceName] = useLocalStorage<string>("zenvibe-selected-voice", "");
   const [voiceSpeed] = useLocalStorage<number>("zenvibe-voice-speed", 1);
@@ -65,12 +62,12 @@ export function useSpeakQuote(isPremium: boolean) {
 
   const activeVoice = useMemo(() => {
     if (voices.length === 0) return null;
-    if (isPremium && selectedVoiceName) {
+    if (selectedVoiceName) {
       const selected = voices.find(v => v.name === selectedVoiceName);
       if (selected) return selected;
     }
     return getDefaultVoiceForLanguage(currentLang);
-  }, [isPremium, selectedVoiceName, voices, currentLang]);
+  }, [selectedVoiceName, voices, currentLang]);
 
   const stopSpeaking = useCallback(() => {
     if ('speechSynthesis' in window) {
@@ -90,15 +87,13 @@ export function useSpeakQuote(isPremium: boolean) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = activeVoice?.lang || (currentLang === 'zh' ? 'zh-CN' : 'en-US');
     if (activeVoice) utterance.voice = activeVoice;
-    if (isPremium) {
-      utterance.rate = voiceSpeed;
-      utterance.pitch = voicePitch;
-    }
+    utterance.rate = voiceSpeed;
+    utterance.pitch = voicePitch;
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
     speechSynthesis.speak(utterance);
-  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
+  }, [activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
 
   const speakText = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) return;
@@ -107,15 +102,13 @@ export function useSpeakQuote(isPremium: boolean) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = activeVoice?.lang || (currentLang === 'zh' ? 'zh-CN' : 'en-US');
     if (activeVoice) utterance.voice = activeVoice;
-    if (isPremium) {
-      utterance.rate = voiceSpeed;
-      utterance.pitch = voicePitch;
-    }
+    utterance.rate = voiceSpeed;
+    utterance.pitch = voicePitch;
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
     speechSynthesis.speak(utterance);
-  }, [isPremium, activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
+  }, [activeVoice, voiceSpeed, voicePitch, isSpeaking, stopSpeaking, currentLang]);
 
   return { speakQuote, speakText, stopSpeaking, isSpeaking, englishVoices: voices, activeVoice };
 }

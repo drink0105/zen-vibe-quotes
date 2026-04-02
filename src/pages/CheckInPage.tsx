@@ -24,11 +24,9 @@ interface CheckInData {
 
 interface CheckInPageProps {
   allQuotes: Quote[];
-  isPremium: boolean;
-  onPremiumUpgrade: () => void;
 }
 
-export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: CheckInPageProps) {
+export default function CheckInPage({ allQuotes }: CheckInPageProps) {
   const [checkIns, setCheckIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
   const [streak, setStreak] = useLocalStorage<number>("zenvibe-streak", 0);
   const [lastCheckInDate, setLastCheckInDate] = useLocalStorage<string>("zenvibe-last-checkin", "");
@@ -36,17 +34,16 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   const [showBreathing, setShowBreathing] = useState(false);
   const [breathPhase, setBreathPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
-  const { speakQuote, speakText, isSpeaking } = useSpeakQuote(isPremium);
+  const { speakQuote, speakText, isSpeaking } = useSpeakQuote();
   const { t } = useLanguage();
 
   const today = new Date().toISOString().split("T")[0];
   const currentHour = new Date().getHours();
-  const isMorning = currentHour < 12;
   const isEvening = currentHour >= 17;
 
   const todayCheckIn = checkIns.find(c => c.date === today);
   const canDoMorning = !todayCheckIn?.morning;
-  const canDoEvening = isPremium && !todayCheckIn?.evening && isEvening;
+  const canDoEvening = !todayCheckIn?.evening && isEvening;
 
   useEffect(() => {
     if (!lastCheckInDate) return;
@@ -73,12 +70,11 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   }, [showBreathing]);
 
   const getRandomQuote = () => {
-    const availableQuotes = isPremium ? allQuotes : allQuotes.filter(q => q.tier === "free");
-    const mindfulQuotes = availableQuotes.filter(q => 
+    const mindfulQuotes = allQuotes.filter(q => 
       q.category.toLowerCase().includes("mindfulness") || 
       q.category.toLowerCase().includes("motivation")
     );
-    const pool = mindfulQuotes.length > 0 ? mindfulQuotes : availableQuotes;
+    const pool = mindfulQuotes.length > 0 ? mindfulQuotes : allQuotes;
     return pool[Math.floor(Math.random() * pool.length)];
   };
 
@@ -131,14 +127,11 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
     setTimeout(() => setShowCompletionMessage(false), 3000);
   };
 
-  const reflectionPrompts = isPremium 
-    ? [t("prompt.morning1"), t("prompt.morning2"), t("prompt.morning3"), t("prompt.morning4"), t("prompt.morning5")]
-    : [t("prompt.morningFree")];
-
+  const reflectionPrompts = [t("prompt.morning1"), t("prompt.morning2"), t("prompt.morning3"), t("prompt.morning4"), t("prompt.morning5")];
   const eveningPrompts = [t("prompt.evening1"), t("prompt.evening2"), t("prompt.evening3"), t("prompt.evening4"), t("prompt.evening5")];
 
   const [currentPrompt] = useState(() => 
-    isEvening && isPremium 
+    isEvening 
       ? eveningPrompts[Math.floor(Math.random() * eveningPrompts.length)]
       : reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)]
   );
@@ -148,7 +141,7 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
   );
 
   return (
-    <div className={`min-h-screen ${isPremium ? 'pb-[80px]' : 'pb-[130px]'} px-4 py-8`}>
+    <div className="min-h-screen pb-[130px] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <MdSelfImprovement className="w-16 h-16 mx-auto mb-4 text-primary animate-glow-pulse" />
@@ -156,7 +149,7 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
           <p className="text-muted-foreground">{t("checkin.subtitle")}</p>
         </div>
 
-        <CheckInStats checkIns={checkIns} streak={streak} isPremium={isPremium} />
+        <CheckInStats checkIns={checkIns} streak={streak} />
 
         {dailyQuote && (
           <div className="glass-card p-6 mb-6 gradient-mindfulness">
@@ -185,14 +178,8 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
             <p className="text-green-600 dark:text-green-400 font-medium">
               {t("checkin.completionMsg")}
             </p>
-            <Button
-              onClick={() => speakText(t("checkin.completionSpeak"))}
-              variant="ghost"
-              size="sm"
-              className="mt-2"
-            >
-              <MdVolumeUp className="w-4 h-4 mr-2" />
-              {t("checkin.hearConfirmation")}
+            <Button onClick={() => speakText(t("checkin.completionSpeak"))} variant="ghost" size="sm" className="mt-2">
+              <MdVolumeUp className="w-4 h-4 mr-2" /> {t("checkin.hearConfirmation")}
             </Button>
           </div>
         )}
@@ -212,120 +199,67 @@ export default function CheckInPage({ allQuotes, isPremium, onPremiumUpgrade }: 
             {canDoMorning ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-muted-foreground">
-                    {currentPrompt}
-                  </label>
-                  <textarea
-                    value={reflection}
-                    onChange={(e) => setReflection(e.target.value)}
-                    placeholder={t("checkin.reflectPlaceholder")}
-                    className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none"
-                  />
+                  <label className="block text-sm font-medium mb-2 text-muted-foreground">{currentPrompt}</label>
+                  <textarea value={reflection} onChange={(e) => setReflection(e.target.value)} placeholder={t("checkin.reflectPlaceholder")} className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none" />
                 </div>
-                <Button onClick={() => completeCheckIn("morning")} variant="zen" className="w-full">
-                  {t("checkin.completeMorning")}
-                </Button>
+                <Button onClick={() => completeCheckIn("morning")} variant="zen" className="w-full">{t("checkin.completeMorning")}</Button>
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">{t("checkin.morningDone")}</p>
             )}
           </div>
 
-          {isPremium ? (
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <MdNightlight className="w-6 h-6 text-indigo-500" />
-                <h3 className="text-lg font-semibold">{t("checkin.eveningTitle")}</h3>
-                {todayCheckIn?.evening && (
-                  <span className="ml-auto flex items-center gap-1 text-green-500 text-sm">
-                    <MdCheck className="w-4 h-4" /> {t("checkin.complete")}
-                  </span>
-                )}
-              </div>
-              
-              {!isEvening ? (
-                <p className="text-muted-foreground text-sm">{t("checkin.eveningAvailableAfter")}</p>
-              ) : canDoEvening ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-muted-foreground">
-                      {eveningPrompt}
-                    </label>
-                    <textarea
-                      value={reflection}
-                      onChange={(e) => setReflection(e.target.value)}
-                      placeholder={t("checkin.eveningReflectPlaceholder")}
-                      className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none"
-                    />
-                  </div>
-                  <Button onClick={() => completeCheckIn("evening")} variant="zen" className="w-full">
-                    {t("checkin.completeEvening")}
-                  </Button>
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-sm">{t("checkin.eveningDone")}</p>
+          <div className="glass-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <MdNightlight className="w-6 h-6 text-indigo-500" />
+              <h3 className="text-lg font-semibold">{t("checkin.eveningTitle")}</h3>
+              {todayCheckIn?.evening && (
+                <span className="ml-auto flex items-center gap-1 text-green-500 text-sm">
+                  <MdCheck className="w-4 h-4" /> {t("checkin.complete")}
+                </span>
               )}
             </div>
-          ) : (
-            <div className="glass-card p-6 opacity-60">
-              <div className="flex items-center gap-3 mb-2">
-                <MdNightlight className="w-6 h-6 text-indigo-500" />
-                <h3 className="text-lg font-semibold">{t("checkin.eveningTitle")}</h3>
-                <span className="ml-auto text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">{t("quote.premium")}</span>
+            
+            {!isEvening ? (
+              <p className="text-muted-foreground text-sm">{t("checkin.eveningAvailableAfter")}</p>
+            ) : canDoEvening ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-muted-foreground">{eveningPrompt}</label>
+                  <textarea value={reflection} onChange={(e) => setReflection(e.target.value)} placeholder={t("checkin.eveningReflectPlaceholder")} className="glass-button w-full p-3 rounded-lg border text-foreground min-h-[80px] resize-none" />
+                </div>
+                <Button onClick={() => completeCheckIn("evening")} variant="zen" className="w-full">{t("checkin.completeEvening")}</Button>
               </div>
-              <p className="text-muted-foreground text-sm">{t("checkin.eveningPremium")}</p>
+            ) : (
+              <p className="text-muted-foreground text-sm">{t("checkin.eveningDone")}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4">{t("checkin.mindfulBreathing")}</h3>
+          
+          {showBreathing ? (
+            <div className="text-center py-8">
+              <div className={`w-32 h-32 mx-auto rounded-full bg-primary/20 flex items-center justify-center transition-all duration-1000 ${
+                breathPhase === "inhale" ? "scale-125" : breathPhase === "hold" ? "scale-125" : "scale-75"
+              }`}>
+                <span className="text-lg font-medium">{t(`checkin.${breathPhase}`)}</span>
+              </div>
+              <p className="text-muted-foreground mt-4 text-sm">
+                {breathPhase === "inhale" && t("checkin.breatheIn")}
+                {breathPhase === "hold" && t("checkin.holdGently")}
+                {breathPhase === "exhale" && t("checkin.releaseSlowly")}
+              </p>
+              <Button onClick={() => setShowBreathing(false)} variant="outline" size="sm" className="mt-6">{t("checkin.endSession")}</Button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-muted-foreground text-sm mb-4">{t("checkin.breathingDesc")}</p>
+              <Button onClick={() => setShowBreathing(true)} variant="outline">{t("checkin.startBreathing")}</Button>
             </div>
           )}
         </div>
-
-        {isPremium && (
-          <div className="glass-card p-6 mb-6">
-            <h3 className="text-lg font-semibold mb-4">{t("checkin.mindfulBreathing")}</h3>
-            
-            {showBreathing ? (
-              <div className="text-center py-8">
-                <div 
-                  className={`w-32 h-32 mx-auto rounded-full bg-primary/20 flex items-center justify-center transition-all duration-1000 ${
-                    breathPhase === "inhale" ? "scale-125" : 
-                    breathPhase === "hold" ? "scale-125" : 
-                    "scale-75"
-                  }`}
-                >
-                  <span className="text-lg font-medium">{t(`checkin.${breathPhase}`)}</span>
-                </div>
-                <p className="text-muted-foreground mt-4 text-sm">
-                  {breathPhase === "inhale" && t("checkin.breatheIn")}
-                  {breathPhase === "hold" && t("checkin.holdGently")}
-                  {breathPhase === "exhale" && t("checkin.releaseSlowly")}
-                </p>
-                <Button onClick={() => setShowBreathing(false)} variant="outline" size="sm" className="mt-6">
-                  {t("checkin.endSession")}
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <p className="text-muted-foreground text-sm mb-4">{t("checkin.breathingDesc")}</p>
-                <Button onClick={() => setShowBreathing(true)} variant="outline">
-                  {t("checkin.startBreathing")}
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {!isPremium && (
-          <div className="glass-card p-6 text-center gradient-creativity">
-            <h3 className="text-lg font-semibold mb-2 text-white">{t("checkin.premiumTitle")}</h3>
-            <p className="text-white/90 text-sm mb-4">{t("checkin.premiumDesc")}</p>
-            <Button 
-              onClick={onPremiumUpgrade}
-              variant="outline" 
-              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-            >
-              {t("shared.upgradeFor")}
-            </Button>
-          </div>
-        )}
 
         <div className="mt-6">
           <CheckInHistory checkIns={checkIns} streak={streak} />

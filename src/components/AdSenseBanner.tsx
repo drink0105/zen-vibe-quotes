@@ -1,25 +1,25 @@
 import { useEffect } from "react";
 
-export function Banner() {
+export function AdSenseBanner() {
   useEffect(() => {
-    // Load Adsterra scripts
-    const script1 = document.createElement("script");
-    script1.innerHTML = `
-      atOptions = {
-        'key' : '59d13fc0d03e18e4518d71921432309a',
-        'format' : 'iframe',
-        'height' : 50,
-        'width' : 320,
-        'params' : {}
-      };
-    `;
-    document.head.appendChild(script1);
+    // Inject AdSense script
+    const scriptId = "adsbygoogle-js";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.async = true;
+      script.src =
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4014613680442567";
+      script.crossOrigin = "anonymous";
+      document.body.appendChild(script);
+    }
 
-    const script2 = document.createElement("script");
-    script2.src = "https://www.highperformanceformat.com/59d13fc0d03e18e4518d71921432309a/invoke.js";
-    script2.async = true;
-    document.head.appendChild(script2);
-
+    try {
+      // @ts-ignore
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.log("Ad error:", e);
+    }
   }, []);
 
   return (
@@ -38,8 +38,12 @@ export function Banner() {
         overflow: "hidden",
       }}
     >
-      {/* Adsterra will inject the ad here */}
-      <div id="adsterra-banner"></div>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block", width: "100%", height: "50px" }}
+        data-ad-client="ca-pub-4014613680442567"
+        data-ad-slot="8272900040"
+      />
     </div>
   );
 }

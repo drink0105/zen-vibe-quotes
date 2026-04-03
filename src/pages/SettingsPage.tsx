@@ -6,6 +6,44 @@ import { CheckInHistory } from "@/components/CheckInHistory";
 import { getVoicesForLanguage, getDefaultVoiceForLanguage } from "@/hooks/useSpeakQuote";
 import { useLanguage } from "@/i18n/LanguageContext";
 
+/** Slider that ignores accidental touches while scrolling.
+ *  The input is pointer-events:none until the user taps the row,
+ *  which activates it for 3 seconds (enough to drag). */
+function TouchSafeSlider({ label, min, max, step, value, onChange }: {
+  label: string; min: number; max: number; step: number;
+  value: number; onChange: (v: number) => void;
+}) {
+  const [active, setActive] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+
+  const activate = useCallback(() => {
+    setActive(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setActive(false), 3000);
+  }, []);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  return (
+    <div
+      className="py-2"
+      onPointerDown={activate}
+    >
+      <label className="block text-sm font-medium mb-2">{label}</label>
+      <input
+        type="range" min={min} max={max} step={step}
+        value={value}
+        onChange={(e) => { activate(); onChange(parseFloat(e.target.value)); }}
+        className="w-full"
+        style={{ touchAction: active ? "none" : "pan-y", pointerEvents: active ? "auto" : "none" }}
+      />
+      {!active && (
+        <p className="text-xs text-muted-foreground mt-1 italic">Tap to adjust</p>
+      )}
+    </div>
+  );
+}
+
 interface CheckInData {
   date: string;
   morning: boolean;

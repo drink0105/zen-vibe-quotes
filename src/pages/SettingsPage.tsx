@@ -1,10 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { MdSettings, MdLightMode, MdDarkMode, MdStars, MdRecordVoiceOver, MdVolumeUp, MdLanguage } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CheckInHistory } from "@/components/CheckInHistory";
 import { getVoicesForLanguage, getDefaultVoiceForLanguage } from "@/hooks/useSpeakQuote";
 import { useLanguage } from "@/i18n/LanguageContext";
+
+/** Slider that ignores accidental touches while scrolling.
+ *  The input is pointer-events:none until the user taps the row,
+ *  which activates it for 3 seconds (enough to drag). */
+function TouchSafeSlider({ label, min, max, step, value, onChange }: {
+  label: string; min: number; max: number; step: number;
+  value: number; onChange: (v: number) => void;
+}) {
+  const [active, setActive] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+
+  const activate = useCallback(() => {
+    setActive(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setActive(false), 3000);
+  }, []);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  return (
+    <div
+      className="py-2"
+      onPointerDown={activate}
+    >
+      <label className="block text-sm font-medium mb-2">{label}</label>
+      <input
+        type="range" min={min} max={max} step={step}
+        value={value}
+        onChange={(e) => { activate(); onChange(parseFloat(e.target.value)); }}
+        className="w-full"
+        style={{ touchAction: active ? "none" : "pan-y", pointerEvents: active ? "auto" : "none" }}
+      />
+      {!active && (
+        <p className="text-xs text-muted-foreground mt-1 italic">Tap to adjust</p>
+      )}
+    </div>
+  );
+}
 
 interface CheckInData {
   date: string;
@@ -207,28 +245,18 @@ export default function SettingsPage({
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("settings.voiceSpeed")}: {voiceSpeed}x
-              </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voiceSpeed}
-                onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("settings.voicePitch")}: {voicePitch}x
-              </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voicePitch}
-                onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
+            <TouchSafeSlider
+              label={`${t("settings.voiceSpeed")}: ${voiceSpeed}x`}
+              min={0.5} max={2} step={0.1}
+              value={voiceSpeed}
+              onChange={(v) => setVoiceSpeed(v)}
+            />
+            <TouchSafeSlider
+              label={`${t("settings.voicePitch")}: ${voicePitch}x`}
+              min={0.5} max={2} step={0.1}
+              value={voicePitch}
+              onChange={(v) => setVoicePitch(v)}
+            />
 
             <Button onClick={testVoice} variant="outline" size="sm">
               <MdVolumeUp className="w-4 h-4 mr-2" />

@@ -207,28 +207,18 @@ export default function SettingsPage({
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("settings.voiceSpeed")}: {voiceSpeed}x
-              </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voiceSpeed}
-                onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("settings.voicePitch")}: {voicePitch}x
-              </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voicePitch}
-                onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
+            <TouchSafeSlider
+              label={`${t("settings.voiceSpeed")}: ${voiceSpeed}x`}
+              min={0.5} max={2} step={0.1}
+              value={voiceSpeed}
+              onChange={(v) => setVoiceSpeed(v)}
+            />
+            <TouchSafeSlider
+              label={`${t("settings.voicePitch")}: ${voicePitch}x`}
+              min={0.5} max={2} step={0.1}
+              value={voicePitch}
+              onChange={(v) => setVoicePitch(v)}
+            />
 
             <Button onClick={testVoice} variant="outline" size="sm">
               <MdVolumeUp className="w-4 h-4 mr-2" />

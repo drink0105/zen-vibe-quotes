@@ -167,7 +167,7 @@ const App = () => {
               </Routes>
               <Navigation />
             </div>
-            <AdSenseBanner />
+            <AdSterraBanner />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

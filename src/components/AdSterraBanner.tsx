@@ -1,15 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function AdSterraBanner() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    if (!containerRef.current) return;
 
-    <script src="https://pl29040184.profitablecpmratenetwork.com/9b/45/bb/9b45bb7564e1d9a8d73910f4ce0d0d80.js"></script>
+    const optionsScript = document.createElement("script");
+    optionsScript.type = "text/javascript";
+    optionsScript.text = `
+      atOptions = {
+        'key' : '59d13fc0d03e18e4518d71921432309a',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
+    `;
+    containerRef.current.appendChild(optionsScript);
 
-
+    const invokeScript = document.createElement("script");
+    invokeScript.type = "text/javascript";
+    invokeScript.src = "https://www.highperformanceformat.com/59d13fc0d03e18e4518d71921432309a/invoke.js";
+    containerRef.current.appendChild(invokeScript);
   }, []);
 
   return (
     <div
+      ref={containerRef}
       style={{
         position: "fixed",
         bottom: 0,
@@ -23,8 +41,6 @@ export function AdSterraBanner() {
         alignItems: "center",
         overflow: "hidden",
       }}
-    >
-      <div id="container-5a65b743694be49d4a9d785f7e86c0a9"></div>
-    </div>
+    />
   );
 }

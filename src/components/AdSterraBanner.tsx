@@ -1,12 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-export function Banner() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
+export function AdSterraBanner() {
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    // Load the new native banner script
+    // Adsterra native banner script
     const script = document.createElement("script");
     script.async = true;
     script.setAttribute("data-cfasync", "false");
@@ -17,7 +13,6 @@ export function Banner() {
 
   return (
     <div
-      ref={containerRef}
       style={{
         position: "fixed",
         bottom: 0,
@@ -32,7 +27,6 @@ export function Banner() {
         overflow: "hidden",
       }}
     >
-      {/* Profitable CPM banner will inject here */}
       <div id="container-5a65b743694be49d4a9d785f7e86c0a9"></div>
     </div>
   );

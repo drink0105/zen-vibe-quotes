@@ -2,12 +2,7 @@ import { useEffect } from "react";
 
 export function AdSterraBanner() {
   useEffect(() => {
-    // Adsterra native banner script
-    const script = document.createElement("script");
-    script.async = true;
-    script.setAttribute("data-cfasync", "false");
-    script.src = "https://pl29048034.profitablecpmratenetwork.com/5a65b743694be49d4a9d785f7e86c0a9/invoke.js";
-    document.head.appendChild(script);
+   
 
   }, []);
 

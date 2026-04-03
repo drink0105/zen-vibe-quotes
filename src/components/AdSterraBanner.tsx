@@ -1,28 +1,29 @@
 import { useEffect, useRef } from "react";
 
-export function AdSterraBanner() {
+export function Banner() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const optionsScript = document.createElement("script");
-    optionsScript.type = "text/javascript";
-    optionsScript.text = `
-      atOptions = {
-        'key' : '59d13fc0d03e18e4518d71921432309a',
-        'format' : 'iframe',
-        'height' : 50,
-        'width' : 320,
-        'params' : {}
-      };
+    // Create a completely isolated container for the ad
+    const adContainer = document.createElement("div");
+    adContainer.style.cssText = `
+      width: 100%;
+      height: 50px;
+      overflow: hidden;
+      position: relative;
     `;
-    containerRef.current.appendChild(optionsScript);
 
-    const invokeScript = document.createElement("script");
-    invokeScript.type = "text/javascript";
-    invokeScript.src = "https://www.highperformanceformat.com/59d13fc0d03e18e4518d71921432309a/invoke.js";
-    containerRef.current.appendChild(invokeScript);
+    // Adsterra script
+    const script = document.createElement("script");
+    script.async = true;
+    script.setAttribute("data-cfasync", "false");
+    script.src = "https://pl29048034.profitablecpmratenetwork.com/5a65b743694be49d4a9d785f7e86c0a9/invoke.js";
+    adContainer.appendChild(script);
+
+    containerRef.current.appendChild(adContainer);
+
   }, []);
 
   return (
@@ -40,6 +41,7 @@ export function AdSterraBanner() {
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
+        pointerEvents: "none",   // prevent clicks from escaping
       }}
     />
   );

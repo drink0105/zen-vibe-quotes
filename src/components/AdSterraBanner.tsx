@@ -2,7 +2,9 @@ import { useEffect } from "react";
 
 export function AdSterraBanner() {
   useEffect(() => {
-   
+
+    <script src="https://pl29040184.profitablecpmratenetwork.com/9b/45/bb/9b45bb7564e1d9a8d73910f4ce0d0d80.js"></script>
+
 
   }, []);
 

@@ -189,6 +189,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "settings.categories": "6 categories: Motivation, Mindfulness, Humor, Productivity, Creativity, Resilience",
     "settings.offline": "Fully offline experience",
     "settings.privacy": "Privacy Policy",
+    "settings.voicePreset": "Voice Style",
+    "settings.preset_normal": "Normal",
+    "settings.preset_calm": "Calm",
+    "settings.preset_energetic": "Energetic",
+    "settings.preset_deep": "Deep",
     "settings.testVoiceText": "You are capable of achieving great things today!",
 
     // Background theme names
@@ -400,6 +405,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "settings.categories": "6个类别：动力、正念、幽默、效率、创意、韧性",
     "settings.offline": "完全离线体验",
     "settings.privacy": "隐私政策",
+    "settings.voicePreset": "语音风格",
+    "settings.preset_normal": "正常",
+    "settings.preset_calm": "平静",
+    "settings.preset_energetic": "活力",
+    "settings.preset_deep": "低沉",
     "settings.testVoiceText": "你今天有能力成就伟大的事情！",
 
     // Background theme names

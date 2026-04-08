@@ -13,6 +13,13 @@ interface CheckInData {
   reflection: string;
 }
 
+const VOICE_PRESETS: Record<string, { speed: number; pitch: number }> = {
+  normal: { speed: 1, pitch: 1 },
+  calm: { speed: 0.8, pitch: 0.85 },
+  energetic: { speed: 1.25, pitch: 1.15 },
+  deep: { speed: 1, pitch: 0.6 },
+};
+
 interface SettingsPageProps {
   theme: 'light' | 'dark';
   onThemeChange: (theme: 'light' | 'dark') => void;
@@ -38,6 +45,7 @@ export default function SettingsPage({
   const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   
+  const [voicePreset, setVoicePreset] = useLocalStorage<string>("zenvibe-voice-preset", "normal");
   const [checkIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
   const [streak] = useLocalStorage<number>("zenvibe-streak", 0);
 
@@ -209,25 +217,25 @@ export default function SettingsPage({
 
             <div>
               <label className="block text-sm font-medium mb-2">
-                {t("settings.voiceSpeed")}: {voiceSpeed}x
+                {t("settings.voicePreset")}
               </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voiceSpeed}
-                onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("settings.voicePitch")}: {voicePitch}x
-              </label>
-              <input
-                type="range" min="0.5" max="2" step="0.1"
-                value={voicePitch}
-                onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
-                className="w-full"
-              />
+              <select
+                value={voicePreset}
+                onChange={(e) => {
+                  const preset = e.target.value as keyof typeof VOICE_PRESETS;
+                  setVoicePreset(preset);
+                  const { speed, pitch } = VOICE_PRESETS[preset];
+                  setVoiceSpeed(speed);
+                  setVoicePitch(pitch);
+                }}
+                className="glass-button w-full p-3 rounded-lg border text-foreground"
+              >
+                {Object.keys(VOICE_PRESETS).map((key) => (
+                  <option key={key} value={key}>
+                    {t(`settings.preset_${key}`)}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <Button onClick={testVoice} variant="outline" size="sm">

@@ -14,7 +14,7 @@ import CheckInPage from "./pages/CheckInPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
-import { AdSterraBanner } from "@/components/AdSterraBanner";
+import { AdSenseBanner } from "@/components/AdSenseBanner";
 const queryClient = new QueryClient();
 
 interface Quote {
@@ -167,7 +167,7 @@ const App = () => {
               </Routes>
               <Navigation />
             </div>
-            <AdSterraBanner />
+            <AdSenseBanner />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

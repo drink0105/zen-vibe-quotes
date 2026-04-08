@@ -472,7 +472,8 @@ html.dark body {
 /* ===== MOBILE AD BANNER: LOCKED TO 50px ===== */
 @media (max-width: 599px) {
   #ad-banner, .ad-banner, #admob-banner-container, .banner-container, [class*="banner"],
-  .ad-container, .ad-wrapper, .ad-container iframe {
+  .adsbygoogle, ins.adsbygoogle, .adsbygoogle > div, .adsbygoogle > iframe,
+  .ad-container, .ad-wrapper, .adsbygoogle iframe {
     height: 50px !important;
     max-height: 50px !important;
     min-height: 50px !important;

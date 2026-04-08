@@ -189,6 +189,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "settings.categories": "6 categories: Motivation, Mindfulness, Humor, Productivity, Creativity, Resilience",
     "settings.offline": "Fully offline experience",
     "settings.privacy": "Privacy Policy",
+    "settings.voicePreset": "Voice Style",
+    "settings.preset_normal": "Normal",
+    "settings.preset_calm": "Calm",
+    "settings.preset_energetic": "Energetic",
+    "settings.preset_deep": "Deep",
     "settings.testVoiceText": "You are capable of achieving great things today!",
 
     // Background theme names

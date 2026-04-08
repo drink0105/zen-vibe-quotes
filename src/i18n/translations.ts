@@ -13,9 +13,6 @@ export const translations: Record<Language, Record<string, string>> = {
     // Index page
     "home.subtitle": "Your daily dose of inspiration",
     "home.loading": "Loading ZenVibe...",
-    "home.goPremium": "Go Premium",
-    "home.premiumDesc": "Unlock 300+ premium quotes, unlimited favorites, and remove ads",
-    "home.upgradeFor": "Upgrade for $2.99",
 
     // Mood selector
     "mood.title": "How are you feeling today?",
@@ -28,7 +25,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "mood.strong": "Strong",
 
     // Quote card
-    "quote.premium": "Premium",
     "quote.stopListening": "Stop listening",
     "quote.listen": "Listen to quote",
 
@@ -47,7 +43,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "fav.title": "Your Favorites",
     "fav.empty": "No favorites yet",
     "fav.emptyDesc": "Start saving quotes you love by tapping the heart icon",
-    "fav.limitAlert": "Free tier allows up to 10 favorites. Upgrade to Premium for unlimited favorites!",
 
     // Playlists page
     "playlist.title": "Mood Playlists",
@@ -67,12 +62,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "playlist.update": "Update",
     "playlist.cancel": "Cancel",
     "playlist.more": "more...",
-    "playlist.freeLimit": "Free tier allows only 1 playlist. Upgrade to Premium for unlimited playlists!",
     "playlist.selectAtLeast": "Please select at least one quote for your playlist.",
-    "playlist.maxQuotes": "tier allows max",
+    "playlist.maxQuotes": "Max",
     "playlist.quotesPerPlaylist": "quotes per playlist.",
-    "playlist.premiumTitle": "Go Premium",
-    "playlist.premiumDesc": "Unlock unlimited playlists, 10 quotes per playlist, and access to all premium quotes",
 
     // Timer page
     "timer.title": "Zen Timer",
@@ -84,10 +76,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "timer.stop": "Stop",
     "timer.vibrateOnFinish": "Vibrate on finish",
     "timer.duration": "Timer Duration",
-    "timer.freeLimit": "Free tier: 1 minute only. Premium: up to 5 minutes",
     "timer.mindfulnessQuote": "Mindfulness Quote",
-    "timer.premiumTitle": "Go Premium",
-    "timer.premiumDesc": "Unlock 1-5 minute timers and access to all premium mindfulness quotes",
     "timer.min": "min",
 
     // Check-In page
@@ -101,7 +90,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "checkin.morningDone": "You've completed your morning check-in. Wonderful! 🌅",
     "checkin.eveningAvailableAfter": "Available after 5 PM. Take your time. ✨",
     "checkin.eveningDone": "You've completed your evening check-in. Rest well. 🌙",
-    "checkin.eveningPremium": "Unlock evening reflections with Premium",
     "checkin.completionMsg": "✨ Check-in complete! You're doing great. ✨",
     "checkin.hearConfirmation": "Hear Confirmation",
     "checkin.completionSpeak": "Check-in complete! You're doing great. Keep nurturing your inner peace.",
@@ -117,8 +105,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "checkin.breatheIn": "Breathe in slowly...",
     "checkin.holdGently": "Hold gently...",
     "checkin.releaseSlowly": "Release slowly...",
-    "checkin.premiumTitle": "Deepen Your Practice",
-    "checkin.premiumDesc": "Unlock evening check-ins, breathing exercises, and expanded reflection prompts",
 
     // Check-In prompts
     "prompt.morning1": "What intention will guide your day?",
@@ -174,15 +160,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "settings.voiceSpeed": "Voice Speed",
     "settings.voicePitch": "Voice Pitch",
     "settings.testVoice": "Test Voice",
-    "settings.voiceUpgrade": "Upgrade to Premium for multiple English voice options (US/UK accents) and speed/pitch controls",
     "settings.bgThemes": "Background Themes",
     "settings.bgThemesDesc": "Choose a background theme that applies across all screens",
-    "settings.bgUpgrade": "Upgrade to Premium to unlock 6 additional background themes",
-    "settings.premiumStatus": "Premium Status",
-    "settings.premiumActive": "Premium Active",
-    "settings.premiumActiveDesc": "Enjoy all premium features!",
-    "settings.premiumUpgradeDesc": "Unlock unlimited favorites, playlists, alarms, and premium content",
-    "settings.upgradePremium": "Upgrade to Premium - $2.99",
     "settings.about": "About ZenVibe",
     "settings.version": "Version: 1.0.0",
     "settings.quotesCount": "500+ motivational quotes and affirmations",
@@ -212,10 +191,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "pwa.desc": "Add to your home screen for quick access and offline use",
     "pwa.installBtn": "Install",
     "pwa.notNow": "Not Now",
-
-    // Shared
-    "shared.upgradeFor": "Upgrade for $2.99",
-    "shared.comingSoon": "Coming Soon - $2.99",
   },
   zh: {
     // Navigation
@@ -229,9 +204,6 @@ export const translations: Record<Language, Record<string, string>> = {
     // Index page
     "home.subtitle": "每日灵感之源",
     "home.loading": "正在加载 ZenVibe...",
-    "home.goPremium": "升级高级版",
-    "home.premiumDesc": "解锁300+高级语录、无限收藏、去除广告",
-    "home.upgradeFor": "升级 $2.99",
 
     // Mood selector
     "mood.title": "你今天感觉怎么样？",
@@ -244,7 +216,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "mood.strong": "坚强",
 
     // Quote card
-    "quote.premium": "高级",
     "quote.stopListening": "停止朗读",
     "quote.listen": "朗读语录",
 
@@ -263,7 +234,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "fav.title": "我的收藏",
     "fav.empty": "暂无收藏",
     "fav.emptyDesc": "点击心形图标保存你喜欢的语录",
-    "fav.limitAlert": "免费版最多收藏10条。升级高级版享受无限收藏！",
 
     // Playlists page
     "playlist.title": "心情播放列表",
@@ -283,12 +253,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "playlist.update": "更新",
     "playlist.cancel": "取消",
     "playlist.more": "更多...",
-    "playlist.freeLimit": "免费版只能创建1个播放列表。升级高级版享受无限播放列表！",
     "playlist.selectAtLeast": "请至少选择一条语录。",
-    "playlist.maxQuotes": "版最多允许",
+    "playlist.maxQuotes": "最多允许",
     "playlist.quotesPerPlaylist": "条语录每个播放列表。",
-    "playlist.premiumTitle": "升级高级版",
-    "playlist.premiumDesc": "解锁无限播放列表、每个列表10条语录、所有高级语录",
 
     // Timer page
     "timer.title": "禅修计时器",
@@ -300,10 +267,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "timer.stop": "停止",
     "timer.vibrateOnFinish": "完成时震动",
     "timer.duration": "计时时长",
-    "timer.freeLimit": "免费版：仅1分钟。高级版：最长5分钟",
     "timer.mindfulnessQuote": "正念语录",
-    "timer.premiumTitle": "升级高级版",
-    "timer.premiumDesc": "解锁1-5分钟计时器及所有高级正念语录",
     "timer.min": "分钟",
 
     // Check-In page
@@ -317,7 +281,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "checkin.morningDone": "你已完成早晨签到。太棒了！🌅",
     "checkin.eveningAvailableAfter": "下午5点后可用。慢慢来。✨",
     "checkin.eveningDone": "你已完成晚间签到。好好休息。🌙",
-    "checkin.eveningPremium": "升级高级版解锁晚间签到",
     "checkin.completionMsg": "✨ 签到完成！你做得很好。✨",
     "checkin.hearConfirmation": "听取确认",
     "checkin.completionSpeak": "签到完成！你做得很好。继续呵护你的内心平和。",
@@ -333,8 +296,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "checkin.breatheIn": "缓缓吸气...",
     "checkin.holdGently": "轻轻屏住...",
     "checkin.releaseSlowly": "慢慢呼出...",
-    "checkin.premiumTitle": "深化你的练习",
-    "checkin.premiumDesc": "解锁晚间签到、呼吸练习和更多反思提示",
 
     // Check-In prompts
     "prompt.morning1": "今天什么意念将引导你？",
@@ -390,15 +351,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "settings.voiceSpeed": "语速",
     "settings.voicePitch": "音调",
     "settings.testVoice": "测试语音",
-    "settings.voiceUpgrade": "升级高级版享受多种语音选项和语速/音调控制",
     "settings.bgThemes": "背景主题",
     "settings.bgThemesDesc": "选择一个应用于所有页面的背景主题",
-    "settings.bgUpgrade": "升级高级版解锁6个额外背景主题",
-    "settings.premiumStatus": "高级版状态",
-    "settings.premiumActive": "高级版已激活",
-    "settings.premiumActiveDesc": "享受所有高级功能！",
-    "settings.premiumUpgradeDesc": "解锁无限收藏、播放列表、闹钟和高级内容",
-    "settings.upgradePremium": "升级高级版 - $2.99",
     "settings.about": "关于 ZenVibe",
     "settings.version": "版本：1.0.0",
     "settings.quotesCount": "500+励志语录和肯定句",
@@ -428,9 +382,5 @@ export const translations: Record<Language, Record<string, string>> = {
     "pwa.desc": "添加到主屏幕，快速访问和离线使用",
     "pwa.installBtn": "安装",
     "pwa.notNow": "以后再说",
-
-    // Shared
-    "shared.upgradeFor": "升级 $2.99",
-    "shared.comingSoon": "即将推出 - $2.99",
   },
 };

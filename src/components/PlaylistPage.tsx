@@ -17,7 +17,7 @@ interface Quote {
   text: string;
   author?: string;
   category: string;
-  tier: "free" | "premium";
+  
 }
 
 interface Playlist {

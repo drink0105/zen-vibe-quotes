@@ -121,7 +121,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter basename="">
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background" style={{ paddingTop: "50px", paddingBottom: "50px" }}>
               <Routes>
                 <Route path="/" element={
                   <Index 

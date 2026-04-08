@@ -123,49 +123,51 @@ const App = () => {
           <Sonner />
           <BrowserRouter basename="">
             <div className="min-h-screen bg-background" style={{ paddingTop: "50px", paddingBottom: "50px" }}>
-              <Routes>
-                <Route path="/" element={
-                  <Index 
-                    allQuotes={allQuotes}
-                    favorites={favorites}
-                    onFavorite={handleFavorite}
-                    onShare={handleShare}
-                  />
-                } />
-                <Route path="/favorites" element={
-                  <FavoritesPage 
-                    favorites={favorites}
-                    onRemoveFavorite={handleRemoveFavorite}
-                    onShare={handleShare}
-                  />
-                } />
-                <Route path="/playlists" element={
-                  <PlaylistsPage 
-                    allQuotes={allQuotes}
-                  />
-                } />
-                <Route path="/timer" element={
-                  <TimerPage 
-                    allQuotes={allQuotes}
-                  />
-                } />
-                <Route path="/checkin" element={
-                  <CheckInPage 
-                    allQuotes={allQuotes}
-                  />
-                } />
-                <Route path="/settings" element={
-                  <SettingsPage 
-                    theme={theme}
-                    onThemeChange={setTheme}
-                    backgroundTheme={backgroundTheme}
-                    onBackgroundThemeChange={setBackgroundTheme}
-                    appVersion={appVersion}
-                    onVersionChange={setAppVersion}
-                  />
-                } />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <SwipeNavigator>
+                <Routes>
+                  <Route path="/" element={
+                    <Index 
+                      allQuotes={allQuotes}
+                      favorites={favorites}
+                      onFavorite={handleFavorite}
+                      onShare={handleShare}
+                    />
+                  } />
+                  <Route path="/favorites" element={
+                    <FavoritesPage 
+                      favorites={favorites}
+                      onRemoveFavorite={handleRemoveFavorite}
+                      onShare={handleShare}
+                    />
+                  } />
+                  <Route path="/playlists" element={
+                    <PlaylistsPage 
+                      allQuotes={allQuotes}
+                    />
+                  } />
+                  <Route path="/timer" element={
+                    <TimerPage 
+                      allQuotes={allQuotes}
+                    />
+                  } />
+                  <Route path="/checkin" element={
+                    <CheckInPage 
+                      allQuotes={allQuotes}
+                    />
+                  } />
+                  <Route path="/settings" element={
+                    <SettingsPage 
+                      theme={theme}
+                      onThemeChange={setTheme}
+                      backgroundTheme={backgroundTheme}
+                      onBackgroundThemeChange={setBackgroundTheme}
+                      appVersion={appVersion}
+                      onVersionChange={setAppVersion}
+                    />
+                  } />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </SwipeNavigator>
               <Navigation />
             </div>
             <AdSenseBanner />

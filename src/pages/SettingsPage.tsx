@@ -13,6 +13,13 @@ interface CheckInData {
   reflection: string;
 }
 
+const VOICE_PRESETS: Record<string, { speed: number; pitch: number }> = {
+  normal: { speed: 1, pitch: 1 },
+  calm: { speed: 0.8, pitch: 0.85 },
+  energetic: { speed: 1.25, pitch: 1.15 },
+  deep: { speed: 1, pitch: 0.6 },
+};
+
 interface SettingsPageProps {
   theme: 'light' | 'dark';
   onThemeChange: (theme: 'light' | 'dark') => void;

@@ -17,27 +17,29 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
   }, []);
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => {
+    onSwipedLeft: (eventData) => {
       if (!isMobile) return;
+      if (Math.abs(eventData.velocity) < 0.15) return;
       const idx = TAB_ORDER.indexOf(location.pathname);
       if (idx < TAB_ORDER.length - 1) {
         setSwipeDir("left");
         navigate(TAB_ORDER[idx + 1]);
-        setTimeout(() => setSwipeDir(null), 300);
+        setTimeout(() => setSwipeDir(null), Math.max(150, 300 - eventData.velocity * 100));
       }
     },
-    onSwipedRight: () => {
+    onSwipedRight: (eventData) => {
       if (!isMobile) return;
+      if (Math.abs(eventData.velocity) < 0.15) return;
       const idx = TAB_ORDER.indexOf(location.pathname);
       if (idx > 0) {
         setSwipeDir("right");
         navigate(TAB_ORDER[idx - 1]);
-        setTimeout(() => setSwipeDir(null), 300);
+        setTimeout(() => setSwipeDir(null), Math.max(150, 300 - eventData.velocity * 100));
       }
     },
     preventScrollOnSwipe: false,
     trackMouse: false,
-    delta: 50,
+    delta: 80,
   });
 
   return (

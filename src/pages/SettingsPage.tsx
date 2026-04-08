@@ -38,6 +38,7 @@ export default function SettingsPage({
   const [voicePitch, setVoicePitch] = useLocalStorage<number>("zenvibe-voice-pitch", 1);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   
+  const [voicePreset, setVoicePreset] = useLocalStorage<string>("zenvibe-voice-preset", "normal");
   const [checkIns] = useLocalStorage<CheckInData[]>("zenvibe-checkins", []);
   const [streak] = useLocalStorage<number>("zenvibe-streak", 0);
 

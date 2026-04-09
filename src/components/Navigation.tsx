@@ -39,9 +39,9 @@ export function Navigation() {
                 size="sm"
                 onClick={() => navigate(item.id)}
                 className={`
-                  flex flex-col items-center justify-center gap-0 p-1 h-full transition-all duration-300 flex-1 min-w-0 shrink-0
+                  flex flex-col items-center justify-center gap-0 p-1 h-full transition-colors duration-200 flex-1 min-w-0 shrink-0
                   ${isActive 
-                    ? 'text-primary bg-primary/10 glow-primary' 
+                    ? 'text-primary bg-primary/10' 
                     : 'text-muted-foreground hover:text-foreground'
                   }
                 `}

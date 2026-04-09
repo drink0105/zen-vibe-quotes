@@ -44,17 +44,7 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
 
   return (
     <div {...handlers} className="min-h-full">
-      <div
-        className={
-          swipeDir === "left"
-            ? "animate-slide-in-right"
-            : swipeDir === "right"
-            ? "animate-slide-in-left"
-            : ""
-        }
-      >
-        {children}
-      </div>
+      {children}
     </div>
   );
 }

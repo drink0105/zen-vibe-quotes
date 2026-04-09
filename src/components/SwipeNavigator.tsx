@@ -8,7 +8,6 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
-  const [swipeDir, setSwipeDir] = useState<"left" | "right" | null>(null);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 600);
@@ -21,10 +20,8 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
       if (!isMobile) return;
       if (Math.abs(eventData.velocity) < 0.15) return;
       const idx = TAB_ORDER.indexOf(location.pathname);
-      if (idx < TAB_ORDER.length - 1) {
-        setSwipeDir("left");
+      if (idx >= 0 && idx < TAB_ORDER.length - 1) {
         navigate(TAB_ORDER[idx + 1]);
-        setTimeout(() => setSwipeDir(null), Math.max(150, 300 - eventData.velocity * 100));
       }
     },
     onSwipedRight: (eventData) => {
@@ -32,9 +29,7 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
       if (Math.abs(eventData.velocity) < 0.15) return;
       const idx = TAB_ORDER.indexOf(location.pathname);
       if (idx > 0) {
-        setSwipeDir("right");
         navigate(TAB_ORDER[idx - 1]);
-        setTimeout(() => setSwipeDir(null), Math.max(150, 300 - eventData.velocity * 100));
       }
     },
     preventScrollOnSwipe: false,

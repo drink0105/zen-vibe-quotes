@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { 
@@ -33,24 +32,23 @@ export function Navigation() {
             const isActive = location.pathname === item.id;
             
             return (
-              <Button
+              <button
                 key={item.id}
-                variant="ghost"
-                size="sm"
                 onClick={() => navigate(item.id)}
                 className={`
-                  flex flex-col items-center justify-center gap-0 p-1 h-full transition-colors duration-200 flex-1 min-w-0 shrink-0
-                  hover:bg-transparent focus:bg-transparent active:bg-transparent
+                  flex flex-col items-center justify-center gap-0 p-1 h-full flex-1 min-w-0 shrink-0
+                  border-none outline-none bg-transparent cursor-pointer
+                  transition-colors duration-200 rounded-md
                   ${isActive 
-                    ? 'text-primary bg-primary/10 hover:bg-primary/10' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'text-primary bg-primary/10' 
+                    : 'text-muted-foreground'
                   }
                 `}
-                style={{ fontSize: "10px", maxWidth: "16.666%", minWidth: 0 }}
+                style={{ fontSize: "10px", maxWidth: "16.666%", minWidth: 0, WebkitTapHighlightColor: "transparent" }}
               >
                 <Icon style={{ height: "16px", width: "16px", flexShrink: 0 }} />
                 <span className="font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis text-[9px] w-full text-center block">{item.label}</span>
-              </Button>
+              </button>
             );
           })}
         </div>

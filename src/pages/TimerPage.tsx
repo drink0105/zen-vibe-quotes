@@ -157,11 +157,11 @@ export default function TimerPage({ allQuotes }: TimerPageProps) {
         </div>
 
         {currentQuote && (
-          <div className="glass-card p-6 mb-6 gradient-mindfulness">
+          <div className="quote-card glass-card p-6 mb-6 tilt-3d glow-mindfulness">
             <div className="text-center">
-              <span className="px-3 py-1 text-xs font-semibold bg-white/30 rounded-full backdrop-blur-sm text-black mb-4 inline-block">{currentQuote.category}</span>
-              <blockquote className="text-lg mb-4 leading-relaxed font-quote text-black">"{currentQuote.text}"</blockquote>
-              {currentQuote.author && <p className="text-sm text-black/80">— {currentQuote.author}</p>}
+              <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-primary/15 text-primary mb-4">{currentQuote.category}</span>
+              <blockquote className="text-lg mb-4 leading-relaxed font-quote text-foreground">"{currentQuote.text}"</blockquote>
+              {currentQuote.author && <p className="text-sm text-muted-foreground">— {currentQuote.author}</p>}
             </div>
           </div>
         )}

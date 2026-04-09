@@ -40,8 +40,9 @@ export function Navigation() {
                 onClick={() => navigate(item.id)}
                 className={`
                   flex flex-col items-center justify-center gap-0 p-1 h-full transition-colors duration-200 flex-1 min-w-0 shrink-0
+                  hover:bg-transparent focus:bg-transparent active:bg-transparent
                   ${isActive 
-                    ? 'text-primary bg-primary/10' 
+                    ? 'text-primary bg-primary/10 hover:bg-primary/10' 
                     : 'text-muted-foreground hover:text-foreground'
                   }
                 `}

@@ -135,11 +135,11 @@ export function ZenTimerPage({ allQuotes }: ZenTimerPageProps) {
         </div>
 
         {currentQuote && (
-          <div className="glass-card p-6 gradient-mindfulness">
-            <div className="text-center text-white">
-              <h3 className="text-sm font-semibold mb-4 opacity-90">{t("timer.mindfulnessQuote")}</h3>
-              <blockquote className="text-lg font-quote mb-4 leading-relaxed">"{currentQuote.text}"</blockquote>
-              {currentQuote.author && <p className="text-white/80 text-sm">— {currentQuote.author}</p>}
+          <div className="quote-card glass-card p-6 tilt-3d glow-mindfulness">
+            <div className="text-center">
+              <h3 className="text-sm font-semibold mb-4 text-muted-foreground">{t("timer.mindfulnessQuote")}</h3>
+              <blockquote className="text-lg font-quote mb-4 leading-relaxed text-foreground">"{currentQuote.text}"</blockquote>
+              {currentQuote.author && <p className="text-muted-foreground text-sm">— {currentQuote.author}</p>}
             </div>
           </div>
         )}

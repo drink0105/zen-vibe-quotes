@@ -152,19 +152,19 @@ export default function CheckInPage({ allQuotes }: CheckInPageProps) {
         <CheckInStats checkIns={checkIns} streak={streak} />
 
         {dailyQuote && (
-          <div className="glass-card p-6 mb-6 gradient-mindfulness">
-            <blockquote className="text-lg font-quote leading-relaxed text-black mb-2">
+          <div className="quote-card glass-card p-6 mb-6 tilt-3d glow-mindfulness">
+            <blockquote className="text-lg font-quote leading-relaxed text-foreground mb-2">
               "{dailyQuote.text}"
             </blockquote>
             <div className="flex items-center justify-between">
               {dailyQuote.author && (
-                <p className="text-sm text-black/70">— {dailyQuote.author}</p>
+                <p className="text-sm text-muted-foreground">— {dailyQuote.author}</p>
               )}
               <Button
                 onClick={() => speakQuote(dailyQuote)}
                 variant="ghost"
                 size="sm"
-                className={`ml-auto text-black hover:bg-black/10 ${isSpeaking ? 'animate-pulse' : ''}`}
+                className={`ml-auto text-muted-foreground hover:text-foreground ${isSpeaking ? 'animate-pulse' : ''}`}
                 title={isSpeaking ? t("quote.stopListening") : t("quote.listen")}
               >
                 {isSpeaking ? <MdVolumeOff className="w-5 h-5" /> : <MdVolumeUp className="w-5 h-5" />}

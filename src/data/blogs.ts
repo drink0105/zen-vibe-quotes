@@ -1140,7 +1140,7 @@ Understanding the science behind habits turns behavior change from a matter of w
     zh: {
       title: "习惯养成与戒除坏习惯背后的科学",
       excerpt:
-        "习惯由"线索—行为—奖赏"循环驱动。理解这个循环,能把行为改变从意志力变成策略。",
+        "习惯由「线索—行为—奖赏」循环驱动。理解这个循环,能把行为改变从意志力变成策略。",
       body: `习惯对日常生活的塑造远超大多数人的认知。理解习惯如何形成、又如何被改变的基本机制,会在创造持久的正向改变上带来实际优势。
 
 ## 习惯循环

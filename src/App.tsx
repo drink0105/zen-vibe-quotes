@@ -13,6 +13,8 @@ import PlaylistsPage from "./pages/PlaylistsPage";
 import TimerPage from "./pages/TimerPage";
 import CheckInPage from "./pages/CheckInPage";
 import SettingsPage from "./pages/SettingsPage";
+import BlogsPage from "./pages/BlogsPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 import NotFound from "./pages/NotFound";
 import { Navigation } from "@/components/Navigation";
 import { AdSenseBanner } from "@/components/AdSenseBanner";
@@ -165,6 +167,8 @@ const App = () => {
                       onVersionChange={setAppVersion}
                     />
                   } />
+                  <Route path="/blogs" element={<BlogsPage />} />
+                  <Route path="/blogs/:id" element={<BlogDetailPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </SwipeNavigator>

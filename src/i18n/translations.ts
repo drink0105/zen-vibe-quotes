@@ -191,6 +191,15 @@ export const translations: Record<Language, Record<string, string>> = {
     "pwa.desc": "Add to your home screen for quick access and offline use",
     "pwa.installBtn": "Install",
     "pwa.notNow": "Not Now",
+
+    // Blogs
+    "blogs.title": "Daily Wisdom Blogs",
+    "blogs.subtitle": "Insights for a calmer, more intentional life",
+    "blogs.explore": "Explore Blogs",
+    "blogs.readMore": "Read More",
+    "blogs.back": "Back",
+    "blogs.backToList": "Back to Blogs",
+    "blogs.notFound": "Blog post not found",
   },
   zh: {
     // Navigation
@@ -382,5 +391,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "pwa.desc": "添加到主屏幕，快速访问和离线使用",
     "pwa.installBtn": "安装",
     "pwa.notNow": "以后再说",
+
+    // Blogs
+    "blogs.title": "每日智慧博客",
+    "blogs.subtitle": "为更平静、更有意的生活提供洞见",
+    "blogs.explore": "浏览博客",
+    "blogs.readMore": "阅读全文",
+    "blogs.back": "返回",
+    "blogs.backToList": "返回博客列表",
+    "blogs.notFound": "未找到该文章",
   },
 };

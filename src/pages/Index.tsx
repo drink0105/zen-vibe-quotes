@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { QuoteCard } from "@/components/QuoteCard";
 import { MoodSelector } from "@/components/MoodSelector";
 import { QuoteOfTheDay } from "@/components/QuoteOfTheDay";
+import { BlogsCTA } from "@/components/BlogsCTA";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Quote {
@@ -103,6 +104,8 @@ export default function Index({
           />
         )}
       </div>
+
+      <BlogsCTA />
     </div>
   );
 }

@@ -12,12 +12,22 @@ export default function BlogDetailPage() {
   const { language, t } = useLanguage();
 
   const blog = blogs.find((b) => String(b.id) === id);
+  const content = blog ? blog[language] ?? blog.en : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!blog) {
+  useEffect(() => {
+    if (!content) return;
+    const previous = document.title;
+    document.title = `${content.title} – ZenVibe`;
+    return () => {
+      document.title = previous;
+    };
+  }, [content?.title]);
+
+  if (!blog || !content) {
     return (
       <div className="min-h-screen bg-background pb-[130px] flex flex-col items-center justify-center px-6 text-center">
         <p className="text-muted-foreground mb-4">{t("blogs.notFound")}</p>
@@ -27,16 +37,6 @@ export default function BlogDetailPage() {
       </div>
     );
   }
-
-  const content = blog[language] ?? blog.en;
-  // Update document title for SEO when viewing a post
-  useEffect(() => {
-    const previous = document.title;
-    document.title = `${content.title} – ZenVibe`;
-    return () => {
-      document.title = previous;
-    };
-  }, [content.title]);
 
   // Render body: split paragraphs, render "## " lines as headings.
   const blocks = content.body.split(/\n\n+/);

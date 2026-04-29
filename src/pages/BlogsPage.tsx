@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { blogs } from "@/data/blogs";
@@ -8,6 +9,10 @@ import { MdArrowBack, MdMenuBook } from "react-icons/md";
 export default function BlogsPage() {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-[130px]">

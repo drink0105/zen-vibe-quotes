@@ -83,6 +83,27 @@ export default function BlogDetailPage() {
                 );
               })}
             </div>
+            <div
+              style={{
+                marginTop: "40px",
+                background: "#f9f9f9",
+                borderRadius: "12px",
+                padding: "16px",
+                textAlign: "center",
+                fontSize: "14px",
+                color: "#333",
+                lineHeight: 1.6,
+              }}
+            >
+              <div style={{ fontWeight: 600 }}>Written by ZenVibe Team</div>
+              <div>Daily mindfulness, motivation, and personal growth.</div>
+              <a
+                href="/privacy.html"
+                style={{ color: "#007AFF", textDecoration: "none" }}
+              >
+                Privacy Policy
+              </a>
+            </div>
           </CardContent>
         </Card>
       </article>
